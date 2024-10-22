@@ -11,9 +11,8 @@ spring:
             scope: # https://developers.kakao.com/docs/latest/ko/kakaologin/common#user-info
               - profile_nickname
               - profile_image
-              - account_email
             authorization-grant-type: authorization_code
-            redirect-uri: "http://localhost:3000/auth/kakao/callback"
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             client-name: Kakao
             client-authentication-method: client_secret_post
         provider:
@@ -23,3 +22,8 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-info-authentication-method: header
             user-name-attribute: id # Kakao 응답 값 id, connected_at, properties, kakao_account 중 id 지정
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://bangtal-boys.ct6gaqmk493g.ap-northeast-2.rds.amazonaws.com:3306/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: bts_admin
+    password: BangtalBoys
