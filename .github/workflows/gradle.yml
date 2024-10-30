@@ -1,26 +1,17 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
-
-name: Java CI with Gradle
+name: Java CI/CD
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "dev" ]
+    branches: [ "master" ]
 
 permissions:
   contents: read
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -28,10 +19,43 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+
+      - uses: actions/checkout@v3
+      - run: touch ./src/main/resources/application.properties
+      - run: echo "${{ secrets.PROPERTIES }}" > ./src/main/resources/application.properties
+      - run: cat ./src/main/resources/application.properties
+      - name: make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Build with Gradle
-          # uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
-          # with:
-        # arguments: build
-        run : ./gradlew clean build --exclude-task test
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Make dir
+        run: mkdir cicd
+
+      - name: Copy jar
+        run: cp ./build/libs/*.jar ./cicd
+
+      - name: Copy appspec
+        run: cp ./appspec.yml ./cicd
+
+      - name: Copy script
+        run: cp ./deploy.sh ./cicd
+
+      - name: Make zip
+        run: zip -r -qq -j ./deploy.zip ./cicd
+      - run: ls -al
+
+      - name: Upload S3
+        run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./deploy.zip s3://ci-cd-test-123/ci-cd/
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name cd-test --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name CD --s3-location bucket=ci-cd-test-123,bundleType=zip,key=ci-cd/deploy.zip
