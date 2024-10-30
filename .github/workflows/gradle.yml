@@ -58,4 +58,4 @@ jobs:
       - name: Upload S3
         run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./deploy.zip s3://bangtal-boys-s3/ci-cd/
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name cd-test --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name CD --s3-location bucket=ci-cd-test-123,bundleType=zip,key=ci-cd/deploy.zip
+        run: aws deploy create-deployment --application-name codedeploy --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name dev --s3-location bucket=bangtal-boys-s3,bundleType=zip,key=ci-cd/deploy.zip
