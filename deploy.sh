@@ -9,8 +9,8 @@
          sleep 3
  fi
 
- JAR_PATH="/home/deploy-user/cicd/*.jar"
+ JAR_PATH="/home/ubuntu/cicd/*.jar"
  echo "jar path : $JAR_PATH"
  chmod +x $JAR_PATH
- nohup java -jar $JAR_PATH >> /home/deploy-user/cicd/deploy.log 2>> /home/deploy-user/cicd/deploy_err.log &
+ nohup java -jar $JAR_PATH >> /home/ubuntu/cicd/deploy.log 2>> /home/ubuntu/cicd/deploy_err.log &
  echo "jar fild deploy success"

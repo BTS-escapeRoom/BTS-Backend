@@ -3,17 +3,17 @@ os: linux
 
 files:
   - source:  /
-    destination: /home/deploy-user/cicd
+    destination: /home/ubuntu/cicd
     overwrite: yes
 
 permissions:
   - object: /
     pattern: "**"
-    owner: deploy-user
-    group: deploy-user
+    owner: root
+    group: root
 
 hooks:
   ApplicationStart:
     - location: deploy.sh
       timeout: 60
-      runas: deploy-user
+      runas: root
