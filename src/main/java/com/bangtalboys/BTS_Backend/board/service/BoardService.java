@@ -25,11 +25,4 @@ public class BoardService {
         return boardRepository.save(board);
     }
 
-    public Board getBoard(Long boardId) {
-        Board board = boardRepository.findById(boardId).orElse(null);
-        if (board == null) {
-
-        }
-
-    }
 }
