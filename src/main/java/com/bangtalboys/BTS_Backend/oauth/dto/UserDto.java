@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 public class UserDto {
 
+    private Long id;
     private String profileImg;
     private String nickname;
     private SocialType socialType;

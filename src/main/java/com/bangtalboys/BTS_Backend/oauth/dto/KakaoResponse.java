@@ -1,11 +1,11 @@
 package com.bangtalboys.BTS_Backend.oauth.dto;
 
-import com.bangtalboys.BTS_Backend.utils.enums.Role;
 import com.bangtalboys.BTS_Backend.utils.enums.SocialType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -22,12 +22,30 @@ public class KakaoResponse implements OAuth2Response {
 
     @Override
     public String getNickname() {
-        return String.valueOf(profile.get("nickname"));
+        if (profile == null) {
+            return "방탈이";
+        }
+
+        String nickname = String.valueOf(profile.get("nickname"));
+        if (Objects.equals(nickname, "null")) {
+            return "방탈이";
+        }
+
+        return nickname;
     }
 
     @Override
     public String getProfileImg() {
-        return String.valueOf(profile.get("profile_img_url"));
+        if (profile == null) {
+            return null;
+        }
+
+        String profileImg = String.valueOf(profile.get("profile_img_url"));
+        if (Objects.equals(profileImg, "null")) {
+            return null;
+        }
+
+        return profileImg;
     }
 
     @Override

@@ -47,6 +47,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             memberRepository.save(member);
             UserDto userDto = UserDto.builder()
+                    .id(member.getId())
                     .username(username)
                     .profileImg(oAuth2Response.getProfileImg())
                     .nickname(oAuth2Response.getNickname())
@@ -57,7 +58,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return new CustomOAuth2User(userDto);
         } else {
             UserDto userDto = UserDto.builder()
-                    .username(username)
+                    .id(existData.getId())
+                    .username(existData.getUsername())
                     .profileImg(existData.getProfileImg())
                     .nickname(existData.getNickname())
                     .socialType(existData.getSocialType())
