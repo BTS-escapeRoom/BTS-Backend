@@ -4,13 +4,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Getter
+@Setter
 @ToString
 @NoArgsConstructor
 @Table(name = "board")
@@ -24,8 +22,10 @@ public class Board {
     @Column(name = "theme_id")
     private Long themeId;
 
+    @Column()
     private String type;
 
+    @Column()
     private String title;
 
     private String description;

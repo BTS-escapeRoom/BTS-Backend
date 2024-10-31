@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/board")
@@ -16,5 +18,15 @@ public class BoardController {
     @PostMapping("")
     public ResponseEntity<Board> createBoard(@RequestBody BoardRequest boardRequest) {
         return ResponseEntity.ok(boardService.createBoard(boardRequest));
+    }
+
+    @GetMapping("/{boardId}")
+    public ResponseEntity<Board> getBoard(@PathVariable long boardId) {
+        return ResponseEntity.ok(boardService.getOneBoard(boardId));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<Board>> getAllBoards() {
+        return ResponseEntity.ok(boardService.getAllBoards());
     }
 }
