@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/user")
+@RequestMapping("/v1/members")
 public class MemberController {
 
     @ResponseBody // View 페이지가 아닌 응답값 그대로 반환하기 위해 사용
