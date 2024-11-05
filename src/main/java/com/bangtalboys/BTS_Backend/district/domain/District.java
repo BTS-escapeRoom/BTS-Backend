@@ -1,6 +1,8 @@
 package com.bangtalboys.BTS_Backend.district.domain;
 
 import com.bangtalboys.BTS_Backend.city.domain.City;
+import com.bangtalboys.BTS_Backend.store.domain.Store;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,9 +24,9 @@ public class District {
 
     private String name;
 
-//    @OneToMany(mappedBy = "district", cascade = CascadeType.REMOVE, orphanRemoval = true)
-//    @JsonManagedReference
-//    private List<Store> stores = new ArrayList<>();
+    @OneToMany(mappedBy = "district", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Store> storeList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")

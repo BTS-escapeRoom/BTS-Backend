@@ -1,5 +1,6 @@
 package com.bangtalboys.BTS_Backend.theme.domain;
 
+import com.bangtalboys.BTS_Backend.genre.domain.Genre;
 import com.bangtalboys.BTS_Backend.store.domain.Store;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -26,27 +27,31 @@ public class Theme {
 
     private String description;
 
-    private int minimumPeople;
+    private Integer minimumPeople;
 
-    private int maximumPeople;
+    private Integer maximumPeople;
 
-    private int recommendPeople;
+    private Integer recommendPeople;
 
     private Long difficulty;
 
     private String genre;
 
-    private int fearLevel;
+    private Integer fearLevel;
 
-    private int time;
+    private Integer time;
 
-    private int price;
+    private Integer price;
 
     private String reservationUrl;
 
     private LocalDateTime registrationDate;
 
     private String notes;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "genre_id")
+    private Genre genreType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")

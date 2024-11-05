@@ -1,6 +1,7 @@
 package com.bangtalboys.BTS_Backend.city.dto;
 
 import com.bangtalboys.BTS_Backend.city.domain.City;
+import com.bangtalboys.BTS_Backend.district.domain.District;
 import com.bangtalboys.BTS_Backend.district.dto.DistrictResponse;
 import jakarta.persistence.ElementCollection;
 import lombok.Builder;
@@ -16,15 +17,14 @@ public class CityResponse {
 
     private Long id;
     private String name;
-
     @ElementCollection
     private List<DistrictResponse> districtList;
 
     @Builder
-    public CityResponse(City city) {
+    public CityResponse(City city, List<District> filteredDistricts) {
         this.id = city.getId();
         this.name = city.getName();
-        this.districtList = city.getDistrictList().stream().map(DistrictResponse::new).collect(Collectors.toList());
+        this.districtList = filteredDistricts.stream().map(DistrictResponse::new).collect(Collectors.toList());
     }
 
 }

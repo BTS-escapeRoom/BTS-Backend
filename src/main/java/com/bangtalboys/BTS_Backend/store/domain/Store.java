@@ -39,5 +39,5 @@ public class Store {
     private District district;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Theme> themes = new ArrayList<>();
+    private List<Theme> themeList = new ArrayList<>();
 }

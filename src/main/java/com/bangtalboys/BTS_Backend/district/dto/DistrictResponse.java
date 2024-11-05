@@ -9,12 +9,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DistrictResponse {
     private Long id;
-
     private String name;
+    private int storeCount;
 
     @Builder
     public DistrictResponse(District district) {
         this.id = district.getId();
         this.name = district.getName();
+        this.storeCount = district.getStoreList().size();
     }
 }

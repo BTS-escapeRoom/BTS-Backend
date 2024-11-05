@@ -27,3 +27,5 @@ spring:
     url: jdbc:mysql://bangtal-boys.ct6gaqmk493g.ap-northeast-2.rds.amazonaws.com:3306/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
     username: bts_admin
     password: BangtalBoys
+springdoc:
+  show-login-endpoint: true
