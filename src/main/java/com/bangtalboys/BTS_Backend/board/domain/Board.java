@@ -1,10 +1,8 @@
 package com.bangtalboys.BTS_Backend.board.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @Entity
 @Getter
@@ -14,10 +12,11 @@ import lombok.*;
 @Table(name = "board")
 public class Board {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "member_id")
+    private Long memberId;
 
     @Column(name = "theme_id")
     private Long themeId;
@@ -34,9 +33,9 @@ public class Board {
 
 
     @Builder
-    public Board(Long id, Long userId, Long themeId, String type, String title, String description, Long hit) {
+    public Board(Long id, Long memberId, Long themeId, String type, String title, String description, Long hit) {
         this.id = id;
-        this.userId = userId;
+        this.memberId = memberId;
         this.themeId = themeId;
         this.type = type;
         this.title = title;
