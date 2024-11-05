@@ -2,6 +2,7 @@ package com.bangtalboys.BTS_Backend.oauth.jwt;
 
 import com.bangtalboys.BTS_Backend.utils.enums.Token;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @ResponseBody
+@Hidden
 public class ReissueController {
     private final JwtUtil jwtUtil;
     public ReissueController(JwtUtil jwtUtil) {
