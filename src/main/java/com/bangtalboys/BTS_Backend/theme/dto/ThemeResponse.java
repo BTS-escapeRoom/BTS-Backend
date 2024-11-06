@@ -2,14 +2,11 @@ package com.bangtalboys.BTS_Backend.theme.dto;
 
 import com.bangtalboys.BTS_Backend.store.dto.StoreListResponse;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
 public class ThemeResponse {
 
     private Long id;
@@ -30,8 +27,6 @@ public class ThemeResponse {
     private String genreType;
     private StoreListResponse store;
 
-
-    @Builder
     public ThemeResponse(Theme theme) {
         id = theme.getId();
         thumbnail = theme.getThumbnail();

@@ -3,17 +3,14 @@ package com.bangtalboys.BTS_Backend.store.dto;
 import com.bangtalboys.BTS_Backend.store.domain.Store;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeListResponse;
 import jakarta.persistence.ElementCollection;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-@NoArgsConstructor
-public class StoreResponse extends Throwable {
+public class StoreResponse {
 
     private Long id;
     private String name;
@@ -24,7 +21,6 @@ public class StoreResponse extends Throwable {
     @ElementCollection
     private List<ThemeListResponse> themeList;
 
-    @Builder
     public StoreResponse(Store store) {
         this.id = store.getId();
         this.name = store.getName();

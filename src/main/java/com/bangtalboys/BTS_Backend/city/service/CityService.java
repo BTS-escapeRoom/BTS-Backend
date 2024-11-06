@@ -33,8 +33,16 @@ public class CityService {
                 .collect(Collectors.toList());
     }
 
-//    public CityResponse getOneCity(Long id) {
-//        Optional<City> city = cityRepository.findById(id);
-//        return city.map(new CityResponse(city, )).orElseThrow(NotFoundException::new);
-//    }
+    public CityResponse getOneCity(Long id) {
+        Optional<City> city = cityRepository.findById(id);
+        return city
+                .map(c -> {
+                    List<District> filteredDistrict = c.getDistrictList().stream()
+                            .filter(district -> !district.getStoreList().isEmpty())
+                            .collect(Collectors.toList());
+
+                    return new CityResponse(c, filteredDistrict);
+                })
+                .orElseThrow(NotFoundException::new);
+    }
 }

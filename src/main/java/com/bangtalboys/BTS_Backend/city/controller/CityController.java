@@ -30,26 +30,26 @@ public class CityController {
             return ResponseEntity.ok(Response.ok(cityResponses));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("", "500"));
+                    .body(Response.error(e.getMessage(), "500"));
         }
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Response<CityResponse>> getCity(
-//            @PathVariable Long id
-//    ) {
-//
-//        CityResponse cityResponse = null;
-//
-//        try {
-//            cityResponse = cityService.getOneCity(id);
-//            return ResponseEntity.ok(Response.ok(cityResponse));
-//        } catch (BusinessBaseException e) {
-//            return ResponseEntity.status(e.getErrorCode().getStatus())
-//                    .body(Response.error(e.getMessage(), e.getErrorCode().getCode()));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(Response.error("Internal Server Error", "500"));
-//        }
-//    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Response<CityResponse>> getCity(
+            @PathVariable Long id
+    ) {
+
+        CityResponse cityResponse = null;
+
+        try {
+            cityResponse = cityService.getOneCity(id);
+            return ResponseEntity.ok(Response.ok(cityResponse));
+        } catch (BusinessBaseException e) {
+            return ResponseEntity.status(e.getErrorCode().getStatus())
+                    .body(Response.error(e.getMessage(), e.getErrorCode().getCode()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Response.error("Internal Server Error", "500"));
+        }
+    }
 }

@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 public class ThemeListResponse {
     private Long id;
     private String thumbnail;
@@ -18,7 +17,6 @@ public class ThemeListResponse {
     private Integer time;
     private String genreType;
 
-    @Builder
     public ThemeListResponse(Theme theme) {
         id = theme.getId();
         thumbnail = theme.getThumbnail();
