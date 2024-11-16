@@ -29,15 +29,10 @@ public class ThemeController {
             @RequestParam(required = false) Integer difficulty,
             @RequestParam(required = false) Long genreId,
             @RequestParam(required = false) Long districtId,
-            @RequestParam(required = false) Long cityId) {
+            @RequestParam(required = false) Long cityId
+    ) {
 
-        try {
-            List<ThemeListResponse> themeListResponses = themeService.getAllTheme(title, peoples, difficulty, genreId, districtId, cityId);
-            return ResponseEntity.ok(Response.ok(themeListResponses));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error(e.getMessage(), "500"));
-        }
+        return ResponseEntity.ok(Response.ok(themeService.getAllTheme(title, peoples, difficulty, genreId, districtId, cityId)));
     }
 
     @Operation(summary = "테마 단건 조회")
@@ -46,16 +41,6 @@ public class ThemeController {
             @PathVariable Long id
     ) {
 
-
-        try {
-            ThemeResponse themeResponses = themeService.getOneTheme(id);
-            return ResponseEntity.ok(Response.ok(themeResponses));
-        } catch (BusinessBaseException e) {
-            return ResponseEntity.status(e.getErrorCode().getStatus())
-                    .body(Response.error(e.getMessage(), e.getErrorCode().getCode()));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("Internal Server Error", "500"));
-        }
+        return ResponseEntity.ok(Response.ok(themeService.getOneTheme(id)));
     }
 }

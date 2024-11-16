@@ -26,12 +26,6 @@ public class GenreController {
     @GetMapping("")
     public ResponseEntity<Response<List<GenreResponse>>> getAllGenre() {
 
-        try {
-            List<GenreResponse> genreResponses = genreService.getAllGenre();
-            return ResponseEntity.ok(Response.ok(genreResponses));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error(e.getMessage(), "500"));
-        }
+        return ResponseEntity.ok(Response.ok(genreService.getAllGenre()));
     }
 }

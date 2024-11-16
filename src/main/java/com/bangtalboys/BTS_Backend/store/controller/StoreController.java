@@ -28,13 +28,7 @@ public class StoreController {
     @GetMapping("")
     public ResponseEntity<Response<List<StoreListResponse>>> getAllStore() {
 
-        try {
-            List<StoreListResponse> storeListResponses = storeService.getAllStore();
-            return ResponseEntity.ok(Response.ok(storeListResponses));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("Internal Server Error", "500"));
-        }
+        return ResponseEntity.ok(Response.ok(storeService.getAllStore()));
     }
     @Operation(summary = "매장 단건 조회")
     @GetMapping("/{id}")
@@ -42,16 +36,6 @@ public class StoreController {
             @PathVariable Long id
     ) {
 
-        try {
-            StoreResponse storeResponse = storeService.getOneStore(id);
-            return ResponseEntity.ok(Response.ok(storeResponse));
-        } catch (BusinessBaseException e) {
-            return ResponseEntity.status(e.getErrorCode().getStatus())
-                    .body(Response.error(e.getMessage(), e.getErrorCode().getCode()));
-        } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("Internal Server Error", "500"));
-        }
+        return ResponseEntity.ok(Response.ok(storeService.getOneStore(id)));
     }
 }
