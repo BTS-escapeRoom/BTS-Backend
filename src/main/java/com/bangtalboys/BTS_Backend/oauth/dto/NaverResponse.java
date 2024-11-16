@@ -9,23 +9,21 @@ import java.util.Objects;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class KakaoResponse implements OAuth2Response {
-    private final String socialId;
-//    private final Map<String, Object> attribute;
+public class NaverResponse implements OAuth2Response{
 
-    public KakaoResponse(Map<String, Object> attribute) {
-        this.socialId = attribute.get("id").toString();
-//        this.account = (Map<String, Object>) attribute.get("kakao_account");
-//        this.profile = (Map<String, Object>) account.get("profile");
+    private final Map<String, Object> attribute;
+
+    public NaverResponse(Map<String, Object> attribute) {
+        this.attribute = (Map<String, Object>) attribute.get("response");
     }
 
 //    @Override
 //    public String getNickname() {
-//        if (profile == null) {
+//        if (attribute == null) {
 //            return "방탈이";
 //        }
 //
-//        String nickname = profile.get("nickname").toString();
+//        String nickname = attribute.get("name").toString();
 //        if (Objects.equals(nickname, "null")) {
 //            return "방탈이";
 //        }
@@ -35,11 +33,11 @@ public class KakaoResponse implements OAuth2Response {
 //
 //    @Override
 //    public String getProfileImg() {
-//        if (profile == null) {
+//        if (attribute == null) {
 //            return null;
 //        }
 //
-//        String profileImg = profile.get("profile_img_url").toString();
+//        String profileImg = attribute.get("profile_image").toString();
 //        if (Objects.equals(profileImg, "null")) {
 //            return null;
 //        }
@@ -49,12 +47,11 @@ public class KakaoResponse implements OAuth2Response {
 
     @Override
     public SocialType getSocialType() {
-        return SocialType.KAKAO;
+        return SocialType.NAVER;
     }
 
     @Override
     public String getSocialId() {
-        return socialId;
+        return attribute.get("id").toString();
     }
-
 }

@@ -1,9 +1,9 @@
 package com.bangtalboys.BTS_Backend.config;
 
+import com.bangtalboys.BTS_Backend.oauth.authentication.CustomOAuth2UserService;
+import com.bangtalboys.BTS_Backend.oauth.authentication.CustomSuccessHandler;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtFilter;
-import com.bangtalboys.BTS_Backend.oauth.service.CustomOAuth2UserService;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
-import com.bangtalboys.BTS_Backend.oauth.handler.CustomSuccessHandler;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -87,4 +87,12 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+//    @Bean
+//    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
+//        DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
+//        accessTokenResponseClient.setRequestEntityConverter(new CustomRequestEntityConverter());
+//
+//        return accessTokenResponseClient;
+//    }
 }

@@ -1,18 +1,22 @@
-package com.bangtalboys.BTS_Backend.oauth.service;
+package com.bangtalboys.BTS_Backend.oauth.authentication;
 
 import com.bangtalboys.BTS_Backend.member.domain.Member;
-import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
-import com.bangtalboys.BTS_Backend.oauth.dto.KakaoResponse;
-import com.bangtalboys.BTS_Backend.oauth.dto.OAuth2Response;
-import com.bangtalboys.BTS_Backend.oauth.dto.UserDto;
+import com.bangtalboys.BTS_Backend.oauth.dto.*;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.utils.enums.Role;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +33,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2Response oAuth2Response = null;
         if (registrationId.equals("kakao")) {
             oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
+        } else if (registrationId.equals("naver")) {
+            oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
+        } else if (registrationId.equals("apple")) {
+            oAuth2Response = new AppleResponse(userRequest.getAdditionalParameters());
         } else {
             return null;
         }
@@ -39,8 +47,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (existData == null) {
             Member member = Member.builder()
                     .username(username)
-                    .profileImg(oAuth2Response.getProfileImg())
-                    .nickname(oAuth2Response.getNickname())
                     .socialType(oAuth2Response.getSocialType())
                     .role(Role.ROLE_USER)
                     .build();
@@ -49,8 +55,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             UserDto userDto = UserDto.builder()
                     .id(member.getId())
                     .username(username)
-                    .profileImg(oAuth2Response.getProfileImg())
-                    .nickname(oAuth2Response.getNickname())
                     .socialType(oAuth2Response.getSocialType())
                     .role(Role.ROLE_USER)
                     .build();

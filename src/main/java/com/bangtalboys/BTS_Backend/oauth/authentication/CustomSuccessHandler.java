@@ -1,4 +1,4 @@
-package com.bangtalboys.BTS_Backend.oauth.handler;
+package com.bangtalboys.BTS_Backend.oauth.authentication;
 
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
@@ -39,21 +39,20 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String accessToken = jwtUtil.createJwt(Token.AccessToken.getType(), id, username, role, Token.AccessToken.getTtl());
+//        String accessToken = jwtUtil.createJwt(Token.AccessToken.getType(), id, username, role, Token.AccessToken.getTtl());
         String refreshToken = jwtUtil.createJwt(Token.RefreshToken.getType(), id, username, role, Token.RefreshToken.getTtl());
 
-        response.addCookie(createCookie(Token.AccessToken.getType(), accessToken));
+//        response.addCookie(createCookie(Token.AccessToken.getType(), accessToken));
         response.addCookie(createCookie(Token.RefreshToken.getType(), refreshToken));
-        response.setHeader(Token.AccessToken.getType(), accessToken);
-        response.sendRedirect("http://localhost:3000/");
+        response.sendRedirect("http://localhost:3000?result=success");
     }
 
     private Cookie createCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(true);
-        //cookie.setPath("/");
+        cookie.setSecure(true);
+        cookie.setPath("/");
         cookie.setHttpOnly(true);
 
         return cookie;
