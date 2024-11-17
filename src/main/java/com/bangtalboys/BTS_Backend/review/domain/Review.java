@@ -33,8 +33,7 @@ public class Review extends BaseEntity {
     private Integer hardScore;
 
     private LocalDateTime visitDate;
-
-    private boolean isSuccess;
+    private Boolean isSuccess;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_id")
@@ -56,7 +55,5 @@ public class Review extends BaseEntity {
         this.isSuccess = isSuccess;
         this.theme = theme;
         this.member = member;
-    } {
-
     }
 }

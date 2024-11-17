@@ -1,5 +1,6 @@
 package com.bangtalboys.BTS_Backend.review.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,6 @@ public class ReviewRequest {
     private Integer activityScore;
     private Integer hardScore;
     private LocalDateTime visitDate;
-    private boolean isSuccess;
+    private Boolean isSuccess;
     private Long themeId;
 }

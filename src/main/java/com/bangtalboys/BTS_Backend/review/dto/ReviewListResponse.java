@@ -15,9 +15,8 @@ public class ReviewListResponse {
     private Integer activityScore;
     private Integer hardScore;
     private LocalDateTime visitDate;
-    private boolean isSuccess;
+    private Boolean isSuccess;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
 
     public ReviewListResponse(Review review) {
@@ -29,8 +28,7 @@ public class ReviewListResponse {
         activityScore = review.getActivityScore();
         hardScore = review.getHardScore();
         visitDate = review.getVisitDate();
-        isSuccess = review.isSuccess();
+        isSuccess = review.getIsSuccess();
         createdAt = review.getCreatedAt();
-        updatedAt = review.getUpdatedAt();
     }
 }

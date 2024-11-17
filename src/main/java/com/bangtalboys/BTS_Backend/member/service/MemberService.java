@@ -5,8 +5,6 @@ import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.member.dto.MemberRequest;
 import com.bangtalboys.BTS_Backend.member.dto.MemberResponse;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
-import com.bangtalboys.BTS_Backend.theme.domain.Theme;
-import com.bangtalboys.BTS_Backend.theme.dto.ThemeResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

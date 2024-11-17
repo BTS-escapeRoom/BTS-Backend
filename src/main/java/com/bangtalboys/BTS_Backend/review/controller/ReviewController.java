@@ -19,7 +19,7 @@ import java.util.List;
 @Tag(name="테마 리뷰 API")
 @RequestMapping("/v1/reviews")
 public class ReviewController {
-    private ReviewService reviewService;
+    private final ReviewService reviewService;
     private final JwtUtil jwtUtil;
 
     @Operation(summary = "리뷰 단건 조회")
@@ -37,7 +37,7 @@ public class ReviewController {
             @RequestParam(required = true) Long themeId
     ) {
 
-        return ResponseEntity.ok(Response.ok(reviewService.getAllReview(themeId)));
+        return ResponseEntity.ok(Response.ok(reviewService.getAllReviews(themeId)));
     }
 
     @Operation(summary = "리뷰 등록")

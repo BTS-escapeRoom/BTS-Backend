@@ -27,12 +27,11 @@ public class ReviewService {
     private final MemberRepository memberRepository;
 
     public ReviewResponse getOneReview(Long reviewId) {
-
         Optional<Review> review = reviewRepository.findById(reviewId);
         return review.map(ReviewResponse::new).orElseThrow(NotFoundException::new);
     }
 
-    public List<ReviewListResponse> getAllReview(Long themeId) {
+    public List<ReviewListResponse> getAllReviews(Long themeId) {
         List<Review> reviewList = reviewRepository.findAllByThemeIdOrderByCreatedAtDesc(themeId);
         return reviewList.stream().map(ReviewListResponse::new).collect(Collectors.toList());
     }
@@ -52,7 +51,7 @@ public class ReviewService {
                 .activityScore(reviewRequest.getActivityScore())
                 .hardScore(reviewRequest.getHardScore())
                 .visitDate(reviewRequest.getVisitDate())
-                .isSuccess(reviewRequest.isSuccess())
+                .isSuccess(reviewRequest.getIsSuccess())
                 .theme(theme)
                 .member(member)
                 .build();
@@ -73,9 +72,10 @@ public class ReviewService {
         review.setPeople(reviewRequest.getPeople());
         review.setTime(reviewRequest.getTime());
         review.setScareScore(reviewRequest.getScareScore());
-        review.setActivityScore(review.getActivityScore());
-        review.setHardScore(review.getHardScore());
-        review.setVisitDate(review.getVisitDate());
+        review.setActivityScore(reviewRequest.getActivityScore());
+        review.setHardScore(reviewRequest.getHardScore());
+        review.setVisitDate(reviewRequest.getVisitDate());
+        review.setIsSuccess(reviewRequest.getIsSuccess());
 
         reviewRepository.save(review);
         return new ReviewResponse(review);
