@@ -16,7 +16,7 @@ public class GenreService {
     private final GenreRepository genreRepository;
 
     public List<GenreResponse> getAllGenre() {
-        List<Genre> genreResponses = genreRepository.findAll();
-        return genreResponses.stream().map(GenreResponse::new).collect(Collectors.toList());
+        List<Genre> genreList = genreRepository.findAll();
+        return genreList.stream().map(GenreResponse::new).collect(Collectors.toList());
     }
 }

@@ -1,18 +1,14 @@
 package com.bangtalboys.BTS_Backend.member.controller;
 
-import com.bangtalboys.BTS_Backend.config.error.exception.BusinessBaseException;
 import com.bangtalboys.BTS_Backend.member.dto.MemberRequest;
 import com.bangtalboys.BTS_Backend.member.dto.MemberResponse;
 import com.bangtalboys.BTS_Backend.member.service.MemberService;
-import com.bangtalboys.BTS_Backend.utils.Response.Response;
+import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

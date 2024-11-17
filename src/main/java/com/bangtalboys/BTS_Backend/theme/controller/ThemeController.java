@@ -1,14 +1,12 @@
 package com.bangtalboys.BTS_Backend.theme.controller;
 
-import com.bangtalboys.BTS_Backend.config.error.exception.BusinessBaseException;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeListResponse;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeResponse;
 import com.bangtalboys.BTS_Backend.theme.service.ThemeService;
-import com.bangtalboys.BTS_Backend.utils.Response.Response;
+import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

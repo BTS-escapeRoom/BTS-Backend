@@ -2,11 +2,10 @@ package com.bangtalboys.BTS_Backend.genre.controller;
 
 import com.bangtalboys.BTS_Backend.genre.dto.GenreResponse;
 import com.bangtalboys.BTS_Backend.genre.service.GenreService;
-import com.bangtalboys.BTS_Backend.utils.Response.Response;
+import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

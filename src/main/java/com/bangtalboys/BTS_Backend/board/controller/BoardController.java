@@ -4,14 +4,10 @@ import com.bangtalboys.BTS_Backend.board.domain.Board;
 import com.bangtalboys.BTS_Backend.board.dto.BoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.UpdateBoardRequest;
 import com.bangtalboys.BTS_Backend.board.service.BoardService;
-import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
-import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
-import com.bangtalboys.BTS_Backend.utils.Response.Response;
-import jakarta.servlet.http.HttpServletRequest;
+import com.bangtalboys.BTS_Backend.utils.response.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
