@@ -1,8 +1,12 @@
 package com.bangtalboys.BTS_Backend.utils.response;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class Response<T> {
     private String code;
     private String message;
+    // Getter 메서드
     private T data;
 
 
@@ -20,16 +24,4 @@ public class Response<T> {
         return new Response<>(null, message, code);
     }
 
-    // Getter 메서드
-    public T getData() {
-        return data;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public String getCode() {
-        return code;
-    }
 }
