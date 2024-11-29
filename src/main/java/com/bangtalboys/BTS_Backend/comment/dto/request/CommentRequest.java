@@ -1,4 +1,4 @@
-package com.bangtalboys.BTS_Backend.comment.dto;
+package com.bangtalboys.BTS_Backend.comment.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.bangtalboys.BTS_Backend.board.dto;
+package com.bangtalboys.BTS_Backend.board.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

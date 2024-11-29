@@ -1,7 +1,7 @@
-package com.bangtalboys.BTS_Backend.comment.domain;
+package com.bangtalboys.BTS_Backend.board.domain;
 
-import com.bangtalboys.BTS_Backend.board.domain.Board;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
+import com.bangtalboys.BTS_Backend.utils.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,11 +10,14 @@ import lombok.*;
 @Setter
 @ToString
 @NoArgsConstructor
-@Table(name = "comment")
-public class Comment {
+@Table(name = "board_like")
+public class BoardLike {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    private Long id;
+
+    @Column()
+    private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -24,13 +27,10 @@ public class Comment {
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @Column()
-    private String comment;
-
     @Builder
-    public Comment(Member member, Board board, String comment) {
+    public BoardLike(Status status, Member member, Board board) {
+        this.status = status;
         this.member = member;
         this.board = board;
-        this.comment = comment;
     }
 }

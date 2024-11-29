@@ -1,5 +1,8 @@
 package com.bangtalboys.BTS_Backend.board.domain;
 
+import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
+import com.bangtalboys.BTS_Backend.member.domain.Member;
+import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -15,11 +18,13 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "member_id")
-    private Long memberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private Member member;
 
-    @Column(name = "theme_id")
-    private Long themeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "theme_id")
+    private Theme theme;
 
     @Column()
     private String type;
@@ -33,13 +38,12 @@ public class Board {
 
 
     @Builder
-    public Board(Long id, Long memberId, Long themeId, String type, String title, String description, Long hit) {
-        this.id = id;
-        this.memberId = memberId;
-        this.themeId = themeId;
-        this.type = type;
-        this.title = title;
-        this.description = description;
-        this.hit = hit;
+    public Board( BoardRequest boardRequest, Member member, Theme theme) {
+        this.member = member;
+        this.theme = theme;
+        this.type = boardRequest.getType();
+        this.title = boardRequest.getTitle();
+        this.description = boardRequest.getDescription();
+        this.hit = 0L;
     }
 }
