@@ -16,7 +16,9 @@ RUN chmod +x ./gradlew
 
 RUN gradle clean build -x test
 
-CMD ["ls", "-al", "/app/build/libs"]
+RUN ls -al build/libs
+
+RUN mv build/libs/*-SNAPSHOT.jar build/libs/app.jar
 
 
 #=========================================================================
@@ -28,6 +30,6 @@ ENV PROFILE="dev-docker"
 
 WORKDIR /app
 
-COPY --from=builder /app/build/libs/*-SNAPSHOT.jar app.jar
+COPY --from=builder /app/build/libs/app.jar ./
 
 ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.profiles.active=$PROFILE"]
