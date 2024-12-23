@@ -106,10 +106,10 @@ jobs:
           echo "Host *" > $HOME/.ssh/config
           echo "  StrictHostKeyChecking no" >> $HOME/.ssh/config
           echo "  HostKeyAlgorithms ssh-ed25519" >> $HOME/.ssh/config
-          : # Test SSH connection and set known_hosts
+          # Test SSH connection and set known_hosts
           ssh -o StrictHostKeyChecking=no ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }} "echo SSH connection successful"
 
-      : # SSH_AGENT_PID and SSH_AUTH_SOCK are set by the container-ssh-agent action
+      # SSH_AGENT_PID and SSH_AUTH_SOCK are set by the container-ssh-agent action
       - uses: PhutureCorp/container-ssh-agent@v0.0.1
         with:
           ssh-private-key: |
@@ -119,10 +119,8 @@ jobs:
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
 
       - name: Run container
-        env:
-          DOCKER_HOST: ssh://${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}
         run: |
-          
+          export DOCKER_HOST=ssh://${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}
           docker run -d --name ${{ env.project }}-deployed -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
           if [ "$(docker ps -aq -f name=${{ env.project }})" ]; then
             docker stop ${{ env.project }} || true
