@@ -99,7 +99,7 @@ jobs:
       - name: test ssh connection
         run: |
           mkdir -p $HOME/.ssh
-          ssh-keyscan -R workstation.dork94.com >> $HOME/.ssh/known_hosts
+          ssh-keyscan workstation.dork94.com >> $HOME/.ssh/known_hosts
           cat $HOME/.ssh/known_hosts
           ssh - ${{ secrets.WORKSTATION_USER }}@workstation.dork94.com
           echo "StrictHostKeyChecking no" >> /etc/ssh_config
