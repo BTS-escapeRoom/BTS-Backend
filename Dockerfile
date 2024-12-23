@@ -1,6 +1,6 @@
 #=========================================================================
 ## BUILD STAGE 1 - APP 빌드
-FROM gradle:jdk17 as builder-jre
+FROM gradle:jdk17 AS builder
 
 WORKDIR /app
 
@@ -28,6 +28,6 @@ ENV PROFILE="dev-docker"
 
 WORKDIR /app
 
-COPY --from=builder-jre /app/build/libs/*-SNAPSHOT.jar app.jar
+COPY --from=builder /app/build/libs/*-SNAPSHOT.jar app.jar
 
 ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=$PROFILE"]

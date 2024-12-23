@@ -53,4 +53,44 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ghcr.io/${{ env.repository }}:latest
+          tags: ghcr.io/${{ env.repository }}:${{ github.sha }}
+
+  deploy-to-workstation:
+    name: Deploy to Workstation
+    runs-on: ubuntu-latest
+    needs: push_container
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged --shm-size=2g
+    container:
+      image: ubuntu:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.WORKSTATION_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+
+      - name: Verify Docker Connection
+        run: docker info
+      - name: Install Docker
+        run: |
+          apt-get update
+          apt-get install -y docker.io
+      - name: login to ghcr
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pull image
+        run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
+      - name: Run container
+        env:
+          DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
+        run: docker run -d -p 8080:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
