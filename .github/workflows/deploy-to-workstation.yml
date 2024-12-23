@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - dev
-      - cicd
+      - CICD
 
 jobs:
   push_container:
