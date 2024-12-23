@@ -21,8 +21,12 @@ configurations {
 }
 
 bootJar {
-    apply plugin: 'application'
-    mainClassName = 'com.bangtalboys.BTS_Backend.BtsBackendApplication'
+    mainClass = 'org.springframework.boot.loader.JarLauncher' // Main-Class 설정
+    manifest {
+        attributes(
+                'Start-Class': 'com.bangtalboys.BTS_Backend.BtsBackendApplication' // Start-Class 설정
+        )
+    }
     enabled = true
 }
 
