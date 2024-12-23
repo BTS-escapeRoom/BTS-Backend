@@ -113,18 +113,19 @@ jobs:
 #        run: ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} echo "Connected to workstation"
 
       - name: Run container
-        env:
-          DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
+#        env:
+#          DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
         run: |
           mkdir -p $HOME/.ssh
           echo "${{ secrets.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
           chmod 600 $HOME/.ssh/id_rsa
           ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
+          ssh-keyscan ${{ secrets.WORKSTATION_ADDR }}
           echo "StrictHostKeyChecking no" >> $HOME/.ssh/config
-          ssh-keygen -R ${{ secrets.WORKSTATION_ADDR }}
           ssh-add - < $HOME/.ssh/id_rsa
           cat $HOME/.ssh/known_hosts
 #          docker run -d -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }} --restart=always
+          docker -H ${{ secrets.WORKSTATION_ADDR }} run -d -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }} --restart=always
 
 
 
