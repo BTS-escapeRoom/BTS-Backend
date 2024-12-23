@@ -97,13 +97,13 @@ jobs:
           mkdir -p $HOME/.ssh
           echo "${{ vars.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
           chmod 600 $HOME/.ssh/id_rsa
-          ssh-keyscan ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
+          ssh-keyscan -H -t rsa ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
           echo "StrictHostKeyChecking no" >> $HOME/.ssh/config
           eval $(ssh-agent)
           ssh-add - <<< "${{ vars.WORKSTATION_SSH_KEY }}"
           cat $HOME/.ssh/known_hosts
           cat $HOME/.ssh/id_rsa
-        
+          ssh -o StrictHostKeyChecking=no -o HostKeyAlgorithms=ssh-rsa ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }} "echo SSH connection successful"
              
 
       - name: Pull image
