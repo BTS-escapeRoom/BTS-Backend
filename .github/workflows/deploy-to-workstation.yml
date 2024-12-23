@@ -97,17 +97,17 @@ jobs:
       - name: test ssh connection
         run: |
           mkdir -p $HOME/.ssh
-          echo "${{ vars.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
+          echo "${{ secrets.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
           chmod 600 $HOME/.ssh/id_rsa
-          ssh-keyscan -H -t rsa ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
+          ssh-keyscan -H -t rsa ${{ secrets.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
           echo "StrictHostKeyChecking no" >> $HOME/.ssh/config
           eval $(ssh-agent)
-          echo "${{ vars.WORKSTATION_SSH_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
+          echo "${{ secrets.WORKSTATION_SSH_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
           echo "Host *" > $HOME/.ssh/config
           echo "  StrictHostKeyChecking no" >> $HOME/.ssh/config
           echo "  HostKeyAlgorithms ssh-ed25519" >> $HOME/.ssh/config
           # Test SSH connection and set known_hosts
-          ssh -o StrictHostKeyChecking=no ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }} "echo SSH connection successful"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} "echo SSH connection successful"
 
       # SSH_AGENT_PID and SSH_AUTH_SOCK are set by the container-ssh-agent action
       - uses: PhutureCorp/container-ssh-agent@v0.0.1
@@ -120,7 +120,7 @@ jobs:
 
       - name: Run container
         run: |
-          export DOCKER_HOST=ssh://${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}
+          export DOCKER_HOST=ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
           docker run -d --name ${{ env.project }}-deployed -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
           if [ "$(docker ps -aq -f name=${{ env.project }})" ]; then
             docker stop ${{ env.project }} || true
