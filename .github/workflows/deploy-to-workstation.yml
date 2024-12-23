@@ -101,9 +101,11 @@ jobs:
 
       - name: test ssh connection
         run: |
+          mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
           cat ~/.ssh/known_hosts
           ssh - ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
+          echo "StrictHostKeyChecking no" >> /etc/ssh_config
 
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
