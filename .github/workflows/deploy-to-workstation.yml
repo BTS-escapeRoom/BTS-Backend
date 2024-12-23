@@ -103,6 +103,8 @@ jobs:
           echo "${{ secrets.WORKSTATION_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
+          cat ~/.ssh/id_rsa
+          cat ~/.ssh/known_hosts
 
       - name: test ssh connection
         run: ssh -o StrictHostKeyChecking=no ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} echo "SSH connection successful"
