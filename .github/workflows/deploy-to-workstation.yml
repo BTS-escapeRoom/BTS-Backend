@@ -99,7 +99,7 @@ jobs:
       - name: test ssh connection
         run: |
           mkdir -p $HOME/.ssh
-          ssh-keyscan workstation.dork94.com >> $HOME/.ssh/known_hosts
+          ssh-keyscan -H ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
           cat $HOME/.ssh/known_hosts
           ssh - ${{ secrets.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }} 
 
