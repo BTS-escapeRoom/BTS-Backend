@@ -56,4 +56,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: ${{ steps.upper-to-lower.outputs.repository }}:latest
+          tags: ${{ env.repository }}:latest
