@@ -68,13 +68,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.WORKSTATION_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
-          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+      - name: ssh configuration
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.WORKSTATION_ADDR }}
+          username: ${{ secrets.WORKSTATION_USER }}
+          key: ${{ secrets.WORKSTATION_SSH_KEY }}
+          port: ${{ secrets.WORKSTATION_PORT }}
 
       - name: Verify Docker Connection
         run: docker info
