@@ -109,13 +109,6 @@ jobs:
 
       - name: Run container
         run: |
-          mkdir -p $HOME/.ssh
-          echo "${{ secrets.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
-          chmod 600 $HOME/.ssh/id_rsa
-          ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
-          echo "Host ${{ secrets.WORKSTATION_ADDR }}
-          StrictHostKeyChecking no
-          UserKnownHostsFile=/dev/null" >> $HOME/.ssh/config
           ssh -q -o ConnectTimeout=30 -l ${{ secrets.WORKSTATION_USER }} -- ${{ secrets.WORKSTATION_ADDR }}
           
 
