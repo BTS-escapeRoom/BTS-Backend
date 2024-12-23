@@ -112,7 +112,6 @@ jobs:
         env:
           DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}:${{ secrets.WORKSTATION_PORT }}
         run: |   
-          docker context use remote
           docker run -d -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }} --restart=always
 
 
