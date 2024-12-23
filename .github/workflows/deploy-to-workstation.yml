@@ -100,10 +100,10 @@ jobs:
           echo "${{ vars.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
           chmod 600 $HOME/.ssh/id_rsa
           ssh-keyscan -H -t rsa ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
-          : # Test SSH connection and set known_hosts
+          # Test SSH connection and set known_hosts
           ssh -o StrictHostKeyChecking=no ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }} "echo SSH connection successful"
 
-      : # SSH_AGENT_PID and SSH_AUTH_SOCK are set by the container-ssh-agent action
+      # SSH_AGENT_PID and SSH_AUTH_SOCK are set by the container-ssh-agent action
       - uses: PhutureCorp/container-ssh-agent@v0.0.1
         with:
           ssh-private-key: |
