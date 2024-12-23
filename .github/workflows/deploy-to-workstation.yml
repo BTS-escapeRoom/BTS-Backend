@@ -94,15 +94,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.WORKSTATION_SSH_KEY }}
+
 
       - name: test ssh connection
         run: |
           mkdir -p $HOME/.ssh
-          ssh-keyscan -H workstation.dork94.com >> $HOME/.ssh/known_hosts
+          ssh-keyscan workstation.dork94.com >> $HOME/.ssh/known_hosts
           cat $HOME/.ssh/known_hosts
           ssh - ${{ secrets.WORKSTATION_USER }}@workstation.dork94.com
           echo "StrictHostKeyChecking no" >> /etc/ssh_config
