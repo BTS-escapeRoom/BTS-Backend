@@ -98,6 +98,7 @@ jobs:
           echo "${{ vars.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
           chmod 600 $HOME/.ssh/id_rsa
           ssh-keyscan ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
+          echo "StrictHostKeyChecking no" >> $HOME/.ssh/config
           cat $HOME/.ssh/known_hosts
           cat $HOME/.ssh/id_rsa
         
