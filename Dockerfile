@@ -34,5 +34,4 @@ COPY src ./
 COPY --from=builder /app/build/libs/app.jar ./
 
 
-#ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.profiles.active=$PROFILE"]
-ENTRYPOINT ["/bin/sh"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.profiles.active=$PROFILE"]
