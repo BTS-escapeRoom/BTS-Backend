@@ -26,10 +26,11 @@ jobs:
       - run: echo "${{ secrets.PROPERTIES }}" > ./src/main/resources/application.properties
       - run: cat ./src/main/resources/application.properties
 
-      - name: Install Docker
+      - name: Install Docker and curl
         run: |
           apt-get update
           apt-get install -y docker.io
+          apt-get install -y curl
 
       - name: login to ghcr
         uses: docker/login-action@v2
@@ -78,7 +79,7 @@ jobs:
           script: |
             echo "ssh connection established"
 
-      - name: Verify Docker Connection
+      - name: Verify docker connection
         run: docker info
       - name: Install Docker
         run: |
@@ -94,7 +95,7 @@ jobs:
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
       - name: Run container
         env:
-          DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
+          DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}:${{ secrets.WORKSTATION_PORT }}
         run: docker run -d -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }} --re
 
 
