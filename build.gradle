@@ -20,12 +20,6 @@ configurations {
 	}
 }
 
-bootJar {
-    apply plugin: 'application'
-    mainClassName = 'com.bangtalboys.BTS_Backend.BtsBackendApplication'
-    enabled = true
-}
-
 jar {
 	enabled= false
 }
