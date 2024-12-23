@@ -99,9 +99,10 @@ jobs:
       - name: test ssh connection
         run: |
           mkdir -p $HOME/.ssh
+          echo "${{ vars.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
           ssh-keyscan -H ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
           cat $HOME/.ssh/known_hosts
-          ssh -o StrictHostKeyChecking=no ${{ secrets.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}  
+          ssh -o StrictHostKeyChecking=no ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}  
 
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
@@ -109,7 +110,7 @@ jobs:
 
       - name: Run container
         env:
-          DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}
+          DOCKER_HOST: ssh://${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}
         run: docker run -d --name ${{ env.repository }} -p 8080:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
 
 
