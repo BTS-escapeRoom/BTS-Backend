@@ -118,7 +118,7 @@ jobs:
       - name: Run container
         run: |
           export DOCKER_HOST=ssh://${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}
-          docker run -d --name ${{ env.project }} -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
+          docker run -d --name ${{ env.project }} -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }} --restart=always
 
 
 
