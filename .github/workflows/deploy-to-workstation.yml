@@ -118,7 +118,7 @@ jobs:
           ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
           cat ~/.ssh/known_hosts
-          docker run -d -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }} --restart=always
+#          docker run -d -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }} --restart=always
 
 
 
