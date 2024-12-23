@@ -82,12 +82,15 @@ jobs:
           script: |
             echo "ssh connection established"
 
-      - name: Verify docker connection and install docker, curl
-        run: docker info
       - name: Install Docker
         run: |
           apt-get update
           apt-get install -y docker.io
+      
+
+      - name: Verify docker connection
+        run: docker info
+
       - name: login to ghcr
         uses: docker/login-action@v2
         with:
