@@ -5,11 +5,11 @@ FROM gradle:jdk17 AS builder
 WORKDIR /app
 
 COPY appspec.yml ./
-COPY gradle ./
-COPY scripts ./
+COPY gradle ./gradle
+COPY scripts ./scripts
 COPY build.gradle ./
 COPY settings.gradle ./
-COPY src ./
+COPY src ./src
 COPY gradlew ./
 
 RUN chmod +x ./gradlew
@@ -30,7 +30,7 @@ ENV PROFILE="dev-docker"
 
 WORKDIR /app
 
-COPY appspec.yml ./
+COPY src ./
 COPY --from=builder /app/build/libs/app.jar ./
 
 
