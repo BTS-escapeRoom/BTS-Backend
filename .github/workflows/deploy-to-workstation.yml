@@ -112,9 +112,13 @@ jobs:
 
 
       - name: Run container
-        env:
-          DOCKER_HOST: ssh://${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}
-        run: docker run -d --name ${{ env.repository }} -p 8080:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
+
+
+        run: |
+          cat $HOME/.ssh/known_hosts
+          cat $HOME/.ssh/id_rsa
+          export DOCKER_HOST=ssh://$WORKSTATION_USER@$WORKSTATION_ADDR
+          docker run -d --name ${{ env.repository }} -p 8080:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
 
 
 
