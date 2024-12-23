@@ -81,10 +81,13 @@ jobs:
           key: ${{ secrets.WORKSTATION_SSH_KEY }}
           port: ${{ secrets.WORKSTATION_PORT }}
           script: |
-            ssh -o ConnectTimeout=30 -l ${{ secrets.WORKSTATION_USER }} ${{ secrets.WORKSTATION_ADDR }} docker info
             echo {{ secrets.WORKSTATION_SSH_KEY }} > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan -H ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
+            eval $(ssh-agent)
+            ssh-add - <<< "${{ secrets.WORKSTATION_SSH_KEY }}"
+            ssh -o ConnectTimeout=30 -l ${{ secrets.WORKSTATION_USER }} ${{ secrets.WORKSTATION_ADDR }} docker info
+            
             
 
       - name: Install Docker
