@@ -14,7 +14,7 @@ COPY gradlew ./
 
 RUN chmod +x ./gradlew
 
-RUN gradle clean build -x test
+RUN gradlew build
 
 RUN ls -al build/libs
 
