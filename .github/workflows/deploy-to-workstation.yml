@@ -69,8 +69,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install curl
-        run: apt-get update && apt-get install -y curl
+      - name: Install curl and ssh-keyscan
+        run: apt-get update && apt-get install -y curl && apt-get install -y openssh-client && apt-get install -y ssh-keyscan
+
 
       - name: ssh configuration
         uses: appleboy/ssh-action@master
@@ -80,7 +81,11 @@ jobs:
           key: ${{ secrets.WORKSTATION_SSH_KEY }}
           port: ${{ secrets.WORKSTATION_PORT }}
           script: |
-            echo "ssh connection established"
+            ssh -o ConnectTimeout=30 -l ${{ secrets.WORKSTATION_USER }} ${{ secrets.WORKSTATION_ADDR }} docker info
+            echo {{ secrets.WORKSTATION_SSH_KEY }} > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan -H ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
+            
 
       - name: Install Docker
         run: |
