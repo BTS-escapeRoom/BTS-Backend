@@ -100,6 +100,8 @@ jobs:
           echo "${{ vars.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
           chmod 600 $HOME/.ssh/id_rsa
           ssh-keyscan -H -t rsa ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
+          eval $(ssh-agent)
+          echo "${{ vars.WORKSTATION_SSH_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
           # Test SSH connection and set known_hosts
           ssh -o StrictHostKeyChecking=no ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }} "echo SSH connection successful"
 
