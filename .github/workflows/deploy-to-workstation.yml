@@ -97,22 +97,18 @@ jobs:
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
 
-      - uses: webfactory/ssh-agent@v0.9.0
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
         with:
             ssh-private-key: ${{ secrets.WORKSTATION_SSH_KEY }}
 
-      - name: configure ssh
-        run: |
-          mkdir -p ~/.ssh
-          eval $(ssh-agent -s)
-          echo "${{ secrets.WORKSTATION_SSH_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
-          ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
-          cat ~/.ssh/known_hosts
 
       - name: test ssh connection
         run: ssh -o ConnectTimeout=30 -l ${{ secrets.WORKSTATION_USER }} -- ${{ secrets.WORKSTATION_ADDR }}
 
       - name: Run container
+        env:
+          DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
         run: docker run -d --name ${{ env.repository }} -p 8080:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
 
 
