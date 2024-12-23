@@ -72,9 +72,6 @@ jobs:
       - name: Install curl and ssh-keyscan
         run: apt-get update && apt-get install -y curl && apt-get install -y openssh-client
 
-
-
-
       - name: Install Docker
         run: |
           apt-get update
@@ -100,6 +97,9 @@ jobs:
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
       - name: Run container
+        env:
+          DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
+
         run: |
           mkdir -p $HOME/.ssh
           echo "${{ secrets.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
@@ -110,7 +110,8 @@ jobs:
           eval $(ssh-agent)
           ssh-add - < $HOME/.ssh/id_rsa
           cat $HOME/.ssh/known_hosts
-          docker -H ${{ secrets.WORKSTATION_ADDR }} run -d -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }} --restart=always
+          docker run -d -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }} --restart=always
+          
 
 
 
