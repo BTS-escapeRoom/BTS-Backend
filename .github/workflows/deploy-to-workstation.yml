@@ -108,7 +108,8 @@ jobs:
           cat $HOME/.ssh/id_rsa
           cat $HOME/.ssh/config
           ssh -o StrictHostKeyChecking=no -o HostKeyAlgorithms=ssh-ed25519 ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }} "echo SSH connection successful"
-          ssh -o StrictHostKeyChecking=no -o ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }} "echo SSH connection successful"
+          ssh -o StrictHostKeyChecking=no ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }} "echo SSH connection successful"
+          
              
 
       - name: Pull image
