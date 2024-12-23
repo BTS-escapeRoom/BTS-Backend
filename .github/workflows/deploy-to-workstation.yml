@@ -100,8 +100,9 @@ jobs:
         run: |
           mkdir -p $HOME/.ssh
           echo "${{ vars.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
-          ssh-keyscan -H ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
+          ssh-keyscan ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
           cat $HOME/.ssh/known_hosts
+             
 
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
