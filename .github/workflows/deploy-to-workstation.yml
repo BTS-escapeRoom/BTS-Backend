@@ -109,7 +109,7 @@ jobs:
 
       - name: Run container
         run: |
-          ssh -q -o ConnectTimeout=30 -l ${{ secrets.WORKSTATION_USER }} -- ${{ secrets.WORKSTATION_ADDR }}
+          ssh -o ConnectTimeout=30 -l ${{ secrets.WORKSTATION_USER }} -- ${{ secrets.WORKSTATION_ADDR }}
           
 
 
