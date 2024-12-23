@@ -14,7 +14,7 @@ COPY gradlew ./
 
 RUN chmod +x ./gradlew
 RUN gradle wrapper
-RUN ./gradlew bootJar
+RUN ./gradlew build bootJar
 
 RUN ls -al build/libs
 
