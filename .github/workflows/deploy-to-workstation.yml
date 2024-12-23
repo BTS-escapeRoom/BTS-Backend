@@ -101,7 +101,7 @@ jobs:
           mkdir -p $HOME/.ssh
           ssh-keyscan -H ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
           cat $HOME/.ssh/known_hosts
-          ssh - ${{ secrets.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }} 
+          ssh -o StrictHostKeyChecking=no ${{ secrets.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}  
 
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
