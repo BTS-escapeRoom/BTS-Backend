@@ -104,7 +104,6 @@ jobs:
           ssh-keyscan ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
           cat $HOME/.ssh/known_hosts
           cat $HOME/.ssh/id_rsa
-          ssh -T ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}
         
              
 
