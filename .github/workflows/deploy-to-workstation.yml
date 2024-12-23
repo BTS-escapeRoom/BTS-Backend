@@ -82,6 +82,8 @@ jobs:
           echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]' > repository
           REPO_NAME=$(cat repository)
           echo "repository=$REPO_NAME" >> $GITHUB_ENV
+          PROJ_NAME=$(basename ${{ github.repository }})
+          echo "project=PROJ_NAME" >> $GITHUB_ENV
 
       - name: login to ghcr
         uses: docker/login-action@v2
@@ -104,17 +106,10 @@ jobs:
           echo "Host *" > $HOME/.ssh/config
           echo "  StrictHostKeyChecking no" >> $HOME/.ssh/config
           echo "  HostKeyAlgorithms ssh-ed25519" >> $HOME/.ssh/config
-          cat $HOME/.ssh/known_hosts
-          cat $HOME/.ssh/id_rsa
-          cat $HOME/.ssh/config
-          ssh -o StrictHostKeyChecking=no -o HostKeyAlgorithms=ssh-ed25519 ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }} "echo SSH connection successful"
           ssh -o StrictHostKeyChecking=no ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }} "echo SSH connection successful"
-          
-             
 
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
-
 
       - uses: PhutureCorp/container-ssh-agent@v0.0.1
         with:
@@ -122,10 +117,8 @@ jobs:
             ${{ secrets.WORKSTATION_SSH_KEY }}
       - name: Run container
         run: |
-          cat $HOME/.ssh/known_hosts
-          cat $HOME/.ssh/id_rsa
           export DOCKER_HOST=ssh://${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}
-          docker run -d --name ${{ env.repository }} -p 8080:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
+          docker run -d --name ${{ env.project }} -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
 
 
 
