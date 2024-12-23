@@ -72,21 +72,21 @@ jobs:
       - name: Install curl and ssh-keyscan
         run: apt-get update && apt-get install -y curl && apt-get install -y openssh-client
 
-
-      - name: ssh configuration
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.WORKSTATION_ADDR }}
-          username: ${{ secrets.WORKSTATION_USER }}
-          key: ${{ secrets.WORKSTATION_SSH_KEY }}
-          port: ${{ secrets.WORKSTATION_PORT }}
-          script: |
-            echo {{ secrets.WORKSTATION_SSH_KEY }} > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan -H ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
-            eval $(ssh-agent)
-            ssh-add - <<< "${{ secrets.WORKSTATION_SSH_KEY }}"
-            ssh -o ConnectTimeout=30 -l ${{ secrets.WORKSTATION_USER }} ${{ secrets.WORKSTATION_ADDR }} docker info
+#
+#      - name: ssh configuration
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.WORKSTATION_ADDR }}
+#          username: ${{ secrets.WORKSTATION_USER }}
+#          key: ${{ secrets.WORKSTATION_SSH_KEY }}
+#          port: ${{ secrets.WORKSTATION_PORT }}
+#          script: |
+#            echo {{ secrets.WORKSTATION_SSH_KEY }} > ~/.ssh/id_rsa
+#            chmod 600 ~/.ssh/id_rsa
+#            ssh-keyscan -H ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
+#            eval $(ssh-agent)
+#            ssh-add - <<< "${{ secrets.WORKSTATION_SSH_KEY }}"
+#            ssh -o ConnectTimeout=30 -l ${{ secrets.WORKSTATION_USER }} ${{ secrets.WORKSTATION_ADDR }} docker info
             
             
 
@@ -112,8 +112,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
+
       - name: Run container
         env:
           DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}:${{ secrets.WORKSTATION_PORT }}
