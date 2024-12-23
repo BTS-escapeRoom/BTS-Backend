@@ -101,9 +101,6 @@ jobs:
         with:
             ssh-private-key: ${{ secrets.WORKSTATION_SSH_KEY }}
 
-
-
-
       - name: configure ssh
         run: |
           mkdir -p ~/.ssh
@@ -113,7 +110,7 @@ jobs:
           cat ~/.ssh/known_hosts
 
       - name: test ssh connection
-        run: ssh -o ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} echo "SSH connection successful"
+        run: ssh -o ConnectTimeout=30 -l ${{ secrets.WORKSTATION_USER }} -- ${{ secrets.WORKSTATION_ADDR }}
 
       - name: Run container
         run: docker run -d --name ${{ env.repository }} -p 8080:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
