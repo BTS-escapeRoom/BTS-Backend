@@ -101,8 +101,7 @@ jobs:
           mkdir -p $HOME/.ssh
           ssh-keyscan workstation.dork94.com >> $HOME/.ssh/known_hosts
           cat $HOME/.ssh/known_hosts
-          ssh - ${{ secrets.WORKSTATION_USER }}@workstation.dork94.com
-          echo "StrictHostKeyChecking no" >> /etc/ssh_config
+          ssh - ${{ secrets.WORKSTATION_USER }}@${{ variables.WORKSTATION_ADDR }} 
 
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
@@ -110,7 +109,7 @@ jobs:
 
       - name: Run container
         env:
-          DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
+          DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ variables.WORKSTATION_ADDR }}
         run: docker run -d --name ${{ env.repository }} -p 8080:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
 
 
