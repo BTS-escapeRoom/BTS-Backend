@@ -30,6 +30,8 @@ ENV PROFILE="dev-docker"
 
 WORKDIR /app
 
+COPY appspec.yml ./
 COPY --from=builder /app/build/libs/app.jar ./
+
 
 ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.profiles.active=$PROFILE"]
