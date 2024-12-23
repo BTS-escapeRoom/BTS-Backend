@@ -107,6 +107,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
+          ssh-keygen -R ${{ secrets.WORKSTATION_ADDR }}
           ssh-add - < ~/.ssh/id_rsa
       - name: Test ssh connection
         run: ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} echo "Connected to workstation"
