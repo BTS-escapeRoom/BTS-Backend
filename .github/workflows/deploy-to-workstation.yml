@@ -100,11 +100,18 @@ jobs:
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
 
+      - name: Set up ssh key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.WORKSTATION_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
+          
+
       - name: Run container
         env:
           DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}:${{ secrets.WORKSTATION_PORT }}
         run: |   
-          ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
           docker context use remote
           docker run -d -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }} --restart=always
 
