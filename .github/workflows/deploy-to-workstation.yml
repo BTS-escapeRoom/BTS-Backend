@@ -107,7 +107,7 @@ jobs:
           cat ~/.ssh/known_hosts
 
       - name: test ssh connection
-        run: ssh -o StrictHostKeyChecking=no ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} echo "SSH connection successful"
+        run: ssh -o ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} echo "SSH connection successful"
 
       - name: Run container
         run: docker run -d --name ${{ env.repository }} -p 8080:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
