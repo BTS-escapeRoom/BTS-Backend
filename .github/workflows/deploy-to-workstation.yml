@@ -102,7 +102,7 @@ jobs:
           echo "${{ vars.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
           ssh-keyscan -H ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
           cat $HOME/.ssh/known_hosts
-          ssh -o StrictHostKeyChecking=no ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}  
+          ssh -o ConnectTimeout=30 -l ${{ vars.WORKSTATION_USER }} -- ${{ vars.WORKSTATION_ADDR }}   
 
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
