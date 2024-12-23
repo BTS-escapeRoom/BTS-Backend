@@ -102,8 +102,6 @@ jobs:
           mkdir -p ~/.ssh
           eval $(ssh-agent -s)
           echo "${{ secrets.WORKSTATION_SSH_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
-#          echo "${{ secrets.WORKSTATION_SSH_KEY }}" > ~/.ssh/id_rsa
-#          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
           cat ~/.ssh/id_rsa
           cat ~/.ssh/known_hosts
