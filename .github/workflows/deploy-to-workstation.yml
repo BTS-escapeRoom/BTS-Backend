@@ -103,7 +103,7 @@ jobs:
           ssh-keyscan ${{ vars.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
           cat $HOME/.ssh/known_hosts
           ssh -T ${{ vars.WORKSTATION_USER }}@${{ vars.WORKSTATION_ADDR }}
-          ssh -o ConnectTimeout=30 -l ${{ vars.WORKSTATION_USER }} -- ${{ vars.WORKSTATION_ADDR }} docker system dial-stdio
+        
              
 
       - name: Pull image
