@@ -96,6 +96,8 @@ jobs:
 
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
+
+
       - name: Run container
 
         run: |
@@ -108,8 +110,7 @@ jobs:
           eval $(ssh-agent)
           ssh-add - < $HOME/.ssh/id_rsa
           cat $HOME/.ssh/known_hosts
-          export DOCKER_HOST=ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
-          docker run -d -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }} --restart=always
+          ssh -o ConnectTimeout=30 -l ${{ secrets.WORKSTATION_USER }} -- ${{ secrets.WORKSTATION_ADDR }}
           
 
 
