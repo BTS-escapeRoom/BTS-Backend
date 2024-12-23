@@ -116,9 +116,11 @@ jobs:
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
 
 
+      - uses: PhutureCorp/container-ssh-agent@v0.0.1
+        with:
+          ssh-private-key: |
+            ${{ secrets.WORKSTATION_SSH_KEY }}
       - name: Run container
-
-
         run: |
           cat $HOME/.ssh/known_hosts
           cat $HOME/.ssh/id_rsa
