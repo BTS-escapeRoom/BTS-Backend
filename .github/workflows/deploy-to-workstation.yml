@@ -70,7 +70,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install curl and ssh-keyscan
-        run: apt-get update && apt-get install -y curl && apt-get install -y openssh-client && apt-get install -y ssh-keyscan
+        run: apt-get update && apt-get install -y curl && apt-get install -y openssh-client
 
 
       - name: ssh configuration
