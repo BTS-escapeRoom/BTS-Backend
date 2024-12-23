@@ -100,7 +100,10 @@ jobs:
           ssh-private-key: ${{ secrets.WORKSTATION_SSH_KEY }}
 
       - name: test ssh connection
-        run: ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
+        run: |
+          ssh-keyscan -H ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
+          cat ~/.ssh/known_hosts
+          ssh - ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
 
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
