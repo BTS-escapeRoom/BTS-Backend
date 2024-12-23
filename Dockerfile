@@ -13,7 +13,7 @@ COPY src ./
 COPY gradlew ./
 
 RUN chmod +x ./gradlew
-
+RUN gradle wrapper
 RUN ./gradlew build
 
 RUN ls -al build/libs
