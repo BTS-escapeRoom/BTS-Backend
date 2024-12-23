@@ -30,7 +30,6 @@ jobs:
         run: |
           apt-get update
           apt-get install -y docker.io
-          apt-get install -y curl
 
       - name: login to ghcr
         uses: docker/login-action@v2
@@ -79,12 +78,13 @@ jobs:
           script: |
             echo "ssh connection established"
 
-      - name: Verify docker connection
+      - name: Verify docker connection and install docker, curl
         run: docker info
       - name: Install Docker
         run: |
           apt-get update
           apt-get install -y docker.io
+          apt-get install -y curl
       - name: login to ghcr
         uses: docker/login-action@v2
         with:
