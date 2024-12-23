@@ -107,10 +107,16 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
+
       - name: Run container
         env:
           DOCKER_HOST: ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
         run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.WORKSTATION_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
           cat ~/.ssh/known_hosts
           docker run -d -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }} --restart=always
 
