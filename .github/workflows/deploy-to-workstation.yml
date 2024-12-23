@@ -106,6 +106,7 @@ jobs:
           echo "${{ secrets.WORKSTATION_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
+          ssh-keyscan ${{ secrets.WORKSTATION_ADDR }}
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
           cat ~/.ssh/know_hosts
 
