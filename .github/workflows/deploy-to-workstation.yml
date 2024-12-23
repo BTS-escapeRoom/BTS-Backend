@@ -97,6 +97,15 @@ jobs:
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
 
+      - name: Test ssh connection
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.WORKSTATION_ADDR }}
+          username: ${{ secrets.WORKSTATION_USER }}
+          key: ${{ secrets.WORKSTATION_SSH_KEY }}
+          port: ${{ secrets.WORKSTATION_PORT }}
+          script: |
+            echo "SSH connection successful"
 
       - name: Run container
         run: |
@@ -104,7 +113,10 @@ jobs:
           echo "${{ secrets.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
           chmod 600 $HOME/.ssh/id_rsa
           ssh-keyscan ${{ secrets.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
-          ssh -o ConnectTimeout=30 -l ${{ secrets.WORKSTATION_USER }} -- ${{ secrets.WORKSTATION_ADDR }}
+          echo "Host ${{ secrets.WORKSTATION_ADDR }}
+          StrictHostKeyChecking no
+          UserKnownHostsFile=/dev/null" >> $HOME/.ssh/config
+          ssh -q -o ConnectTimeout=30 -l ${{ secrets.WORKSTATION_USER }} -- ${{ secrets.WORKSTATION_ADDR }}
           
 
 
