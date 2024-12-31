@@ -128,7 +128,12 @@ jobs:
           fi
           docker rename ${{ env.project }}-deployed ${{ env.project }}
 
-
-
-
-
+      - name: Deploy using docker-compose
+        run: |
+          scp docker-compoose.yml ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}:/path/to/deploy
+          ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} "cd /path/to/deploy && docker-compose up -d"
+          
+          
+          
+          
+          
