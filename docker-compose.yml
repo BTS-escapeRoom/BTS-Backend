@@ -13,6 +13,7 @@ services:
     command: ["--character-set-server=utf8mb4","--collation-server=utf8mb4_unicode_ci"]
 
   application:
+    container_name: bts-backend
     restart: on-failure
     image: ghcr.io/bts-escaperoom/bts-backend:latest
     ports:
