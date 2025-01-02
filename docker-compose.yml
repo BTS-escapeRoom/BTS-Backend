@@ -12,12 +12,12 @@ services:
       - bts-backend-db:/var/lib/mysql
       - bts-backend-db-ini:/etc/mysql/conf.d
     ports:
-      - "3307:3307"
+      - "3306:3306"
     command: ["--character-set-server=utf8mb4","--collation-server=utf8mb4_unicode_ci"]
 
   bts-backend:
     container_name: bts-backend
-    image: bts-backend
+    image: test-docker01
     restart: always
     networks:
       - bts-backend
