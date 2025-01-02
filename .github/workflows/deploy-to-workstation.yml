@@ -121,12 +121,12 @@ jobs:
       - name: Run container
         run: |
           export DOCKER_HOST=ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
-          docker run -d --name ${{ env.project }}-deployed -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
+          docker run -d --name ${{ env.project }}-deployed2 -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
           if [ "$(docker ps -aq -f name=${{ env.project }})" ]; then
             docker stop ${{ env.project }} || true
             docker rm ${{ env.project }} || true
           fi
-          docker rename ${{ env.project }}-deployed ${{ env.project }}
+          docker rename ${{ env.project }}-deployed2 ${{ env.project }}
 
 
 
