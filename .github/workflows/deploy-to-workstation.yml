@@ -118,6 +118,18 @@ jobs:
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
 
+      - name: Remove existing containers by name
+        run: |
+          ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} << EOF
+            for container_name in "${{ env.project }}" "${{ env.project }}-deployed"; do
+              if [ "$(docker ps -aq -f name=$container_name)" ]; then
+                echo "Stopping and removing container: $container_name"
+                docker stop $container_name || true
+                docker rm $container_name || true
+              fi
+            done
+          EOF
+
       - name: Run container
         run: |
           export DOCKER_HOST=ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
