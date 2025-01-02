@@ -1,26 +1,38 @@
-version: '3'
-
 services:
-  database:
-    container_name: bangtal-boys-db
+  bts-backend-db:
+    container_name: bts-backend-db
     image: mysql
     environment:
       MYSQL_DATABASE: bts
       MYSQL_ROOT_HOST: '%'
       MYSQL_ROOT_PASSWORD: bangtal-boys
+    networks:
+      - bts-backend
+    volumes:
+      - bts-backend-db:/var/lib/mysql
+      - bts-backend-db-ini:/etc/mysql/conf.d
     ports:
-      - "3306:3306"
+      - "3307:3307"
     command: ["--character-set-server=utf8mb4","--collation-server=utf8mb4_unicode_ci"]
 
-  application:
+  bts-backend:
     container_name: bts-backend
-    restart: on-failure
-    image: ghcr.io/bts-escaperoom/bts-backend:latest
+    image: bts-backend
+    restart: always
+    networks:
+      - bts-backend
     ports:
       - "8881:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://bangtal-boys-db:3306/bts?useSSL=false&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: "root"
-      SPRING_DATASOURCE_PASSWORD: "bangtal-boys"
     depends_on:
-      - database
+      - bts-backend-db
+
+networks:
+  bts-backend:
+    driver: bridge
+volumes:
+  bts-backend-db:
+    name: bts-backend-db
+    external: false
+  bts-backend-db-ini:
+    name: bts-backend-db-ini
+    external: false

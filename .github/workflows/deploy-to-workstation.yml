@@ -11,19 +11,27 @@ jobs:
   push_container:
     name: Push Container
     runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged --shm-size=2g
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+    container:
+      image: ubuntu:latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - run: touch ./src/main/resources/application.properties
+      - run: echo "${{ secrets.PROPERTIES }}" > ./src/main/resources/application.properties
+      - run: cat ./src/main/resources/application.properties
 
-      - name: Set repository and project name as environment variables
+      - name: Install Docker and curl
         run: |
-          echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]' > repository
-          REPO_NAME=$(cat repository)
-          echo "repository=$REPO_NAME" >> $GITHUB_ENV
-          PROJ_NAME=$(basename $REPO_NAME)
-          echo "project=$PROJ_NAME" >> $GITHUB_ENV
+          apt-get update
+          apt-get install -y docker.io
 
-      - name: Log in to GHCR
+      - name: login to ghcr
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -33,7 +41,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push Docker image
+      - name: convert repository name to lowercase and set it as an environment variable
+        id: set_env
+        run: |
+          echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]' > repository
+          REPO_NAME=$(cat repository)
+          echo "repository=$REPO_NAME" >> $GITHUB_ENV
+
+      - name: Build and push
+        id: docker_build
         uses: docker/build-push-action@v6
         with:
           push: true
@@ -43,33 +59,75 @@ jobs:
     name: Deploy to Workstation
     runs-on: ubuntu-latest
     needs: push_container
+    container:
+      image: ubuntu:latest
     steps:
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.WORKSTATION_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.WORKSTATION_ADDR }} >> ~/.ssh/known_hosts
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Pull Docker image
+      - name: Install curl and ssh-keyscan
+        run: apt-get update && apt-get install -y curl && apt-get install -y openssh-client
+
+      - name: Install Docker
+        run: |
+          apt-get update
+          apt-get install -y docker.io
+
+      - name: Verify docker connection
+        run: docker info
+
+      - name: convert repository name to lowercase and set it as an environment variable
+        id: set_env
+        run: |
+          echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]' > repository
+          REPO_NAME=$(cat repository)
+          echo "repository=$REPO_NAME" >> $GITHUB_ENV
+          PROJ_NAME=$(basename ${{ github.repository }})
+          echo "project=$PROJ_NAME" >> $GITHUB_ENV
+
+      - name: login to ghcr
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+      - name: test ssh connection
+        run: |
+          mkdir -p $HOME/.ssh
+          echo "${{ secrets.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
+          chmod 600 $HOME/.ssh/id_rsa
+          ssh-keyscan -H -t rsa ${{ secrets.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
+          echo "StrictHostKeyChecking no" >> $HOME/.ssh/config
+          eval $(ssh-agent)
+          echo "${{ secrets.WORKSTATION_SSH_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
+          echo "Host *" > $HOME/.ssh/config
+          echo "  StrictHostKeyChecking no" >> $HOME/.ssh/config
+          echo "  HostKeyAlgorithms ssh-ed25519" >> $HOME/.ssh/config
+          # Test SSH connection and set known_hosts
+          ssh -o StrictHostKeyChecking=no ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} "echo SSH connection successful"
+
+      # SSH_AGENT_PID and SSH_AUTH_SOCK are set by the container-ssh-agent action
+      - uses: PhutureCorp/container-ssh-agent@v0.0.1
+        with:
+          ssh-private-key: |
+            ${{ secrets.WORKSTATION_SSH_KEY }}
+
+      - name: Pull image
+        run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
+
+      - name: Run container
         run: |
           export DOCKER_HOST=ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
-          docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
-
-      - name: Clean up old containers
-        run: |
-          export DOCKER_HOST=ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
+          docker run -d --name ${{ env.project }}-deployed -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
           if [ "$(docker ps -aq -f name=${{ env.project }})" ]; then
             docker stop ${{ env.project }} || true
             docker rm ${{ env.project }} || true
           fi
+          docker rename ${{ env.project }}-deployed ${{ env.project }}
 
-      - name: Run new container
-        run: |
-          export DOCKER_HOST=ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
-          docker run -d --name ${{ env.project }} -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
 
-      - name: Deploy using docker-compose
-        run: |
-          scp docker-compose.yml ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}:/path/to/deploy
-          ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} "cd /path/to/deploy && docker-compose up -d"
+
+
