@@ -136,16 +136,16 @@ jobs:
 
       - name: Create directory on workstation
         run: |
-          ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} "mkdir -p /path/to/deploy"
+          ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} "mkdir -p ~/deploy"
 
       - name: Copy docker-compose.yml to workstation
         run: |
-          scp docker-compose.yml ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}:/path/to/deploy
+          scp docker-compose.yml ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}:~/deploy
 
       - name: Run docker-compose
         run: |
           ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} << EOF
-            cd /path/to/deploy
+            cd ~/deploy
             docker-compose pull
             docker-compose up -d
           EOF
