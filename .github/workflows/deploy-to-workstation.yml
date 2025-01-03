@@ -68,10 +68,11 @@ jobs:
       - name: Install curl and ssh-keyscan
         run: apt-get update && apt-get install -y curl && apt-get install -y openssh-client
 
-      - name: Install Docker
+      - name: Install Docker and Docker-Compose
         run: |
           apt-get update
           apt-get install -y docker.io
+          apt-get install -y docker-compose-plugin
 
       - name: Verify docker connection
         run: docker info
@@ -133,12 +134,6 @@ jobs:
 #            docker rm ${{ env.project }} || true
 #          fi
 #          docker rename ${{ env.project }}-deployed ${{ env.project }}
-
-      - name: Install Docker and Docker Compose
-        run: |
-          apt-get update
-          apt-get install -y docker.io
-          apt-get install -y docker-compose-plugin
 
       - name: Run docker-compose using Docker CLI
         run: |
