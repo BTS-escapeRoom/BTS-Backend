@@ -1,6 +1,7 @@
 services:
   bts-backend-db:
     container_name: bts-backend-db
+    restart: always
     image: mysql
     environment:
       MYSQL_DATABASE: bts
