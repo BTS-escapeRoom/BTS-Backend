@@ -137,7 +137,6 @@ jobs:
       - name: Run docker-compose
         run: |
           ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} << EOF
-            cd /path/to/deploy
             docker-compose pull
             docker-compose up -d
           EOF
