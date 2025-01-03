@@ -146,6 +146,6 @@ jobs:
         run: |
           ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} << EOF
             cd ~/deploy
-            docker-compose pull
-            docker-compose up -d
+            IMAGE_TAG=${{ github.sha }} docker-compose pull
+            IMAGE_TAG=${{ github.sha }} docker-compose up -d
           EOF
