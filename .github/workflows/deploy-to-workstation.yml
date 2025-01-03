@@ -137,11 +137,12 @@ jobs:
       - name: Install Docker and Docker Compose
         run: |
           apt-get update
-          apt-get install -y docker.io docker-compose
+          apt-get install -y docker.io
+          apt-get install -y docker-compose-plugin
 
-
-      - name: Run docker-compose
+      - name: Run docker-compose using Docker CLI
         run: |
           export DOCKER_HOST=ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
-          IMAGE_TAG=${{ github.sha }} docker-compose pull
-          IMAGE_TAG=${{ github.sha }} docker-compose up -d
+          IMAGE_TAG=${{ github.sha }} docker compose pull
+          IMAGE_TAG=${{ github.sha }} docker compose up -d
+      
