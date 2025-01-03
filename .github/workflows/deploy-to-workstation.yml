@@ -125,23 +125,12 @@ jobs:
       - name: Remove containers by pattern
         run: |
           ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} << EOF
-            docker ps -aq -f name="${{ env.project }}" -f name="${{ env.project }}-deployed" -f name="${{ env.project }}-db" | xargs -r docker rm -f
+            docker ps -aq -f name="${{ env.project }}" -f name="${{ env.project }}-deployed" -f name="bts-backend-db" | xargs -r docker rm -f
           EOF
-
-#      - name: Run container
-#        run: |
-#          export DOCKER_HOST=ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
-#          docker run -d --name ${{ env.project }}-deployed -p 8881:8080 ghcr.io/${{ env.repository }}:${{ github.sha }}
-#          if [ "$(docker ps -aq -f name=${{ env.project }})" ]; then
-#            docker stop ${{ env.project }} || true
-#            docker rm ${{ env.project }} || true
-#          fi
-#          docker rename ${{ env.project }}-deployed ${{ env.project }}
+          
 
       - name: Run docker-compose using Docker CLI
         run: |
-          docker compose down
           export DOCKER_HOST=ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
-          IMAGE_TAG=${{ github.sha }} docker compose pull
           IMAGE_TAG=${{ github.sha }} docker compose up -d
       
