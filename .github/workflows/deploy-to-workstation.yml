@@ -134,6 +134,10 @@ jobs:
           fi
           docker rename ${{ env.project }}-deployed ${{ env.project }}
 
+      - name: Create directory on workstation
+        run: |
+          ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} "mkdir -p /path/to/deploy"
+
       - name: Copy docker-compose.yml to workstation
         run: |
           scp docker-compose.yml ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}:/path/to/deploy
