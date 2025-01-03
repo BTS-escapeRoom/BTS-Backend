@@ -1,6 +1,5 @@
 services:
   bts-backend-db:
-    restart: always
     image: mysql
     environment:
       MYSQL_DATABASE: bts
@@ -14,9 +13,12 @@ services:
     ports:
       - "33066:3306"
     command: ["--character-set-server=utf8mb4","--collation-server=utf8mb4_unicode_ci"]
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      retries: 3
 
   bts-backend:
-    container_name: bts-backend
     image: ghcr.io/bts-escaperoom/bts-backend:${IMAGE_TAG}
     restart: always
     networks:
@@ -24,15 +26,15 @@ services:
     ports:
       - "8881:8080"
     depends_on:
-      - bts-backend-db
+       bts-backend-db:
+         condition: service_healthy
+
 
 networks:
   bts-backend:
     driver: bridge
 volumes:
   bts-backend-db:
-    name: bts-backend-db
     external: true
   bts-backend-db-ini:
-    name: bts-backend-db-ini
     external: true
