@@ -134,13 +134,11 @@ jobs:
 #          fi
 #          docker rename ${{ env.project }}-deployed ${{ env.project }}
 
-      - name: Create directory on workstation
+      - name: Install Docker and Docker Compose
         run: |
-          ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} "mkdir -p ~/deploy"
+          apt-get update
+          apt-get install -y docker.io docker-compose
 
-      - name: Copy docker-compose.yml to workstation
-        run: |
-          scp docker-compose.yml ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}:~/deploy
 
       - name: Run docker-compose
         run: |
