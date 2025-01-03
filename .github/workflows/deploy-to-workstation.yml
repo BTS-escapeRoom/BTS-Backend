@@ -72,7 +72,6 @@ jobs:
         run: |
           apt-get update
           apt-get install -y docker.io
-          apt-get install -y docker-compose-plugin
 
       - name: Verify docker connection
         run: docker info
