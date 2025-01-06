@@ -49,9 +49,9 @@ spring:
             user-name-attribute: sub
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://bangtal-boys.ct6gaqmk493g.ap-northeast-2.rds.amazonaws.com:3306/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
-    username: bts_admin
-    password: BangtalBoys
+    url: jdbc:mysql://workstation.dork94.com:3306/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: bts
+    password: bangtal-boys
 springdoc:
   show-login-endpoint: true
 apple:
