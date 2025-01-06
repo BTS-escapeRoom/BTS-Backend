@@ -1,34 +1,34 @@
 spring:
   security:
     jwt:
-      secret-key: 37e5e6213096155c93ce0d832fc2f1f5a0faca5785f893fa4eb9b9d4676f2404
+      secret-key: ${SPRING_SECURITY_JWT_SECRET_KEY:37e5e6213096155c93ce0d832fc2f1f5a0faca5785f893fa4eb9b9d4676f2404}
     oauth2:
       client:
         registration:
           kakao:
-            client-id: 6314ef9de4168d995d3c4c4c308f8fef
-            client-secret: jte1OyJD8wDmQdKWjh3E6mRNjLrC91y2
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_ID:6314ef9de4168d995d3c4c4c308f8fef}
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_SECRET:jte1OyJD8wDmQdKWjh3E6mRNjLrC91y2}
             scope:
             authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_REDIRECT_URI:http://localhost:8080/login/oauth2/code/kakao}
             client-name: Kakao
             client-authentication-method: client_secret_post
           naver:
-            client-id: 87XRcRkTrKm_jRmKqsVb
-            client-secret: XRsjyrij5R
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_ID:87XRcRkTrKm_jRmKqsVb}
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_SECRET:XRsjyrij5R}
             scope:
             authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/login/oauth2/code/naver
+            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI:http://localhost:8080/login/oauth2/code/naver}
             client-name: Naver
             client-authentication-method: client_secret_post
-#          apple:
-#            client-id:
-#            client-secret:
-#            scope:
-#            authorization-grant-type: authorization_code
-#            redirect-uri: http://localhost:8080/login/oauth2/code/naver
-#            client-name: Apple
-#            client-authentication-method: client_secret_post
+        #          apple:
+        #            client-id:
+        #            client-secret:
+        #            scope:
+        #            authorization-grant-type: authorization_code
+        #            redirect-uri: http://localhost:8080/login/oauth2/code/naver
+        #            client-name: Apple
+        #            client-authentication-method: client_secret_post
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
@@ -49,9 +49,9 @@ spring:
             user-name-attribute: sub
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://workstation.dork94.com:33066/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
-    username: root
-    password: bangtal-boys
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://workstation.dork94.com:33066/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:bangtal-boys}
 springdoc:
   show-login-endpoint: true
 apple:
