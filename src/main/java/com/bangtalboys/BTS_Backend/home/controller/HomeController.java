@@ -14,6 +14,8 @@ public class HomeController {
 
     @GetMapping("")
     public String home() {
+        System.out.println("!!!!!!!!!!");
         return homeService.getHome();
+
     }
 }
