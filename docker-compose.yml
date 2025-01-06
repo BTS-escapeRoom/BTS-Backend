@@ -2,9 +2,9 @@ services:
   bts-backend-db:
     image: mysql
     environment:
-      MYSQL_DATABASE: bts
-      MYSQL_ROOT_HOST: root
-      MYSQL_ROOT_PASSWORD: bangtal-boys
+      url: jdbc:mysql://workstation.dork94.com:33066/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+      username: root
+      password: bangtal-boys
     networks:
       - bts-backend
     volumes:
