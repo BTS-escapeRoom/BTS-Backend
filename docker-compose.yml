@@ -23,7 +23,7 @@ services:
     restart: always
     environment:
       # JWT Secret Key
-      SPRING_SECURITY_JWT_SECRET_KEY: 37e5e6213096155c93ce0d832fc2f1f5a0faca5785f893fa4eb9b9d4676f2404
+      SPRING_SECURITY_JWT_SECRET-KEY: 37e5e6213096155c93ce0d832fc2f1f5a0faca5785f893fa4eb9b9d4676f2404
 
       # Kakao OAuth2
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_ID: 6314ef9de4168d995d3c4c4c308f8fef
@@ -36,7 +36,7 @@ services:
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI: http://localhost:8080/login/oauth2/code/naver
 
       # Database Configuration
-      SPRING_DATASOURCE_URL: jdbc:mysql://bts-backend-db:3306/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://workstation.dork94.com:33066/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: bangtal-boys
 

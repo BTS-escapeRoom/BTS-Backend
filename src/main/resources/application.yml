@@ -49,7 +49,7 @@ spring:
             user-name-attribute: sub
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://workstation.dork94.com:33066/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://workstation.dork94.com:33066/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
     username: root
     password: bangtal-boys
 springdoc:
