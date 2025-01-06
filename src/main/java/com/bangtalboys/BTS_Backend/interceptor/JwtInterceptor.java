@@ -50,6 +50,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         Long memberIdx = jwtUtil.getId(accessToken);
         Member member = memberRepository.findById(memberIdx).orElseThrow(NotFoundException::new);
 
+        System.out.println(accessToken);
         // AccessToken 이 유효한 경우
         if (!jwtUtil.isExpired(accessToken)) {
             return true;
