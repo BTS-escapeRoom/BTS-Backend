@@ -2,7 +2,7 @@ services:
   bts-backend-db:
     image: mysql
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://workstation.dork94.com:33066/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://bts-backend-db:3306/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: bangtal-boys
     networks:
