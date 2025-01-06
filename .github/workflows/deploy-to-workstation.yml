@@ -122,10 +122,10 @@ jobs:
       - name: Pull image
         run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
 
-      - name: Remove containers by pattern
+      - name: Remove containers
         run: |
           ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} << EOF
-            docker ps -aq -f name="${{ env.project }}" -f name="${{ env.project }}-deployed" -f name="bts-backend-db" | xargs -r docker rm -f
+            docker compose down
           EOF
           
 
