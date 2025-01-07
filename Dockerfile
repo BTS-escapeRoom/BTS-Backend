@@ -1,37 +1,20 @@
-#=========================================================================
-## BUILD STAGE 1 - APP 빌드
-FROM gradle:jdk17 AS builder
+FROM bellsoft/liberica-openjdk-alpine:17
+# or
+# FROM openjdk:8-jdk-alpine
+# FROM openjdk:11-jdk-alpine
 
-WORKDIR /app
+CMD ["./gradlew", "clean", "build"]
+# or Maven
+# CMD ["./mvnw", "clean", "package"]
 
-COPY appspec.yml ./
-COPY gradle ./gradle
-COPY scripts ./scripts
-COPY build.gradle ./
-COPY settings.gradle ./
-COPY src ./src
-COPY gradlew ./
+VOLUME /tmp
 
-RUN chmod +x ./gradlew
-RUN gradle wrapper
-RUN ./gradlew build bootJar
+ARG JAR_FILE=build/libs/*.jar
+# or Maven
+# ARG JAR_FILE_PATH=target/*.jar
 
-RUN ls -al build/libs
+COPY ${JAR_FILE} app.jar
 
-RUN mv build/libs/*-SNAPSHOT.jar build/libs/app.jar
+EXPOSE 8080
 
-
-#=========================================================================
-## BUILD STAGE 2 - APP 실행
-
-FROM amazoncorretto:17-alpine3.18
-
-ENV PROFILE="dev-docker"
-
-WORKDIR /app
-
-COPY src ./
-COPY --from=builder /app/build/libs/app.jar ./
-
-
-ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.profiles.active=$PROFILE"]
+ENTRYPOINT ["java","-jar","/app.jar"]

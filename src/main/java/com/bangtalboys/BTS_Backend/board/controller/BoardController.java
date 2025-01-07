@@ -22,7 +22,7 @@ public class BoardController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("")
-    public ResponseEntity<Response<BoardResponse>> createBoard(@RequestBody BoardRequest boardRequest, @RequestHeader("access_token") String accessToken) {
+    public ResponseEntity<Response<BoardResponse>> createBoard(@RequestBody BoardRequest boardRequest, @RequestHeader("access-token") String accessToken) {
         Long memberId = jwtUtil.getId(accessToken);
         return ResponseEntity.ok(Response.ok(boardService.createBoard(boardRequest, memberId)));
     }
@@ -38,13 +38,13 @@ public class BoardController {
     }
 
     @PatchMapping("/{boardId}")
-    public ResponseEntity<Response<BoardResponse>> updateBoard(@PathVariable long boardId, @RequestBody UpdateBoardRequest updateBoardRequest,  @RequestHeader("access_token") String accessToken) {
+    public ResponseEntity<Response<BoardResponse>> updateBoard(@PathVariable long boardId, @RequestBody UpdateBoardRequest updateBoardRequest,  @RequestHeader("access-token") String accessToken) {
         Long memberId = jwtUtil.getId(accessToken);
         return ResponseEntity.ok(Response.ok(boardService.updateBoard(boardId, memberId, updateBoardRequest)));
     }
 
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<Response<String>> deleteBoard(@PathVariable long boardId, @RequestHeader("access_token") String accessToken) {
+    public ResponseEntity<Response<String>> deleteBoard(@PathVariable long boardId, @RequestHeader("access-token") String accessToken) {
         Long memberId = jwtUtil.getId(accessToken);
         return ResponseEntity.ok(Response.ok(boardService.deleteBoard(boardId, memberId)));
     }

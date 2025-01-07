@@ -20,31 +20,31 @@ public class CommentController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/boards/{boardId}")
-    public ResponseEntity<Response<CommentResponse>> createBoardComment(@RequestBody CommentRequest commentRequest, @PathVariable long boardId, @RequestHeader("access_token") String accessToken) {
+    public ResponseEntity<Response<CommentResponse>> createBoardComment(@RequestBody CommentRequest commentRequest, @PathVariable long boardId, @RequestHeader("access-token") String accessToken) {
 Long memberId = jwtUtil.getId(accessToken);
         return ResponseEntity.ok(Response.ok(commentService.createBoardComment(commentRequest, boardId, memberId)));
     }
 
     @GetMapping("/{id}/boards")
-    public ResponseEntity<Response<CommentResponse>> getOneBoardComment(@PathVariable long id, @RequestHeader("access_token") String accessToken) {
+    public ResponseEntity<Response<CommentResponse>> getOneBoardComment(@PathVariable long id, @RequestHeader("access-token") String accessToken) {
         Long memberId = jwtUtil.getId(accessToken);
         return ResponseEntity.ok(Response.ok(commentService.getOneBoardComment(id, memberId)));
     }
 
     @PutMapping("/{id}/boards")
-    public ResponseEntity<Response<CommentResponse>> updateBoardComment(@PathVariable long id, @RequestBody CommentRequest commentRequest, @RequestHeader("access_token") String accessToken) {
+    public ResponseEntity<Response<CommentResponse>> updateBoardComment(@PathVariable long id, @RequestBody CommentRequest commentRequest, @RequestHeader("access-token") String accessToken) {
         Long memberId = jwtUtil.getId(accessToken);
         return ResponseEntity.ok(Response.ok(commentService.updateBoardComment(commentRequest, id, memberId)));
     }
 
     @GetMapping("/boards/{boardId}")
-    public ResponseEntity<Response<List<CommentResponse>>> getBoardComment(@PathVariable long boardId, @RequestHeader("access_token") String accessToken) {
+    public ResponseEntity<Response<List<CommentResponse>>> getBoardComment(@PathVariable long boardId, @RequestHeader("access-token") String accessToken) {
         Long memberId = jwtUtil.getId(accessToken);
         return ResponseEntity.ok(Response.ok(commentService.getBoardComments(boardId)));
     }
 
     @DeleteMapping("/{id}/boards")
-    public ResponseEntity<Response<String>> deleteBoardComment(@PathVariable long id, @RequestHeader("access_token") String accessToken) {
+    public ResponseEntity<Response<String>> deleteBoardComment(@PathVariable long id, @RequestHeader("access-token") String accessToken) {
         Long memberId = jwtUtil.getId(accessToken);
         return ResponseEntity.ok(Response.ok(commentService.deleteBoardComment(id, memberId)));
     }

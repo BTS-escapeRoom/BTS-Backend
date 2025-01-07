@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum Token {
-    AccessToken("access_token", 600000L),
-    RefreshToken("refresh_token", 86400000L);
+    AccessToken("access-token", 600000L),
+    RefreshToken("refresh-token", 86400000L);
 
     private final String Type;
     private final Long Ttl;

@@ -5,6 +5,7 @@ import com.bangtalboys.BTS_Backend.review.dto.ReviewListResponse;
 import com.bangtalboys.BTS_Backend.review.dto.ReviewRequest;
 import com.bangtalboys.BTS_Backend.review.dto.ReviewResponse;
 import com.bangtalboys.BTS_Backend.review.service.ReviewService;
+import com.bangtalboys.BTS_Backend.utils.enums.Token;
 import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,7 +45,7 @@ public class ReviewController {
     @PostMapping("")
     public ResponseEntity<Response<ReviewResponse>> createReview(
             @RequestBody ReviewRequest reviewRequest,
-            @RequestHeader("access_token") String accessToken
+            @RequestHeader("access-token") String accessToken
     ) {
 
         Long memberId = jwtUtil.getId(accessToken);
@@ -56,7 +57,7 @@ public class ReviewController {
     public ResponseEntity<Response<ReviewResponse>> updateReview(
             @PathVariable Long reviewId,
             @RequestBody ReviewRequest reviewRequest,
-            @RequestHeader("access_token") String accessToken
+            @RequestHeader("access-token") String accessToken
     ) {
 
         Long memberId = jwtUtil.getId(accessToken);
@@ -67,7 +68,7 @@ public class ReviewController {
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Response<String>> deleteReview(
             @PathVariable Long reviewId,
-            @RequestHeader("access_token") String accessToken
+            @RequestHeader("access-token") String accessToken
     ) {
 
         Long memberId = jwtUtil.getId(accessToken);
