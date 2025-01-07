@@ -20,7 +20,7 @@ public class MemberController {
 
     @Operation(summary = "회원 단건 조회")
     @GetMapping("/{memberId}")
-    public ResponseEntity<Response<MemberResponse>> updateMember(
+    public ResponseEntity<Response<MemberResponse>> getMember(
             @PathVariable Long memberId
     ) {
 
@@ -36,4 +36,25 @@ public class MemberController {
 
         return ResponseEntity.ok(Response.ok(memberService.updateMember(memberId, memberRequest)));
     }
+
+    @Operation(summary = "회원 글 조회")
+    @PutMapping("/{memberId}/boards")
+    public ResponseEntity<Response<MemberResponse>> getMemberBoards(
+            @PathVariable Long memberId,
+            @RequestBody MemberRequest memberRequest
+    ) {
+
+        return ResponseEntity.ok(Response.ok(memberService.updateMember(memberId, memberRequest)));
+    }
+
+    @Operation(summary = "찜한 글 조회")
+    @PutMapping("/{memberId}/like/boards")
+    public ResponseEntity<Response<MemberResponse>> getMemberLikeBoards(
+            @PathVariable Long memberId,
+            @RequestBody MemberRequest memberRequest
+    ) {
+
+        return ResponseEntity.ok(Response.ok(memberService.updateMember(memberId, memberRequest)));
+    }
+
 }

@@ -2,9 +2,13 @@ package com.bangtalboys.BTS_Backend.theme.dto;
 
 import com.bangtalboys.BTS_Backend.store.dto.StoreListResponse;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
+import com.bangtalboys.BTS_Backend.theme.domain.ThemeTime;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class ThemeResponse {
@@ -26,6 +30,9 @@ public class ThemeResponse {
     private LocalDateTime registrationDate;
     private String genreType;
     private StoreListResponse store;
+    private List<ThemeTimeResponse> weekdaysTimeList;
+    private List<ThemeTimeResponse> weekendTimeList;
+
 
     public ThemeResponse(Theme theme) {
         id = theme.getId();
@@ -44,6 +51,14 @@ public class ThemeResponse {
         registrationDate = theme.getRegistrationDate();
         genreType = theme.getGenreType().getName();
         store = new StoreListResponse(theme.getStore());
+        weekdaysTimeList = theme.getThemeTimeList().stream()
+                .filter(themeTime -> themeTime.getTimeType().equals("weekdays"))
+                .sorted(Comparator.comparing(ThemeTime::getTime))
+                .map(ThemeTimeResponse::new).collect(Collectors.toList());
+        weekendTimeList = theme.getThemeTimeList().stream()
+                .filter(themeTime -> themeTime.getTimeType().equals("weekend"))
+                .sorted(Comparator.comparing(ThemeTime::getTime))
+                .map(ThemeTimeResponse::new).collect(Collectors.toList());
 
     }
 }

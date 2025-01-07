@@ -23,4 +23,7 @@ public interface ThemeRepository extends JpaRepository<Theme, Long> {
             @Param("genreId") Long genreId,
             @Param("districtId") Long districtId,
             @Param("cityId") Long cityId);
+
+    @Query("SELECT tl.theme FROM ThemeLike tl WHERE tl.member.id = :memberId")
+    List<Theme> findLikeThemeByMemberId(@Param("memberId") Long memberId);
 }

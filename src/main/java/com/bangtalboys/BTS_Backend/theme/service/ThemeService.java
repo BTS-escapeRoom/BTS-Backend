@@ -27,5 +27,23 @@ public class ThemeService {
         return theme.map(ThemeResponse::new).orElseThrow(NotFoundException::new);
     }
 
+//    public ThemeResponse createThemeLike(Long memberId, Long ThemeId) {
+//        ThemeLike themeLike = ThemeLike.builder()
+//                .memberId(memberId)
+//                .themeId(boardRequest.getThemeId())
+//                .type(boardRequest.getType())
+//                .title(boardRequest.getTitle())
+//                .description(boardRequest.getDescription())
+//                .hit(0L)
+//                .build();
+//        Optional<Theme> theme = themeRepository.save(id);
+//        return theme.map(ThemeResponse::new).orElseThrow(NotFoundException::new);
+//    }
+
+    public List<ThemeListResponse> getLikeTheme(Long memberId) {
+        List<Theme> themes = themeRepository.findLikeThemeByMemberId(memberId);
+        return themes.stream().map(ThemeListResponse::new).collect(Collectors.toList());
+    }
+
 };
 

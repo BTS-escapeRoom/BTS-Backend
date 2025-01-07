@@ -2,13 +2,15 @@ package com.bangtalboys.BTS_Backend.theme.domain;
 
 import com.bangtalboys.BTS_Backend.genre.domain.Genre;
 import com.bangtalboys.BTS_Backend.store.domain.Store;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -56,4 +58,8 @@ public class Theme {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private Store store;
+
+    @OneToMany(mappedBy = "theme", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ThemeTime> themeTimeList = new ArrayList<>();
 }

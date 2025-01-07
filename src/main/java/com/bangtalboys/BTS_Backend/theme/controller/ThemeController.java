@@ -41,4 +41,23 @@ public class ThemeController {
 
         return ResponseEntity.ok(Response.ok(themeService.getOneTheme(id)));
     }
+
+//    @Operation(summary = "테마 찜")
+//    @GetMapping("/like")
+//    public ResponseEntity<Response<ThemeResponse>> createThemeLike(
+//            @RequestParam(required = false) Long memberId,
+//            @RequestParam(required = false) Long themeId
+//    ) {
+//
+//        return ResponseEntity.ok(Response.ok(themeService.createThemeLike(memberId, themeId)));
+//    }
+
+    @Operation(summary = "찜한 테마 조회")
+    @PutMapping("/like/{memberId}")
+    public ResponseEntity<Response<List<ThemeListResponse>>> getMemberLikeThemes(
+            @PathVariable Long memberId
+    ) {
+
+        return ResponseEntity.ok(Response.ok(themeService.getLikeTheme(memberId)));
+    }
 }

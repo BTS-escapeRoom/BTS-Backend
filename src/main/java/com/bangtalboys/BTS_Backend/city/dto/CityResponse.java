@@ -15,7 +15,6 @@ public class CityResponse {
 
     private Long id;
     private String name;
-    @ElementCollection
     private List<DistrictResponse> districtList;
 
     public CityResponse(City city, List<District> filteredDistricts) {

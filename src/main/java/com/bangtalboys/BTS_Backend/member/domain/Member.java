@@ -30,7 +30,6 @@ public class Member {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-
     @Builder
     public Member(Long id, String profileImg, String nickname, String description, SocialType socialType, String username, Role role) {
         this.id = id;
