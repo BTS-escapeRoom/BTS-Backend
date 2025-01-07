@@ -1,33 +1,21 @@
-# Build stage
+FROM eclipse-temurin:17-jdk-alpine as build
+WORKDIR /workspace/app
 
-FROM bellsoft/liberica-openjdk-alpine:17 AS builder
+COPY gradlew .
+COPY .gradle .gradle
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .docker
+COPY src src
 
-WORKDIR /app
+RUN ./gradlew build -x test
+RUN mkdir build/extracted && (java -Djarmode=layertools -jar build/libs/sbb-0.0.8.jar extract --destination build/extracted)
 
-COPY . .
-
-RUN ./gradlew clean build -x test
-
-
-# Run stage
-
-FROM bellsoft/liberica-openjdk-alpine:17
-# or
-# FROM openjdk:8-jdk-alpine
-# FROM openjdk:11-jdk-alpine
-
-CMD ["./gradlew", "clean", "build"]
-# or Maven
-# CMD ["./mvnw", "clean", "package"]
-
+FROM eclipse-temurin:17-jdk-alpine
 VOLUME /tmp
-
-ARG JAR_FILE=build/libs/*.jar
-# or Maven
-# ARG JAR_FILE_PATH=target/*.jar
-
-COPY ${JAR_FILE} app.jar
-
-EXPOSE 8080
-
-ENTRYPOINT ["java","-jar","/app.jar"]
+ARG EXTRACTED=/workspace/app/build/extracted
+COPY --from=build ${EXTRACTED}/dependencies/ ./
+COPY --from=build ${EXTRACTED}/spring-boot-loader/ ./
+COPY --from=build ${EXTRACTED}/snapshot-dependencies/ ./
+COPY --from=build ${EXTRACTED}/application/ ./
+ENTRYPOINT ["java","org.springframework.boot.loader.JarLauncher"]
