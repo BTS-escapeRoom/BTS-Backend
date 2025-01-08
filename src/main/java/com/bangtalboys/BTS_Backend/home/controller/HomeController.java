@@ -1,13 +1,18 @@
 package com.bangtalboys.BTS_Backend.home.controller;
 
+import com.bangtalboys.BTS_Backend.home.dto.response.HomeResponse;
 import com.bangtalboys.BTS_Backend.home.service.HomeService;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.utils.enums.Role;
 import com.bangtalboys.BTS_Backend.utils.enums.Token;
+import com.bangtalboys.BTS_Backend.utils.response.Response;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,8 +22,7 @@ public class HomeController {
     private final JwtUtil jwtUtil;
 
     @GetMapping("")
-    public String home() {
-        return homeService.getHome();
-
+    public ResponseEntity<Response<List<HomeResponse>>> home() {
+        return ResponseEntity.ok(Response.ok(homeService.getHome()));
     }
 }

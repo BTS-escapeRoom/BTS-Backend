@@ -26,4 +26,9 @@ public interface ThemeRepository extends JpaRepository<Theme, Long> {
 
     @Query("SELECT tl.theme FROM ThemeLike tl WHERE tl.member.id = :memberId")
     List<Theme> findLikeThemeByMemberId(@Param("memberId") Long memberId);
+
+    @Query("SELECT t FROM Theme t WHERE t.id IN (:ids)")
+    List<Theme> findAllByIds(@Param("ids") List<Long> ids);
+
+    List<Theme> findTop20ByOrderByRegistrationDateDesc();
 }

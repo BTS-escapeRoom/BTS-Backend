@@ -60,4 +60,22 @@ public class ThemeController {
 
         return ResponseEntity.ok(Response.ok(themeService.getLikeTheme(memberId)));
     }
+
+    @Operation(summary = "랜덤 테마 조회 (빅배너용)")
+    @GetMapping("/random")
+    public ResponseEntity<Response<List<ThemeListResponse>>> getRandomThemes() {
+        return ResponseEntity.ok(Response.ok(themeService.getRandomThemes()));
+    }
+
+    @Operation(summary = "인기 테마 조회 (밴드용)")
+    @GetMapping("/popular")
+    public ResponseEntity<Response<List<ThemeListResponse>>> getPopularThemes() {
+        return ResponseEntity.ok(Response.ok(themeService.getPopularThemes()));
+    }
+
+    @Operation(summary = "최신 테마 조회 (밴드용")
+    @GetMapping("/recent")
+    public ResponseEntity<Response<List<ThemeListResponse>>> getRecentThemes() {
+        return ResponseEntity.ok(Response.ok(themeService.getRecentThemes()));
+    }
 }
