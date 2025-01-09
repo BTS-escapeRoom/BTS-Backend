@@ -12,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
-import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -31,66 +31,61 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        //cors 설정
+        // CORS 설정
         http
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
 
                     CorsConfiguration configuration = new CorsConfiguration();
 
-                    configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                    configuration.setAllowedMethods(Collections.singletonList("*"));
+                    // 허용할 출처
+                    configuration.setAllowedOrigins(List.of(
+                            "http://localhost:3000", // 개발 환경
+                            "http://apis.bangtal-boys.com" // 배포 환경
+                    ));
+                    // 허용할 HTTP 메서드
+                    configuration.setAllowedMethods(List.of("OPTIONS", "GET", "POST", "PUT", "DELETE"));
+                    // 인증 정보 허용 (쿠키 등)
                     configuration.setAllowCredentials(true);
-                    configuration.setAllowedHeaders(Collections.singletonList("*"));
+                    // 허용할 헤더
+                    configuration.setAllowedHeaders(List.of("*"));
+                    // 브라우저가 접근 가능한 헤더
+                    configuration.setExposedHeaders(List.of("Authorization"));
+                    // Preflight 요청 캐싱 시간 (초)
                     configuration.setMaxAge(3600L);
-                    configuration.setExposedHeaders(Collections.singletonList("Authorization"));
 
                     return configuration;
                 }));
 
-        //csrf disable
-        http
-                .csrf((auth) -> auth.disable());
+        // CSRF 비활성화
+        http.csrf((auth) -> auth.disable());
 
-        //From 로그인 방식 disable
-        http
-                .formLogin((auth) -> auth.disable());
+        // Form 로그인 방식 비활성화
+        http.formLogin((auth) -> auth.disable());
 
-        //HTTP Basic 인증 방식 disable
-        http
-                .httpBasic((auth) -> auth.disable());
+        // HTTP Basic 인증 방식 비활성화
+        http.httpBasic((auth) -> auth.disable());
 
-        //JwtFilter 추가
-        http
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        // JWT 필터 추가
+        http.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-        //oauth2
-        http
-                .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                                .userService(customOAuth2UserService))
-                        .successHandler(customSuccessHandler)
-                );
+        // OAuth2 로그인 설정
+        http.oauth2Login((oauth2) -> oauth2
+                .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+                        .userService(customOAuth2UserService))
+                .successHandler(customSuccessHandler)
+        );
 
-        //경로별 인가 작업
-        http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers( "/","/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/reissue").permitAll()
-                        .anyRequest().authenticated());
+        // 경로별 인가 설정
+        http.authorizeHttpRequests((auth) -> auth
+                .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/reissue").permitAll()
+                .anyRequest().authenticated()
+        );
 
-        //세션 설정 : STATELESS
-        http
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        // 세션 상태를 STATELESS로 설정
+        http.sessionManagement((session) -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
-
-//    @Bean
-//    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
-//        DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
-//        accessTokenResponseClient.setRequestEntityConverter(new CustomRequestEntityConverter());
-//
-//        return accessTokenResponseClient;
-//    }
 }
