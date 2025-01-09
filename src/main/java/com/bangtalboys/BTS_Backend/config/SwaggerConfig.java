@@ -1,5 +1,6 @@
 package com.bangtalboys.BTS_Backend.config;
 
+import com.bangtalboys.BTS_Backend.utils.enums.Token;
 import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -10,12 +11,13 @@ import org.springframework.context.annotation.*;
 public class SwaggerConfig {
     @Bean
     public OpenAPI openAPI() {
-        String jwt = "JWT";
+        String jwt = Token.AccessToken.getType();
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
         Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
                 .name(jwt)
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
+                .type(SecurityScheme.Type.APIKEY)
+                .in(SecurityScheme.In.HEADER)
+//                .scheme("bearer")
                 .bearerFormat("JWT")
         );
         return new OpenAPI()
