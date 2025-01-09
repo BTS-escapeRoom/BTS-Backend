@@ -8,6 +8,7 @@ import com.bangtalboys.BTS_Backend.board.dto.response.ListBoardResponse;
 import com.bangtalboys.BTS_Backend.board.service.BoardService;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.utils.response.Response;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +18,13 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/boards")
+@Tag(name="게시판 API")
 public class BoardController {
     private final BoardService boardService;
     private final JwtUtil jwtUtil;
 
     @PostMapping("")
-    public ResponseEntity<Response<BoardResponse>> createBoard(@RequestBody BoardRequest boardRequest, @RequestHeader("access-token") String accessToken) {
+    public ResponseEntity<Response<BoardResponse>> createBoard(@RequestBody BoardRequest boardRequest, @RequestHeader("Authorization") String accessToken) {
         Long memberId = jwtUtil.getId(accessToken);
         return ResponseEntity.ok(Response.ok(boardService.createBoard(boardRequest, memberId)));
     }
@@ -38,13 +40,13 @@ public class BoardController {
     }
 
     @PatchMapping("/{boardId}")
-    public ResponseEntity<Response<BoardResponse>> updateBoard(@PathVariable long boardId, @RequestBody UpdateBoardRequest updateBoardRequest,  @RequestHeader("access-token") String accessToken) {
+    public ResponseEntity<Response<BoardResponse>> updateBoard(@PathVariable long boardId, @RequestBody UpdateBoardRequest updateBoardRequest,  @RequestHeader("Authorization") String accessToken) {
         Long memberId = jwtUtil.getId(accessToken);
         return ResponseEntity.ok(Response.ok(boardService.updateBoard(boardId, memberId, updateBoardRequest)));
     }
 
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<Response<String>> deleteBoard(@PathVariable long boardId, @RequestHeader("access-token") String accessToken) {
+    public ResponseEntity<Response<String>> deleteBoard(@PathVariable long boardId, @RequestHeader("Authorization") String accessToken) {
         Long memberId = jwtUtil.getId(accessToken);
         return ResponseEntity.ok(Response.ok(boardService.deleteBoard(boardId, memberId)));
     }

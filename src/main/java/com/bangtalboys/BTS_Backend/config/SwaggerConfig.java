@@ -1,30 +1,36 @@
 package com.bangtalboys.BTS_Backend.config;
 
-import com.bangtalboys.BTS_Backend.utils.enums.Token;
 import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.*;
+
+import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
+
     @Bean
     public OpenAPI openAPI() {
-        String jwt = Token.AccessToken.getType();
+        String jwt = "Authorization";
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
         Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
                 .name(jwt)
-                .type(SecurityScheme.Type.APIKEY)
-                .in(SecurityScheme.In.HEADER)
-//                .scheme("bearer")
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
                 .bearerFormat("JWT")
+                .in(SecurityScheme.In.HEADER)
         );
         return new OpenAPI()
-                .components(new Components())
+                .components(components)
                 .info(apiInfo())
-                .addSecurityItem(securityRequirement)
-                .components(components);
+                .servers(List.of(
+                        new Server().url("http://localhost:8080").description("Local Server"),
+                        new Server().url("http://apis.bangtal-boys.com").description("Dev Server")
+                ))
+                .addSecurityItem(securityRequirement);
     }
     private Info apiInfo() {
         return new Info()

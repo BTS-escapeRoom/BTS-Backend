@@ -45,7 +45,7 @@ public class ReviewController {
     @PostMapping("")
     public ResponseEntity<Response<ReviewResponse>> createReview(
             @RequestBody ReviewRequest reviewRequest,
-            @RequestHeader("access-token") String accessToken
+            @RequestHeader("Authorization") String accessToken
     ) {
 
         Long memberId = jwtUtil.getId(accessToken);
@@ -57,7 +57,7 @@ public class ReviewController {
     public ResponseEntity<Response<ReviewResponse>> updateReview(
             @PathVariable Long reviewId,
             @RequestBody ReviewRequest reviewRequest,
-            @RequestHeader("access-token") String accessToken
+            @RequestHeader("Authorization") String accessToken
     ) {
 
         Long memberId = jwtUtil.getId(accessToken);
@@ -68,7 +68,7 @@ public class ReviewController {
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Response<String>> deleteReview(
             @PathVariable Long reviewId,
-            @RequestHeader("access-token") String accessToken
+            @RequestHeader("Authorization") String accessToken
     ) {
 
         Long memberId = jwtUtil.getId(accessToken);
