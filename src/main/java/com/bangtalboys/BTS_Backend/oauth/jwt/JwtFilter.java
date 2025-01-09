@@ -67,7 +67,7 @@ public class JwtFilter extends OncePerRequestFilter {
 //
 
         // 헤더에서 access키에 담긴 토큰을 꺼냄
-        String token = request.getHeader(Token.AccessToken.getType());
+        String token = request.getHeader("Authorization");
 
 //        if (Objects.equals(token, "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IktBS0FPMzc2MTM3OTU4NSIsImlkIjoiNCIsInJvbGUiOiJSb2xlLlJPTEVfVVNFUiIsImlhdCI6MTczMDM0OTQ0MSwiZXhwIjoxNzMwMzQ5NjU3fQ.otPoIAdm3G-bI83u-o0MOX5Pm8CRxDNd0B_u8witre8")) {
 //            //userDTO를 생성하여 값 set
@@ -86,10 +86,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
 //        }
         // 권한 체크 없는 기능일 경우
-        if (token == null) {
+        if (token == null || !token.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
+        token = token.substring(7);
 
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
         try {
