@@ -40,7 +40,8 @@ public class SecurityConfig {
                     // 허용할 출처
                     configuration.setAllowedOrigins(List.of(
                             "http://localhost:3000", // 개발 환경
-                            "http://apis.bangtal-boys.com" // 배포 환경
+                            "http://localhost:8080",
+                            "https://apis.bangtal-boys.com" // 배포 환경
                     ));
                     // 허용할 HTTP 메서드
                     configuration.setAllowedMethods(List.of("OPTIONS", "GET", "POST", "PUT", "DELETE"));
@@ -48,8 +49,6 @@ public class SecurityConfig {
                     configuration.setAllowCredentials(true);
                     // 허용할 헤더
                     configuration.setAllowedHeaders(List.of("*"));
-                    // 브라우저가 접근 가능한 헤더
-                    configuration.setExposedHeaders(List.of("Authorization"));
                     // Preflight 요청 캐싱 시간 (초)
                     configuration.setMaxAge(3600L);
 
