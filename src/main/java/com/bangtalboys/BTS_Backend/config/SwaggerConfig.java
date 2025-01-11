@@ -27,7 +27,7 @@ public class SwaggerConfig {
                 .components(components)
                 .info(apiInfo())
                 .servers(List.of(
-                        new Server().url("https://apis.bangtal-boys.com").description("Dev Server"),
+                        new Server().url("https://apis.bangtal-boys.com").description("Dev Server")
 
                 ))
                 .addSecurityItem(securityRequirement);
