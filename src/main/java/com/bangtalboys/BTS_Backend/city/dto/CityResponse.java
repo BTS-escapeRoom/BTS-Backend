@@ -1,10 +1,7 @@
 package com.bangtalboys.BTS_Backend.city.dto;
 
 import com.bangtalboys.BTS_Backend.city.domain.City;
-import com.bangtalboys.BTS_Backend.district.domain.District;
-import com.bangtalboys.BTS_Backend.district.dto.DistrictResponse;
-import jakarta.persistence.ElementCollection;
-import lombok.Builder;
+import com.bangtalboys.BTS_Backend.city.domain.District;
 import lombok.Data;
 
 import java.util.List;

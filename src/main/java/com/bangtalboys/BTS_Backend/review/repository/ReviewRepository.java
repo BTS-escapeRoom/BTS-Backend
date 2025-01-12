@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByThemeIdOrderByCreatedAtDesc(Long themeId);
+    List<Review> findAllByMemberIdOrderByCreatedAtDesc(Long memberId);
+
 }

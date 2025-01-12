@@ -21,7 +21,7 @@ public class GenreController {
 
     private final GenreService genreService;
 
-    @Operation(summary = "장르 리스트 조회")
+    @Operation(summary = "장르 목록 조회")
     @GetMapping("")
     public ResponseEntity<Response<List<GenreResponse>>> getAllGenre() {
 

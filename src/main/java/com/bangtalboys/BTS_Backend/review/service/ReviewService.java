@@ -91,4 +91,9 @@ public class ReviewService {
         reviewRepository.delete(review);
         return "Review deleted";
     }
+
+    public List<ReviewListResponse> getMyReview(Long memberId) {
+        List<Review> reviewList = reviewRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId);
+        return reviewList.stream().map(ReviewListResponse::new).collect(Collectors.toList());
+    }
 }

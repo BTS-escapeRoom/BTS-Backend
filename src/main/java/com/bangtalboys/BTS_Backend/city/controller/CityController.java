@@ -18,13 +18,14 @@ import java.util.List;
 public class CityController {
     private final CityService cityService;
 
-    @Operation(summary = "지역 리스트 조회", description = "지역과 세부지역 전달")
+    @Operation(summary = "지역 목록 조회", description = "지역과 세부 지역 데이터")
     @GetMapping("")
     public ResponseEntity<Response<List<CityResponse>>> getAllCity() {
 
         return ResponseEntity.ok(Response.ok(cityService.getAllCity()));
     }
 
+    @Operation(summary = "지역 단건 조회", description = "지역과 세부 지역 데이터")
     @GetMapping("/{id}")
     public ResponseEntity<Response<CityResponse>> getCity(
             @PathVariable Long id

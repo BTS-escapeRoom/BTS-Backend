@@ -57,7 +57,7 @@ public class ThemeController {
         return ResponseEntity.ok(Response.ok(themeService.createThemeLike(memberId, themeId)));
     }
 
-    @Operation(summary = "찜한 테마 조회")
+    @Operation(summary = "내가 찜한 테마 조회")
     @GetMapping("/like")
     public ResponseEntity<Response<List<ThemeListResponse>>> getMemberLikeThemes(
             @AuthenticationPrincipal CustomOAuth2User oauth2User

@@ -22,7 +22,7 @@ import java.util.List;
 public class StoreController {
     private final StoreService storeService;
 
-    @Operation(summary = "매장 리스트 조회")
+    @Operation(summary = "매장 목록 조회")
     @GetMapping("")
     public ResponseEntity<Response<List<StoreListResponse>>> getAllStore() {
 

@@ -4,7 +4,7 @@ import com.bangtalboys.BTS_Backend.city.domain.City;
 import com.bangtalboys.BTS_Backend.city.dto.CityResponse;
 import com.bangtalboys.BTS_Backend.city.repository.CityRepository;
 import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
-import com.bangtalboys.BTS_Backend.district.domain.District;
+import com.bangtalboys.BTS_Backend.city.domain.District;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

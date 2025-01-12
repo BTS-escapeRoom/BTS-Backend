@@ -1,4 +1,4 @@
-package com.bangtalboys.BTS_Backend.district.domain;
+package com.bangtalboys.BTS_Backend.city.domain;
 
 import com.bangtalboys.BTS_Backend.city.domain.City;
 import com.bangtalboys.BTS_Backend.store.domain.Store;

@@ -46,10 +46,7 @@ public class ThemeService {
             themeLikeRepository.delete(existLike.get());
             return "테마 좋아요 취소 완료";
         } else {
-            ThemeLike themeLike = ThemeLike.builder()
-                    .member(member)
-                    .theme(theme)
-                    .build();
+            ThemeLike themeLike = new ThemeLike(member, theme);
             themeLikeRepository.save(themeLike);
             return "테마 좋아요 등록 완료";
         }

@@ -3,11 +3,13 @@ package com.bangtalboys.BTS_Backend.member.controller;
 import com.bangtalboys.BTS_Backend.member.dto.MemberRequest;
 import com.bangtalboys.BTS_Backend.member.dto.MemberResponse;
 import com.bangtalboys.BTS_Backend.member.service.MemberService;
+import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
 import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,43 +20,24 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @Operation(summary = "회원 단건 조회")
-    @GetMapping("/{memberId}")
+    @Operation(summary = "내 회원 정보 조회")
+    @GetMapping("/me")
     public ResponseEntity<Response<MemberResponse>> getMember(
-            @PathVariable Long memberId
+            @AuthenticationPrincipal CustomOAuth2User oauth2User
     ) {
 
+        Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(memberService.getOneMember(memberId)));
     }
 
-    @Operation(summary = "회원 수정")
-    @PutMapping("/{memberId}")
+    @Operation(summary = "회원 정보 수정")
+    @PutMapping("")
     public ResponseEntity<Response<MemberResponse>> updateMember(
-            @PathVariable Long memberId,
+            @AuthenticationPrincipal CustomOAuth2User oauth2User,
             @RequestBody MemberRequest memberRequest
     ) {
 
+        Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(memberService.updateMember(memberId, memberRequest)));
     }
-
-    @Operation(summary = "회원 글 조회")
-    @PutMapping("/{memberId}/boards")
-    public ResponseEntity<Response<MemberResponse>> getMemberBoards(
-            @PathVariable Long memberId,
-            @RequestBody MemberRequest memberRequest
-    ) {
-
-        return ResponseEntity.ok(Response.ok(memberService.updateMember(memberId, memberRequest)));
-    }
-
-    @Operation(summary = "찜한 글 조회")
-    @PutMapping("/{memberId}/like/boards")
-    public ResponseEntity<Response<MemberResponse>> getMemberLikeBoards(
-            @PathVariable Long memberId,
-            @RequestBody MemberRequest memberRequest
-    ) {
-
-        return ResponseEntity.ok(Response.ok(memberService.updateMember(memberId, memberRequest)));
-    }
-
 }
