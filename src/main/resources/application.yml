@@ -12,7 +12,7 @@ spring:
             client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_SECRET:jte1OyJD8wDmQdKWjh3E6mRNjLrC91y2}
             scope:
             authorization-grant-type: authorization_code
-            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_REDIRECT_URI:http://localhost:8080/login/oauth2/code/kakao}
+            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_REDIRECT_URI:https://apis.bangtal-boys.com/login/oauth2/code/kakao}
             client-name: Kakao
             client-authentication-method: client_secret_post
           naver:
@@ -20,7 +20,7 @@ spring:
             client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_SECRET:XRsjyrij5R}
             scope:
             authorization-grant-type: authorization_code
-            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI:http://localhost:8080/login/oauth2/code/naver}
+            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI:https://apis.bangtal-boys.com/login/oauth2/code/naver}
             client-name: Naver
             client-authentication-method: client_secret_post
         #          apple:
