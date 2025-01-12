@@ -28,12 +28,12 @@ services:
       # Kakao OAuth2
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_ID: 6314ef9de4168d995d3c4c4c308f8fef
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_SECRET: jte1OyJD8wDmQdKWjh3E6mRNjLrC91y2
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_REDIRECT_URI: http://localhost:8080/login/oauth2/code/kakao
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_REDIRECT_URI: https://apis.bangtal-boys.com/login/oauth2/code/kakao
 
       # Naver OAuth2
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_ID: 87XRcRkTrKm_jRmKqsVb
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_SECRET: XRsjyrij5R
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI: http://localhost:8080/login/oauth2/code/naver
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI: https://apis.bangtal-boys.com/login/oauth2/code/naver
 
       # Database Configuration
       SPRING_DATASOURCE_URL: jdbc:mysql://bts-backend-db:3306/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
