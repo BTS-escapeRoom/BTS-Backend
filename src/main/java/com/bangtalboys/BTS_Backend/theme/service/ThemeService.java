@@ -1,9 +1,13 @@
 package com.bangtalboys.BTS_Backend.theme.service;
 
 import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
+import com.bangtalboys.BTS_Backend.member.domain.Member;
+import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
+import com.bangtalboys.BTS_Backend.theme.domain.ThemeLike;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeListResponse;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeResponse;
+import com.bangtalboys.BTS_Backend.theme.repository.ThemeLikeRepository;
 import com.bangtalboys.BTS_Backend.theme.repository.ThemeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +22,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ThemeService {
     private final ThemeRepository themeRepository;
+    private final ThemeLikeRepository themeLikeRepository;
+    private final MemberRepository memberRepository;
 
     public List<ThemeListResponse> getAllTheme(String title, Integer peoples, Integer difficulty, Long genreId, Long districtId, Long cityId) {
         List<Theme> themes = themeRepository.findByTitleAndPeoplesAndGenreAndDifficultyAndDistrictOrCity(title, peoples, difficulty, genreId, districtId, cityId);
@@ -29,21 +35,28 @@ public class ThemeService {
         return theme.map(ThemeResponse::new).orElseThrow(NotFoundException::new);
     }
 
-//    public ThemeResponse createThemeLike(Long memberId, Long ThemeId) {
-//        ThemeLike themeLike = ThemeLike.builder()
-//                .memberId(memberId)
-//                .themeId(boardRequest.getThemeId())
-//                .type(boardRequest.getType())
-//                .title(boardRequest.getTitle())
-//                .description(boardRequest.getDescription())
-//                .hit(0L)
-//                .build();
-//        Optional<Theme> theme = themeRepository.save(id);
-//        return theme.map(ThemeResponse::new).orElseThrow(NotFoundException::new);
-//    }
+    public String createThemeLike(Long memberId, Long themeId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
+        Theme theme = themeRepository.findById(themeId).orElseThrow(NotFoundException::new);
+
+        // 기존에 좋아요한 상태인지 확인
+        Optional<ThemeLike> existLike = themeLikeRepository.findByMemberAndTheme(member, theme);
+
+        if (existLike.isPresent()) {
+            themeLikeRepository.delete(existLike.get());
+            return "테마 좋아요 취소 완료";
+        } else {
+            ThemeLike themeLike = ThemeLike.builder()
+                    .member(member)
+                    .theme(theme)
+                    .build();
+            themeLikeRepository.save(themeLike);
+            return "테마 좋아요 등록 완료";
+        }
+    }
 
     public List<ThemeListResponse> getLikeTheme(Long memberId) {
-        List<Theme> themes = themeRepository.findLikeThemeByMemberId(memberId);
+        List<Theme> themes = themeRepository.findThemeByMemberId(memberId);
         return themes.stream().map(ThemeListResponse::new).collect(Collectors.toList());
     }
 
