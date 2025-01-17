@@ -46,7 +46,7 @@ services:
     networks:
       - bts-backend
     ports:
-      - "8881:8080"
+      - "127.0.0.1:8881:8080"
     depends_on:
        bts-backend-db:
          condition: service_healthy
