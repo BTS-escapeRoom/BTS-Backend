@@ -39,16 +39,16 @@ public class ThemeService {
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
         Theme theme = themeRepository.findById(themeId).orElseThrow(NotFoundException::new);
 
-        // 기존에 좋아요한 상태인지 확인
+        // 기존에 찜한 상태인지 확인
         Optional<ThemeLike> existLike = themeLikeRepository.findByMemberAndTheme(member, theme);
 
         if (existLike.isPresent()) {
             themeLikeRepository.delete(existLike.get());
-            return "테마 좋아요 취소 완료";
+            return "테마 찜 취소 완료";
         } else {
             ThemeLike themeLike = new ThemeLike(member, theme);
             themeLikeRepository.save(themeLike);
-            return "테마 좋아요 등록 완료";
+            return "테마 찜 설정 완료";
         }
     }
 

@@ -12,16 +12,16 @@ import com.bangtalboys.BTS_Backend.board.repository.BoardRepository;
 import com.bangtalboys.BTS_Backend.config.error.exception.ForbiddenException;
 import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
-import com.bangtalboys.BTS_Backend.member.dto.MemberResponse;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.theme.repository.ThemeRepository;
-import com.bangtalboys.BTS_Backend.utils.enums.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,9 +53,7 @@ public class BoardService {
         List<ListBoardResponse> boardResponseList = new ArrayList<>();
         List<Board> boardList = boardRepository.findAll();
         for (Board board : boardList) {
-            Member member = memberRepository.findById(board.getMember().getId()).orElseThrow(NotFoundException::new);
-            Theme theme = themeRepository.findById(board.getTheme().getId()).orElseThrow(NotFoundException::new);
-            ListBoardResponse listBoardResponse = new ListBoardResponse(board, member, theme);
+            ListBoardResponse listBoardResponse = new ListBoardResponse(board);
             boardResponseList.add(listBoardResponse);
         }
         return boardResponseList;
@@ -81,11 +79,25 @@ public class BoardService {
         return "Board deleted";
     }
 
-    public String createBoardLike(Long boardId, Long userId) {
+    public String createBoardLike(Long memberId, Long boardId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
         Board board = boardRepository.findById(boardId).orElseThrow(NotFoundException::new);
-        Member member = memberRepository.findById(board.getMember().getId()).orElseThrow(NotFoundException::new);
-        BoardLike boardLike = new BoardLike(Status.ACTIVE, member, board);
-        boardLikeRepository.save(boardLike);
-        return "좋아요 설정 완료";
+
+        // 기존에 찜한 상태인지 확인
+        Optional<BoardLike> existLike = boardLikeRepository.findByMemberAndBoard(member, board);
+
+        if (existLike.isPresent()) {
+            boardLikeRepository.delete(existLike.get());
+            return "게시글 찜 취소 완료";
+        } else {
+            BoardLike boardLike = new BoardLike(member, board);
+            boardLikeRepository.save(boardLike);
+            return "게시글 찜 설정 완료";
+        }
+    }
+
+    public List<ListBoardResponse> getLikeBoard(Long memberId) {
+        List<Board> boards = boardRepository.findBoardByMemberId(memberId);
+        return boards.stream().map(ListBoardResponse::new).collect(Collectors.toList());
     }
 }

@@ -16,11 +16,8 @@ public class BoardLike {
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
-    @Column()
-    private Status status;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,8 +25,7 @@ public class BoardLike {
     private Board board;
 
     @Builder
-    public BoardLike(Status status, Member member, Board board) {
-        this.status = status;
+    public BoardLike(Member member, Board board) {
         this.member = member;
         this.board = board;
     }

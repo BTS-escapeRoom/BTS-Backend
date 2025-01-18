@@ -1,16 +1,18 @@
 package com.bangtalboys.BTS_Backend.board.controller;
 
-import com.bangtalboys.BTS_Backend.board.domain.Board;
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.UpdateBoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardResponse;
 import com.bangtalboys.BTS_Backend.board.dto.response.ListBoardResponse;
 import com.bangtalboys.BTS_Backend.board.service.BoardService;
+import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.utils.response.Response;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,7 +42,7 @@ public class BoardController {
     }
 
     @PatchMapping("/{boardId}")
-    public ResponseEntity<Response<BoardResponse>> updateBoard(@PathVariable long boardId, @RequestBody UpdateBoardRequest updateBoardRequest,  @RequestHeader("Authorization") String accessToken) {
+    public ResponseEntity<Response<BoardResponse>> updateBoard(@PathVariable long boardId, @RequestBody UpdateBoardRequest updateBoardRequest, @RequestHeader("Authorization") String accessToken) {
         Long memberId = jwtUtil.getId(accessToken);
         return ResponseEntity.ok(Response.ok(boardService.updateBoard(boardId, memberId, updateBoardRequest)));
     }
@@ -49,5 +51,24 @@ public class BoardController {
     public ResponseEntity<Response<String>> deleteBoard(@PathVariable long boardId, @RequestHeader("Authorization") String accessToken) {
         Long memberId = jwtUtil.getId(accessToken);
         return ResponseEntity.ok(Response.ok(boardService.deleteBoard(boardId, memberId)));
+    }
+
+    @Operation(summary = "게시글 찜 설정/취소 (토글)")
+    @PostMapping("/like")
+    public ResponseEntity<Response<String>> createBoardLike(
+            @AuthenticationPrincipal CustomOAuth2User oauth2User,
+            @RequestParam(required = false) Long boardId
+    ) {
+        Long memberId = oauth2User.getId();
+        return ResponseEntity.ok(Response.ok(boardService.createBoardLike(memberId, boardId)));
+    }
+
+    @Operation(summary = "내가 찜한 게시글 조회")
+    @GetMapping("/like")
+    public ResponseEntity<Response<List<ListBoardResponse>>> getMemberLikeBoards(
+            @AuthenticationPrincipal CustomOAuth2User oauth2User
+    ) {
+        Long memberId = oauth2User.getId();
+        return ResponseEntity.ok(Response.ok(boardService.getLikeBoard(memberId)));
     }
 }

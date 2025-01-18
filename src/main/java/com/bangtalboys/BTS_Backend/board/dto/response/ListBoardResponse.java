@@ -14,12 +14,12 @@ public class ListBoardResponse {
     private String memberName;
     private String themeName;
 
-    public ListBoardResponse(Board board, Member member, Theme theme) {
+    public ListBoardResponse(Board board) {
         this.id = board.getId();
         this.type = board.getType();
         this.title = board.getTitle();
         this.hit = board.getHit();
-        this.memberName = member.getNickname();
-        this.themeName = theme.getTitle();
+        this.memberName = board.getMember().getNickname();
+        this.themeName = board.getTheme().getTitle();
     }
 }
