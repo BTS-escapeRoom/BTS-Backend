@@ -83,4 +83,16 @@ public class ThemeController {
     public ResponseEntity<Response<List<ThemeListResponse>>> getRecentThemes() {
         return ResponseEntity.ok(Response.ok(themeService.getRecentThemes()));
     }
+
+    @Operation(summary = "실시간 인기 테마 조회 (밴드용)")
+    @GetMapping("/popular/realtime")
+    public ResponseEntity<Response<List<ThemeListResponse>>> getPopularRealtimeThemes() {
+        return ResponseEntity.ok(Response.ok(themeService.getRealtimePopularThemes()));
+    }
+
+    @Operation(summary = "좋아요 개수 높은 순 (밴드용)")
+    @GetMapping("/most-liked")
+    public ResponseEntity<Response<List<ThemeListResponse>>> getMostLikedThemes() {
+        return ResponseEntity.ok(Response.ok(themeService.getMostLikedThemes()));
+    }
 }

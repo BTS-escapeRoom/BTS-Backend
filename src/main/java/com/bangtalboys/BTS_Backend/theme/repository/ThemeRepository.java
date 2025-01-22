@@ -33,5 +33,12 @@ public interface ThemeRepository extends JpaRepository<Theme, Long> {
     @Query("SELECT t FROM Theme t WHERE t.id IN (:ids)")
     List<Theme> findAllByIds(@Param("ids") List<Long> ids);
 
+    @Query("SELECT t, MAX(b.hit) AS max_hit FROM Theme t INNER JOIN Board b ON b.theme.id = t.id GROUP BY b.theme.id ORDER BY max_hit DESC Limit 20")
+    List<Theme> findTop20RealtimePopularThemes();
+
+
+    @Query("SELECT t, Count(tl.id) AS tl_count FROM Theme t INNER JOIN ThemeLike tl ON t.id = tl.theme.id GROUP BY t.id ORDER BY tl_count DESC LIMIT 20")
+    List<Theme> findTop20LikedThemes();
+
     List<Theme> findTop20ByOrderByRegistrationDateDesc();
 }

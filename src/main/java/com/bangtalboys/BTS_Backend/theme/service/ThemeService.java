@@ -80,5 +80,15 @@ public class ThemeService {
         List<Theme> themes = themeRepository.findTop20ByOrderByRegistrationDateDesc();
         return themes.stream().map(ThemeListResponse::new).collect(Collectors.toList());
     }
+
+    public List<ThemeListResponse> getRealtimePopularThemes() {
+        List<Theme> themes = themeRepository.findTop20RealtimePopularThemes();
+        return themes.stream().map(ThemeListResponse::new).collect(Collectors.toList());
+    }
+
+    public List<ThemeListResponse> getMostLikedThemes() {
+        List<Theme> themes = themeRepository.findTop20LikedThemes();
+        return themes.stream().map(ThemeListResponse::new).collect(Collectors.toList());
+    }
 };
 
