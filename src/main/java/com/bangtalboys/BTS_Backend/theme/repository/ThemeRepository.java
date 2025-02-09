@@ -10,14 +10,14 @@ import java.util.List;
 public interface ThemeRepository extends JpaRepository<Theme, Long> {
 
     @Query("SELECT t FROM Theme t " +
-            "WHERE (:title IS NULL OR t.title LIKE %:title%) " +
+            "WHERE (:keyword IS NULL OR t.title LIKE %:keyword% OR t.store.name LIKE %:keyword%) " +
             "AND (:peoples IS NULL OR (t.minimumPeople <= :peoples AND :peoples <= t.maximumPeople)) " +
             "AND (:difficulty IS NULL OR t.difficulty >= :difficulty) " +
             "AND (:genreId IS NULL OR t.genreType.id = :genreId) " +
             "AND (:districtId IS NULL OR t.store.district.id = :districtId) " +
             "AND (:cityId IS NULL OR t.store.district.city.id = :cityId)")
-    List<Theme> findByTitleAndPeoplesAndGenreAndDifficultyAndDistrictOrCity(
-            @Param("title") String title,
+    List<Theme> findByKeywordAndPeoplesAndGenreAndDifficultyAndDistrictOrCity(
+            @Param("keyword") String keyword,
             @Param("peoples") Integer peoples,
             @Param("difficulty") Integer difficulty,
             @Param("genreId") Long genreId,

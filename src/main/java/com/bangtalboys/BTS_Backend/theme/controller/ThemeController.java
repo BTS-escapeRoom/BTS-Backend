@@ -24,10 +24,10 @@ public class ThemeController {
     private final ThemeService themeService;
     private final JwtUtil jwtUtil;
 
-    @Operation(summary = "테마 리스트 조회", description = "제목, 사람수, 난이도, 장르, 지역으로 필터링하여 전달")
+    @Operation(summary = "테마 리스트 조회", description = "제목, 가게, 사람수, 난이도, 장르, 지역으로 필터링하여 전달")
     @GetMapping("")
     public ResponseEntity<Response<List<ThemeListResponse>>> getAllTheme(
-            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Integer peoples,
             @RequestParam(required = false) Integer difficulty,
             @RequestParam(required = false) Long genreId,
@@ -35,7 +35,7 @@ public class ThemeController {
             @RequestParam(required = false) Long cityId
     ) {
 
-        return ResponseEntity.ok(Response.ok(themeService.getAllTheme(title, peoples, difficulty, genreId, districtId, cityId)));
+        return ResponseEntity.ok(Response.ok(themeService.getAllTheme(keyword, peoples, difficulty, genreId, districtId, cityId)));
     }
 
     @Operation(summary = "테마 단건 조회")
