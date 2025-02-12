@@ -100,4 +100,9 @@ public class BoardService {
         List<Board> boards = boardRepository.findBoardByMemberId(memberId);
         return boards.stream().map(ListBoardResponse::new).collect(Collectors.toList());
     }
+
+    public List<ListBoardResponse> searchBoard(String keyword) {
+        List<Board> boards = boardRepository.searchBoardByKeyword(keyword);
+        return boards.stream().map(ListBoardResponse::new).collect(Collectors.toList());
+    }
 }

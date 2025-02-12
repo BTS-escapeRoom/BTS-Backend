@@ -71,4 +71,12 @@ public class BoardController {
         Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(boardService.getLikeBoard(memberId)));
     }
+
+    @Operation(summary = "게시글 검색 (타이틀, 내용)")
+    @GetMapping("/search")
+    public ResponseEntity<Response<List<ListBoardResponse>>> searchBoards(
+            @RequestParam(required = false) String keyword
+    ) {
+        return ResponseEntity.ok(Response.ok(boardService.searchBoard(keyword)));
+    }
 }
