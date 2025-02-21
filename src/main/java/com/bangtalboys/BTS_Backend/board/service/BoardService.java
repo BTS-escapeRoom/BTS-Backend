@@ -14,7 +14,9 @@ import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
+import com.bangtalboys.BTS_Backend.theme.dto.ThemeListResponse;
 import com.bangtalboys.BTS_Backend.theme.repository.ThemeRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,27 +33,26 @@ public class BoardService {
     private final ThemeRepository themeRepository;
     private final BoardLikeRepository boardLikeRepository;
 
+    @Transactional
     public BoardResponse createBoard(BoardRequest boardRequest, Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
         Theme theme = themeRepository.findById(boardRequest.getThemeId()).orElseThrow(NotFoundException::new);
         Board board = new Board(boardRequest, member, theme);
         boardRepository.save(board);
-        return new BoardResponse(board, member, theme);
+        return new BoardResponse(board);
     }
 
+    @Transactional
     public BoardResponse getOneBoard(Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(NotFoundException::new);
+        Optional<Board> board = boardRepository.findById(boardId);
+        board.get().setHit(board.get().getHit() + 1);
 
-        board.setHit(board.getHit()+1);
-
-        Member member = memberRepository.findById(board.getMember().getId()).orElseThrow(NotFoundException::new);
-        Theme theme = themeRepository.findById(board.getTheme().getId()).orElseThrow(NotFoundException::new);
-        return new BoardResponse(board, member, theme);
+        return board.map(BoardResponse::new).orElseThrow(null);
     }
 
-    public List<ListBoardResponse> getAllBoards() {
+    public List<ListBoardResponse> getAllBoards(String keyword, String type) {
         List<ListBoardResponse> boardResponseList = new ArrayList<>();
-        List<Board> boardList = boardRepository.findAll();
+        List<Board> boardList = boardRepository.searchBoardByKeyword(keyword, type);
         for (Board board : boardList) {
             ListBoardResponse listBoardResponse = new ListBoardResponse(board);
             boardResponseList.add(listBoardResponse);
@@ -101,8 +102,4 @@ public class BoardService {
         return boards.stream().map(ListBoardResponse::new).collect(Collectors.toList());
     }
 
-    public List<ListBoardResponse> searchBoard(String keyword) {
-        List<Board> boards = boardRepository.searchBoardByKeyword(keyword);
-        return boards.stream().map(ListBoardResponse::new).collect(Collectors.toList());
-    }
 }

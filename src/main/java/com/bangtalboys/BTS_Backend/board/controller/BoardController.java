@@ -36,8 +36,8 @@ public class BoardController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Response<List<ListBoardResponse>>> getAllBoards() {
-        return ResponseEntity.ok(Response.ok(boardService.getAllBoards()));
+    public ResponseEntity<Response<List<ListBoardResponse>>> getAllBoards(String keyword, String type) {
+        return ResponseEntity.ok(Response.ok(boardService.getAllBoards(keyword, type)));
     }
 
     @PatchMapping("/{boardId}")
@@ -71,11 +71,4 @@ public class BoardController {
         return ResponseEntity.ok(Response.ok(boardService.getLikeBoard(memberId)));
     }
 
-    @Operation(summary = "게시글 검색 (타이틀, 내용)")
-    @GetMapping("/search")
-    public ResponseEntity<Response<List<ListBoardResponse>>> searchBoards(
-            @RequestParam(required = false) String keyword
-    ) {
-        return ResponseEntity.ok(Response.ok(boardService.searchBoard(keyword)));
-    }
 }

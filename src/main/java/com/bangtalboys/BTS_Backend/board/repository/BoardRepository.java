@@ -17,6 +17,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             @Param("memberId") Long memberId);
 
     @Query("SELECT b FROM Board b " +
-            "WHERE (b.title LIKE %:keyword% OR b.description LIKE %:keyword%)")
-    List<Board> searchBoardByKeyword(@Param("keyword") String keyword);
+            "WHERE (:keyword IS NULL OR b.title LIKE %:keyword% OR b.description LIKE %:keyword%)" +
+            "AND (:type IS NULL OR b.type = :type)")
+    List<Board> searchBoardByKeyword(@Param("keyword") String keyword, @Param("type") String type);
 }
