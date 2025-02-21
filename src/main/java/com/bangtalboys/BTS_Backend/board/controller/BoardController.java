@@ -23,11 +23,10 @@ import java.util.List;
 @Tag(name="게시판 API")
 public class BoardController {
     private final BoardService boardService;
-    private final JwtUtil jwtUtil;
 
     @PostMapping("")
-    public ResponseEntity<Response<BoardResponse>> createBoard(@RequestBody BoardRequest boardRequest, @RequestHeader("Authorization") String accessToken) {
-        Long memberId = jwtUtil.getId(accessToken);
+    public ResponseEntity<Response<BoardResponse>> createBoard(@RequestBody BoardRequest boardRequest, @AuthenticationPrincipal CustomOAuth2User oauth2User) {
+        Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(boardService.createBoard(boardRequest, memberId)));
     }
 
@@ -42,14 +41,14 @@ public class BoardController {
     }
 
     @PatchMapping("/{boardId}")
-    public ResponseEntity<Response<BoardResponse>> updateBoard(@PathVariable long boardId, @RequestBody UpdateBoardRequest updateBoardRequest, @RequestHeader("Authorization") String accessToken) {
-        Long memberId = jwtUtil.getId(accessToken);
+    public ResponseEntity<Response<BoardResponse>> updateBoard(@PathVariable long boardId, @RequestBody UpdateBoardRequest updateBoardRequest,@AuthenticationPrincipal CustomOAuth2User oauth2User) {
+        Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(boardService.updateBoard(boardId, memberId, updateBoardRequest)));
     }
 
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<Response<String>> deleteBoard(@PathVariable long boardId, @RequestHeader("Authorization") String accessToken) {
-        Long memberId = jwtUtil.getId(accessToken);
+    public ResponseEntity<Response<String>> deleteBoard(@PathVariable long boardId,  @AuthenticationPrincipal CustomOAuth2User oauth2User) {
+        Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(boardService.deleteBoard(boardId, memberId)));
     }
 
