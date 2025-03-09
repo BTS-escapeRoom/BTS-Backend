@@ -2,7 +2,7 @@ package com.bangtalboys.BTS_Backend.config.error.exception;
 
 import com.bangtalboys.BTS_Backend.config.error.ErrorCode;
 
-public class BusinessBaseException extends  RuntimeException{
+public class BusinessBaseException extends RuntimeException{
     private final ErrorCode errorCode;
 
     public BusinessBaseException(String message ,ErrorCode errorCode) {

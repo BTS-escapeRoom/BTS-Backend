@@ -11,24 +11,29 @@ public class ReviewResponse {
     private String content;
     private Integer people;
     private Integer time;
+    private Float difficulty;
     private Integer scareScore;
     private Integer activityScore;
-    private Integer hardScore;
     private LocalDateTime visitDate;
+
+    private Integer hints;
     private Boolean isSuccess;
     private LocalDateTime createdAt;
 
+    private Boolean isMyReview;
 
-    public ReviewResponse(Review review) {
+
+    public ReviewResponse(Review review, Boolean isMine) {
         id = review.getId();
         content = review.getContent();
         people = review.getPeople();
         time = review.getTime();
         scareScore = review.getScareScore();
         activityScore = review.getActivityScore();
-        hardScore = review.getHardScore();
+        difficulty = review.getDifficulty();
         visitDate = review.getVisitDate();
         isSuccess = review.getIsSuccess();
         createdAt = review.getCreatedAt();
+        isMyReview = isMine;
     }
 }

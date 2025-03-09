@@ -25,8 +25,8 @@ public class ThemeService {
     private final ThemeLikeRepository themeLikeRepository;
     private final MemberRepository memberRepository;
 
-    public List<ThemeListResponse> getAllTheme(String keyword, Integer peoples, Integer difficulty, Long genreId, Long districtId, Long cityId) {
-        List<Theme> themes = themeRepository.findByKeywordAndPeoplesAndGenreAndDifficultyAndDistrictOrCity(keyword, peoples, difficulty, genreId, districtId, cityId);
+    public List<ThemeListResponse> getAllTheme(String keyword, Integer peoples, Integer minDiff, Integer maxDiff, List<Long> genreIdList, List<Long> districtIdList, List<Long> cityIdList) {
+        List<Theme> themes = themeRepository.findByKeywordAndPeoplesAndGenreAndDifficultyAndDistrictOrCity(keyword, peoples, minDiff, maxDiff, genreIdList, districtIdList, cityIdList);
         return themes.stream().map(ThemeListResponse::new).collect(Collectors.toList());
     }
 

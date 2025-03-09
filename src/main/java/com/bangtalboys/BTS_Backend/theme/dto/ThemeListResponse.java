@@ -17,6 +17,8 @@ public class ThemeListResponse {
     private Integer time;
     private String genreType;
 
+    private String status;
+
     public ThemeListResponse(Theme theme) {
         id = theme.getId();
         thumbnail = theme.getThumbnail();

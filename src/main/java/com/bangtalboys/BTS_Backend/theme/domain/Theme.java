@@ -40,7 +40,7 @@ public class Theme {
 
     private String genre;
 
-    private Integer fearLevel;
+    private Integer scareScore;
 
     private Integer time;
 
@@ -51,6 +51,8 @@ public class Theme {
     private LocalDateTime registrationDate;
 
     private String notes;
+
+    private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "genre_id")

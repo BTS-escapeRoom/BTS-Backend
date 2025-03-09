@@ -29,13 +29,14 @@ public class ThemeController {
     public ResponseEntity<Response<List<ThemeListResponse>>> getAllTheme(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Integer peoples,
-            @RequestParam(required = false) Integer difficulty,
-            @RequestParam(required = false) Long genreId,
-            @RequestParam(required = false) Long districtId,
-            @RequestParam(required = false) Long cityId
+            @RequestParam(required = false) Integer min_difficulty,
+            @RequestParam(required = false) Integer max_difficulty,
+            @RequestParam(required = false) List<Long> genreId,
+            @RequestParam(required = false) List<Long> districtId,
+            @RequestParam(required = false) List<Long> cityId
     ) {
 
-        return ResponseEntity.ok(Response.ok(themeService.getAllTheme(keyword, peoples, difficulty, genreId, districtId, cityId)));
+        return ResponseEntity.ok(Response.ok(themeService.getAllTheme(keyword, peoples, min_difficulty, max_difficulty, genreId, districtId, cityId)));
     }
 
     @Operation(summary = "테마 단건 조회")

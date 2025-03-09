@@ -27,19 +27,23 @@ public class ReviewController {
     @Operation(summary = "리뷰 단건 조회")
     @GetMapping("/{reviewId}")
     public ResponseEntity<Response<ReviewResponse>> getOneReviews(
+            @AuthenticationPrincipal CustomOAuth2User oauth2User,
             @PathVariable Long reviewId
     ) {
 
-        return ResponseEntity.ok(Response.ok(reviewService.getOneReview(reviewId)));
+        Long memberId = oauth2User.getId();
+        return ResponseEntity.ok(Response.ok(reviewService.getOneReview(reviewId, memberId)));
     }
 
     @Operation(summary = "리뷰 목록 조회")
     @GetMapping("")
     public ResponseEntity<Response<List<ReviewListResponse>>> getAllReviews(
+            @AuthenticationPrincipal CustomOAuth2User oauth2User,
             @RequestParam(required = true) Long themeId
     ) {
 
-        return ResponseEntity.ok(Response.ok(reviewService.getAllReviews(themeId)));
+        Long memberId = oauth2User.getId();
+        return ResponseEntity.ok(Response.ok(reviewService.getAllReviews(themeId, memberId)));
     }
 
     @Operation(summary = "리뷰 등록")

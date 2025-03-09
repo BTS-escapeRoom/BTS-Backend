@@ -12,17 +12,19 @@ public interface ThemeRepository extends JpaRepository<Theme, Long> {
     @Query("SELECT t FROM Theme t " +
             "WHERE (:keyword IS NULL OR t.title LIKE %:keyword% OR t.store.name LIKE %:keyword%) " +
             "AND (:peoples IS NULL OR (t.minimumPeople <= :peoples AND :peoples <= t.maximumPeople)) " +
-            "AND (:difficulty IS NULL OR t.difficulty >= :difficulty) " +
-            "AND (:genreId IS NULL OR t.genreType.id = :genreId) " +
-            "AND (:districtId IS NULL OR t.store.district.id = :districtId) " +
-            "AND (:cityId IS NULL OR t.store.district.city.id = :cityId)")
+            "AND (:minDiff IS NULL OR t.difficulty >= :minDiff) " +
+            "AND (:maxDiff IS NULL OR t.difficulty <= :maxDiff) " +
+            "AND (:genreIdList IS NULL OR t.genreType.id IN :genreIdList) " +
+            "AND (:districtIdList IS NULL OR t.store.district.id IN :districtIdList) " +
+            "AND (:cityIdList IS NULL OR t.store.district.city.id IN :cityIdList)")
     List<Theme> findByKeywordAndPeoplesAndGenreAndDifficultyAndDistrictOrCity(
             @Param("keyword") String keyword,
             @Param("peoples") Integer peoples,
-            @Param("difficulty") Integer difficulty,
-            @Param("genreId") Long genreId,
-            @Param("districtId") Long districtId,
-            @Param("cityId") Long cityId);
+            @Param("minDiff") Integer minDiff,
+            @Param("maxDiff") Integer maxDiff,
+            @Param("genreIdList") List<Long> genreIdList,
+            @Param("districtIdList") List<Long> districtIdList,
+            @Param("cityIdList") List<Long> cityIdList);
 
     @Query("SELECT t FROM Theme t " +
             "JOIN ThemeLike tl ON t.id = tl.theme.id " +

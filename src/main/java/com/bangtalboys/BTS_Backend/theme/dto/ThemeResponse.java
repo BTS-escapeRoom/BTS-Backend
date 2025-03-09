@@ -22,13 +22,15 @@ public class ThemeResponse {
     private Integer recommendPeople;
     private Long difficulty;
     private String genre;
-    private Integer fearLevel;
+    private Integer scareScore;
     private Integer time;
     private Integer price;
     private String reservationUrl;
     private String notes;
     private LocalDateTime registrationDate;
     private String genreType;
+
+    private String status;
     private StoreListResponse store;
     private List<ThemeTimeResponse> weekdaysTimeList;
     private List<ThemeTimeResponse> weekendTimeList;
@@ -43,11 +45,12 @@ public class ThemeResponse {
         maximumPeople = theme.getMaximumPeople();
         difficulty = theme.getDifficulty();
         genre = theme.getGenre();
-        fearLevel = theme.getFearLevel();
+        scareScore = theme.getScareScore();
         time = theme.getTime();
         price = theme.getPrice();
         reservationUrl = theme.getReservationUrl();
         notes = theme.getNotes();
+        status = theme.getStatus();
         registrationDate = theme.getRegistrationDate();
         genreType = theme.getGenreType().getName();
         store = new StoreListResponse(theme.getStore());

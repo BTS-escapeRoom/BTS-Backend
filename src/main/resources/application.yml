@@ -54,6 +54,10 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://workstation.dork94.com:33066/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul}
     username: ${SPRING_DATASOURCE_USERNAME:root}
     password: ${SPRING_DATASOURCE_PASSWORD:bangtal-boys}
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
 springdoc:
   show-login-endpoint: true
 apple:

@@ -12,7 +12,8 @@ public class ReviewRequest {
     private Integer time;
     private Integer scareScore;
     private Integer activityScore;
-    private Integer hardScore;
+    private Float difficulty;
+    private Integer hints;
     private LocalDateTime visitDate;
     private Boolean isSuccess;
     private Long themeId;
