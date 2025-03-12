@@ -1,16 +1,17 @@
-package com.bangtalboys.BTS_Backend.board.domain;
+package com.bangtalboys.BTS_Backend.comment.domain;
 
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.stereotype.Service;
 
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
-@Table(name="board_report")
-public class BoardReport {
+@ToString
+@Table(name="comment_report")
+public class CommentReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,16 +21,16 @@ public class BoardReport {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private Board board;
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
     @Column()
     private String status;
 
     @Builder
-    public BoardReport(Member member, Board board, String status) {
+    public CommentReport(Member member, Comment comment, String status) {
         this.member = member;
-        this.board = board;
+        this.comment = comment;
         this.status = status;
     }
 }

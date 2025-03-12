@@ -3,8 +3,10 @@ package com.bangtalboys.BTS_Backend.comment.service;
 import com.bangtalboys.BTS_Backend.board.domain.Board;
 import com.bangtalboys.BTS_Backend.board.repository.BoardRepository;
 import com.bangtalboys.BTS_Backend.comment.domain.Comment;
+import com.bangtalboys.BTS_Backend.comment.domain.CommentReport;
 import com.bangtalboys.BTS_Backend.comment.dto.request.CommentRequest;
 import com.bangtalboys.BTS_Backend.comment.dto.response.CommentResponse;
+import com.bangtalboys.BTS_Backend.comment.repository.CommentReportRepository;
 import com.bangtalboys.BTS_Backend.comment.repository.CommentRepository;
 import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
+    private final CommentReportRepository commentReportRepository;
 
     public CommentResponse createBoardComment(CommentRequest commentRequest, Long boardId, Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
@@ -67,5 +71,20 @@ public class CommentService {
         }
         commentRepository.delete(comment);
         return "Comment deleted";
+    }
+
+    public String createCommentReport(Long memberId, Long CommentId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
+        Comment comment = commentRepository.findByIdAndMemberId(CommentId, memberId);
+
+        Optional<CommentReport> existReport = commentReportRepository.findByMemberAndComment(member, comment);
+
+        if (existReport.isPresent()) {
+           commentReportRepository.delete(existReport.get());
+           return "코멘트 신고 취소 완료";
+        }
+        CommentReport commentReport = new CommentReport(member, comment, "active");
+        commentReportRepository.save(commentReport);
+        return "코멘트 신고 완료";
     }
 }
