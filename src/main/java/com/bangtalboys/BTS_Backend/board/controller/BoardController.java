@@ -31,8 +31,9 @@ public class BoardController {
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity<Response<BoardResponse>> getBoard(@PathVariable long boardId) {
-        return ResponseEntity.ok(Response.ok(boardService.getOneBoard(boardId)));
+    public ResponseEntity<Response<BoardResponse>> getBoard(@PathVariable long boardId, @AuthenticationPrincipal CustomOAuth2User oauth2User) {
+        Long memberId = oauth2User.getId();
+        return ResponseEntity.ok(Response.ok(boardService.getOneBoard(boardId, memberId)));
     }
 
     @GetMapping("")
@@ -60,6 +61,16 @@ public class BoardController {
     ) {
         Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(boardService.createBoardLike(memberId, boardId)));
+    }
+
+    @Operation(summary = "게시글 신고/취소 (토글)")
+    @PostMapping("/report")
+    public ResponseEntity<Response<String>> createBoardReport(
+            @AuthenticationPrincipal CustomOAuth2User oauth2User,
+            @RequestParam(required = false) Long boardId
+    ) {
+        Long memberId = oauth2User.getId();
+        return ResponseEntity.ok(Response.ok(boardService.createBoardReport(memberId, boardId)));
     }
 
     @Operation(summary = "내가 찜한 게시글 조회")

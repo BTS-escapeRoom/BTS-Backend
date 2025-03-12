@@ -3,11 +3,13 @@ package com.bangtalboys.BTS_Backend.board.service;
 
 import com.bangtalboys.BTS_Backend.board.domain.Board;
 import com.bangtalboys.BTS_Backend.board.domain.BoardLike;
+import com.bangtalboys.BTS_Backend.board.domain.BoardReport;
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.UpdateBoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardResponse;
 import com.bangtalboys.BTS_Backend.board.dto.response.ListBoardResponse;
 import com.bangtalboys.BTS_Backend.board.repository.BoardLikeRepository;
+import com.bangtalboys.BTS_Backend.board.repository.BoardReportRepository;
 import com.bangtalboys.BTS_Backend.board.repository.BoardRepository;
 import com.bangtalboys.BTS_Backend.config.error.exception.ForbiddenException;
 import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
@@ -32,6 +34,7 @@ public class BoardService {
     private final MemberRepository memberRepository;
     private final ThemeRepository themeRepository;
     private final BoardLikeRepository boardLikeRepository;
+    private final BoardReportRepository boardReportRepository;
 
     @Transactional
     public BoardResponse createBoard(BoardRequest boardRequest, Long memberId) {
@@ -39,15 +42,22 @@ public class BoardService {
         Theme theme = themeRepository.findById(boardRequest.getThemeId()).orElseThrow(NotFoundException::new);
         Board board = new Board(boardRequest, member, theme);
         boardRepository.save(board);
-        return new BoardResponse(board);
+        return new BoardResponse(board, "in-active");
     }
 
     @Transactional
-    public BoardResponse getOneBoard(Long boardId) {
+    public BoardResponse getOneBoard(Long boardId, Long memberId) {
         Optional<Board> board = boardRepository.findById(boardId);
         board.get().setHit(board.get().getHit() + 1);
+        if (memberId != null) {
+            Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
+            Optional<BoardReport> boardReport = boardReportRepository.findByMemberAndBoard(member, board.get());
+            if (boardReport.isPresent()) {
+                return new BoardResponse(board.get(), boardReport.get().getStatus());
+            }
+        }
 
-        return board.map(BoardResponse::new).orElseThrow(null);
+        return new BoardResponse(board.get(), "in-active");
     }
 
     public List<ListBoardResponse> getAllBoards(String keyword, String type) {
@@ -67,7 +77,7 @@ public class BoardService {
         }
         board.setTitle(updateBoardRequest.getTitle());
         board.setDescription(updateBoardRequest.getDescription());
-        return this.getOneBoard(boardId);
+        return this.getOneBoard(boardId, memberId);
     }
 
     public String deleteBoard(Long boardId, Long userId) {
@@ -95,6 +105,21 @@ public class BoardService {
             boardLikeRepository.save(boardLike);
             return "게시글 찜 설정 완료";
         }
+    }
+
+    public String createBoardReport(Long memberId, Long boardId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
+        Board board = boardRepository.findById(boardId).orElseThrow(NotFoundException::new);
+
+        Optional<BoardReport> existReport = boardReportRepository.findByMemberAndBoard(member, board);
+
+        if (existReport.isPresent()) {
+            boardReportRepository.delete(existReport.get());
+            return "게시글 신고 취소 완료";
+        }
+        BoardReport boardReport = new BoardReport(member, board, "active");
+        boardReportRepository.save(boardReport);
+        return "게시글 신고 완료";
     }
 
     public List<ListBoardResponse> getLikeBoard(Long memberId) {
