@@ -2,6 +2,7 @@ package com.bangtalboys.BTS_Backend.review.controller;
 
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
+import com.bangtalboys.BTS_Backend.review.dto.ReviewAvailableResponse;
 import com.bangtalboys.BTS_Backend.review.dto.ReviewListResponse;
 import com.bangtalboys.BTS_Backend.review.dto.ReviewRequest;
 import com.bangtalboys.BTS_Backend.review.dto.ReviewResponse;
@@ -39,7 +40,7 @@ public class ReviewController {
     @GetMapping("")
     public ResponseEntity<Response<List<ReviewListResponse>>> getAllReviews(
             @AuthenticationPrincipal CustomOAuth2User oauth2User,
-            @RequestParam(required = true) Long themeId
+            @RequestParam(required = false) Long themeId
     ) {
 
         Long memberId = oauth2User.getId();
@@ -88,5 +89,16 @@ public class ReviewController {
 
         Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(reviewService.getMyReview(memberId)));
+    }
+
+    @Operation(summary = "리뷰 작성 가능 여부 조회")
+    @GetMapping("/{themeId}/available")
+    public ResponseEntity<Response<ReviewAvailableResponse>> getReviewAvailable(
+            @AuthenticationPrincipal CustomOAuth2User oauth2User,
+            @PathVariable Long themeId
+    ) {
+
+        Long memberId = oauth2User.getId();
+        return ResponseEntity.ok(Response.ok(reviewService.getReviewAvailable(themeId, memberId)));
     }
 }

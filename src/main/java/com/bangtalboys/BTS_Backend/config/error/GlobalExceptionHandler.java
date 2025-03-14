@@ -3,6 +3,7 @@ package com.bangtalboys.BTS_Backend.config.error;
 import com.bangtalboys.BTS_Backend.config.error.exception.BusinessBaseException;
 import com.bangtalboys.BTS_Backend.config.error.exception.ForbiddenException;
 import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,5 +36,11 @@ public final class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotFoundException(ForbiddenException e) {
         ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode(), e.getErrorCode().getMessage());
         return ResponseEntity.status(e.getErrorCode().getStatus()).body(errorResponse);
+    }
+
+    @ExceptionHandler(Exception.class) // 모든 예외를 처리
+    public ResponseEntity<Object> handleGenericException(Exception e) {
+        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }

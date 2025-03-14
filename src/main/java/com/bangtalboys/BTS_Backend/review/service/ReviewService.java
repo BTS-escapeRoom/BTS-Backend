@@ -5,6 +5,7 @@ import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.review.domain.Review;
+import com.bangtalboys.BTS_Backend.review.dto.ReviewAvailableResponse;
 import com.bangtalboys.BTS_Backend.review.dto.ReviewListResponse;
 import com.bangtalboys.BTS_Backend.review.dto.ReviewRequest;
 import com.bangtalboys.BTS_Backend.review.dto.ReviewResponse;
@@ -15,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +36,7 @@ public class ReviewService {
     }
 
     public List<ReviewListResponse> getAllReviews(Long themeId, Long memberId) {
-        List<Review> reviewList = reviewRepository.findAllByThemeIdOrderByCreatedAtDesc(themeId);
+        List<Review> reviewList = reviewRepository.findAllByThemeIdOrAllOrderByCreatedAtDesc(themeId);
 
         return reviewList.stream()
                 .map(review -> new ReviewListResponse(review, review.getMember().getId().equals(memberId)))
@@ -104,5 +106,11 @@ public class ReviewService {
         return reviewList.stream()
                 .map(review -> new ReviewListResponse(review, true))
                 .collect(Collectors.toList());
+    }
+
+    public ReviewAvailableResponse getReviewAvailable(Long themeId, Long memberId) {
+        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
+        Boolean isAvailable = reviewRepository.existsRecentReviews(themeId, memberId, oneHourAgo);
+        return new ReviewAvailableResponse(isAvailable);
     }
 }
