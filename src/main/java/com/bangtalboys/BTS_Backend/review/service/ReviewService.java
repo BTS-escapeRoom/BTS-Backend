@@ -111,6 +111,6 @@ public class ReviewService {
     public ReviewAvailableResponse getReviewAvailable(Long themeId, Long memberId) {
         LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
         Boolean isAvailable = reviewRepository.existsRecentReviews(themeId, memberId, oneHourAgo);
-        return new ReviewAvailableResponse(isAvailable);
+        return new ReviewAvailableResponse(!isAvailable);
     }
 }
