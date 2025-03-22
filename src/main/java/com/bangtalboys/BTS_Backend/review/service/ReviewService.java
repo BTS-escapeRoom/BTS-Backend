@@ -5,10 +5,13 @@ import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.review.domain.Review;
-import com.bangtalboys.BTS_Backend.review.dto.ReviewAvailableResponse;
-import com.bangtalboys.BTS_Backend.review.dto.ReviewListResponse;
-import com.bangtalboys.BTS_Backend.review.dto.ReviewRequest;
-import com.bangtalboys.BTS_Backend.review.dto.ReviewResponse;
+import com.bangtalboys.BTS_Backend.review.domain.ReviewReport;
+import com.bangtalboys.BTS_Backend.review.dto.request.ReviewReportRequest;
+import com.bangtalboys.BTS_Backend.review.dto.request.ReviewRequest;
+import com.bangtalboys.BTS_Backend.review.dto.response.ReviewAvailableResponse;
+import com.bangtalboys.BTS_Backend.review.dto.response.ReviewListResponse;
+import com.bangtalboys.BTS_Backend.review.dto.response.ReviewResponse;
+import com.bangtalboys.BTS_Backend.review.repository.ReviewReportRepository;
 import com.bangtalboys.BTS_Backend.review.repository.ReviewRepository;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.theme.repository.ThemeRepository;
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
+    private final ReviewReportRepository reviewReportRepository;
     private final ThemeRepository themeRepository;
     private final MemberRepository memberRepository;
 
@@ -112,5 +116,25 @@ public class ReviewService {
         LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
         Boolean isAvailable = reviewRepository.existsRecentReviews(themeId, memberId, oneHourAgo);
         return new ReviewAvailableResponse(!isAvailable);
+    }
+
+    public String createReviewReport(Long memberId, ReviewReportRequest reviewReportRequest) {
+        Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
+        Review review = reviewRepository.findById(reviewReportRequest.getReviewId()).orElseThrow(NotFoundException::new);
+
+        Optional<ReviewReport> existReviewReport = reviewReportRepository.findByReviewAndMember(review, member);
+
+        if (existReviewReport.isPresent()) {
+            reviewReportRepository.delete(existReviewReport.get());
+            return "리뷰 신고 취소 완료";
+        }
+
+        ReviewReport reviewReport = ReviewReport.builder()
+                .review(review)
+                .member(member)
+                .description(reviewReportRequest.getDescription())
+                .build();
+        reviewReportRepository.save(reviewReport);
+        return "리뷰 신고 완료";
     }
 }

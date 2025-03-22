@@ -2,10 +2,11 @@ package com.bangtalboys.BTS_Backend.review.controller;
 
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
-import com.bangtalboys.BTS_Backend.review.dto.ReviewAvailableResponse;
-import com.bangtalboys.BTS_Backend.review.dto.ReviewListResponse;
-import com.bangtalboys.BTS_Backend.review.dto.ReviewRequest;
-import com.bangtalboys.BTS_Backend.review.dto.ReviewResponse;
+import com.bangtalboys.BTS_Backend.review.dto.request.ReviewReportRequest;
+import com.bangtalboys.BTS_Backend.review.dto.request.ReviewRequest;
+import com.bangtalboys.BTS_Backend.review.dto.response.ReviewAvailableResponse;
+import com.bangtalboys.BTS_Backend.review.dto.response.ReviewListResponse;
+import com.bangtalboys.BTS_Backend.review.dto.response.ReviewResponse;
 import com.bangtalboys.BTS_Backend.review.service.ReviewService;
 import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -100,5 +101,15 @@ public class ReviewController {
 
         Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(reviewService.getReviewAvailable(themeId, memberId)));
+    }
+
+    @Operation(summary = "리뷰 신고/취소 (토글)")
+    @PostMapping("/report")
+    public ResponseEntity<Response<String>> createReviewReport(
+            @AuthenticationPrincipal CustomOAuth2User oauth2User,
+            @RequestBody ReviewReportRequest reviewReportRequest
+    ) {
+        Long memberId = oauth2User.getId();
+        return ResponseEntity.ok(Response.ok(reviewService.createReviewReport(memberId, reviewReportRequest)));
     }
 }
