@@ -57,6 +57,6 @@ networks:
     driver: bridge
 volumes:
   bts-backend-db:
-    external: true
+    external: false
   bts-backend-db-ini:
-    external: true
+    external: false
