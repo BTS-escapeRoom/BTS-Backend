@@ -2,11 +2,13 @@ package com.bangtalboys.BTS_Backend.theme.controller;
 
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
+import com.bangtalboys.BTS_Backend.theme.dto.ThemeListRequest;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeListResponse;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeResponse;
 import com.bangtalboys.BTS_Backend.theme.service.ThemeService;
 import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,16 +29,24 @@ public class ThemeController {
     @Operation(summary = "테마 리스트 조회", description = "제목, 가게, 사람수, 난이도, 장르, 지역으로 필터링하여 전달")
     @GetMapping("")
     public ResponseEntity<Response<List<ThemeListResponse>>> getAllTheme(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Integer peoples,
-            @RequestParam(required = false) Integer min_difficulty,
-            @RequestParam(required = false) Integer max_difficulty,
-            @RequestParam(required = false) List<Long> genreId,
-            @RequestParam(required = false) List<Long> districtId,
-            @RequestParam(required = false) List<Long> cityId
+            @RequestParam(required = false) @Parameter(description = "검색할 키워드") String keyword,
+            @RequestParam(required = false) @Parameter(description = "인원수") Integer peoples,
+            @RequestParam(required = false) @Parameter(description = "최소 난이도") Integer minDiff,
+            @RequestParam(required = false) @Parameter(description = "최대 난이도") Integer maxDiff,
+            @RequestParam(required = false) @Parameter(description = "장르 ID 리스트") List<Long> genreIdList,
+            @RequestParam(required = false) @Parameter(description = "구 ID 리스트") List<Long> districtIdList,
+            @RequestParam(required = false) @Parameter(description = "시 ID 리스트") List<Long> cityIdList,
+            @RequestParam(required = false) @Parameter(description = "정렬 기준 (recent, popular, distance)") String sort,
+            @RequestParam(required = false) @Parameter(description = "위도 (거리 정렬 시 필요)") Double latitude,
+            @RequestParam(required = false) @Parameter(description = "경도 (거리 정렬 시 필요)") Double longitude,
+            @RequestParam(required = false, defaultValue = "10") @Parameter(description = "페이징 처리에서 사용될 limit 값",  example = "10") Integer limit,
+            @RequestParam(required = false, defaultValue = "0") @Parameter(description = "페이징 처리에서 사용될 offset 값", example = "0") Integer offset
     ) {
 
-        return ResponseEntity.ok(Response.ok(themeService.getAllTheme(keyword, peoples, min_difficulty, max_difficulty, genreId, districtId, cityId)));
+        ThemeListRequest themeListRequest = new ThemeListRequest(
+                keyword, peoples, minDiff, maxDiff, genreIdList, districtIdList, cityIdList, sort, latitude, longitude, limit, offset);
+
+        return ResponseEntity.ok(Response.ok(themeService.getAllTheme(themeListRequest)));
     }
 
     @Operation(summary = "테마 단건 조회")

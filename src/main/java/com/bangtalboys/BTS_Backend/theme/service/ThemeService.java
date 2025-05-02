@@ -5,6 +5,7 @@ import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.theme.domain.ThemeLike;
+import com.bangtalboys.BTS_Backend.theme.dto.ThemeListRequest;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeListResponse;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeResponse;
 import com.bangtalboys.BTS_Backend.theme.repository.ThemeLikeRepository;
@@ -25,8 +26,9 @@ public class ThemeService {
     private final ThemeLikeRepository themeLikeRepository;
     private final MemberRepository memberRepository;
 
-    public List<ThemeListResponse> getAllTheme(String keyword, Integer peoples, Integer minDiff, Integer maxDiff, List<Long> genreIdList, List<Long> districtIdList, List<Long> cityIdList) {
-        List<Theme> themes = themeRepository.findByKeywordAndPeoplesAndGenreAndDifficultyAndDistrictOrCity(keyword, peoples, minDiff, maxDiff, genreIdList, districtIdList, cityIdList);
+    public List<ThemeListResponse> getAllTheme(ThemeListRequest themeListRequest
+    ) {
+        List<Theme> themes = themeRepository.findThemes(themeListRequest);
         return themes.stream().map(ThemeListResponse::new).collect(Collectors.toList());
     }
 

@@ -65,4 +65,8 @@ public class Theme {
     @OneToMany(mappedBy = "theme", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonManagedReference
     private List<ThemeTime> themeTimeList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "theme", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ThemeLike> themeLikeList = new ArrayList<>();
 }

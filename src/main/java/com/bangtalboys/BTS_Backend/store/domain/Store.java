@@ -33,6 +33,10 @@ public class Store {
 
     private LocalDateTime registrationDate;
 
+    private Double latitude;
+
+    private Double longitude;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id")
     @JsonBackReference

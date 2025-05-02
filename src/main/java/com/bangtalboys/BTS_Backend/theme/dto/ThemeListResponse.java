@@ -16,8 +16,11 @@ public class ThemeListResponse {
     private String genre;
     private Integer time;
     private String genreType;
-
     private String status;
+    private String store;
+    private String city;
+    private String dictrict;
+
 
     public ThemeListResponse(Theme theme) {
         id = theme.getId();
@@ -29,5 +32,8 @@ public class ThemeListResponse {
         genre = theme.getGenre();
         time = theme.getTime();
         genreType = theme.getGenreType().getName();
+        store = theme.getStore().getName();
+        city = theme.getStore().getDistrict().getCity().getName();
+        dictrict = theme.getStore().getDistrict().getName();
     }
 }
