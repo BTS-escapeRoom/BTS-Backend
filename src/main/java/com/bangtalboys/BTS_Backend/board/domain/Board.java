@@ -6,9 +6,13 @@ import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -48,6 +52,17 @@ public class Board {
     private String contact_url;
 
     private String contact_method;
+
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
+    private List<BoardLike> likes = new ArrayList<>();
+
+    @CreationTimestamp
+    @Column()
+    private String created_at;
+
+    @UpdateTimestamp
+    @Column()
+    private String updated_at;
 
     @Builder
     public Board( BoardRequest boardRequest, Member member, Theme theme) {

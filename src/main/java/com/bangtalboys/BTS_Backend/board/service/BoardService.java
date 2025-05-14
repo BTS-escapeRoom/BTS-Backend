@@ -20,6 +20,7 @@ import com.bangtalboys.BTS_Backend.theme.dto.ThemeListResponse;
 import com.bangtalboys.BTS_Backend.theme.repository.ThemeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -60,14 +61,32 @@ public class BoardService {
         return new BoardResponse(board.get(), "in-active");
     }
 
-    public List<ListBoardResponse> getAllBoards(String keyword, String type) {
-        List<ListBoardResponse> boardResponseList = new ArrayList<>();
-        List<Board> boardList = boardRepository.searchBoardByKeyword(keyword, type);
-        for (Board board : boardList) {
-            ListBoardResponse listBoardResponse = new ListBoardResponse(board);
-            boardResponseList.add(listBoardResponse);
+    public List<ListBoardResponse> getAllBoards(
+            String keyword,
+            String type,
+            String sortType
+    ) {
+        List<Board> boardList;
+
+        // popular 만 별도 메서드, 나머지는 Sort로 호출
+        if ("popular".equals(sortType)) {
+            boardList = boardRepository
+                    .searchBoardByKeywordOrderByLikes(keyword, type);
+        } else {
+            Sort sort;
+            if ("viewed".equals(sortType)) {
+                sort = Sort.by(Sort.Direction.DESC, "hit");
+            } else { // latest 또는 기본
+                sort = Sort.by(Sort.Direction.DESC, "created_at");
+            }
+            boardList = boardRepository
+                    .searchBoardByKeyword(keyword, type, sort);
         }
-        return boardResponseList;
+
+        // DTO 변환
+        return boardList.stream()
+                .map(ListBoardResponse::new)
+                .collect(Collectors.toList());
     }
 
     public BoardResponse updateBoard(Long boardId, Long memberId, UpdateBoardRequest updateBoardRequest) {

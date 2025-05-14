@@ -37,8 +37,8 @@ public class BoardController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Response<List<ListBoardResponse>>> getAllBoards(String keyword, String type) {
-        return ResponseEntity.ok(Response.ok(boardService.getAllBoards(keyword, type)));
+    public ResponseEntity<Response<List<ListBoardResponse>>> getAllBoards(String keyword, String type, String sortType) {
+        return ResponseEntity.ok(Response.ok(boardService.getAllBoards(keyword, type, sortType)));
     }
 
     @PatchMapping("/{boardId}")
