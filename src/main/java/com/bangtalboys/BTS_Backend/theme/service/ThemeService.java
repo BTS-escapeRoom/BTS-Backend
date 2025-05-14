@@ -6,6 +6,7 @@ import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.theme.domain.ThemeLike;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeListRequest;
+import com.bangtalboys.BTS_Backend.theme.dto.ThemeListPageResponse;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeListResponse;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeResponse;
 import com.bangtalboys.BTS_Backend.theme.repository.ThemeLikeRepository;
@@ -26,10 +27,19 @@ public class ThemeService {
     private final ThemeLikeRepository themeLikeRepository;
     private final MemberRepository memberRepository;
 
-    public List<ThemeListResponse> getAllTheme(ThemeListRequest themeListRequest
+    public ThemeListPageResponse getAllTheme(ThemeListRequest themeListRequest
     ) {
         List<Theme> themes = themeRepository.findThemes(themeListRequest);
-        return themes.stream().map(ThemeListResponse::new).collect(Collectors.toList());
+        long totalCount = themeRepository.countThemes(themeListRequest);
+        long totalPage = totalCount % 20 == 0 ? totalCount / 20 : totalCount / 20 + 1;
+        long nextPage = themeListRequest.getPage() + 1L;
+
+        if (themeListRequest.getPage() == totalPage) {
+            nextPage = -1L;
+        }
+
+        List<ThemeListResponse> themeListViewResponses = themes.stream().map(ThemeListResponse::new).collect(Collectors.toList());
+        return new ThemeListPageResponse(themeListViewResponses, nextPage, totalPage);
     }
 
     public ThemeResponse getOneTheme(Long id) {

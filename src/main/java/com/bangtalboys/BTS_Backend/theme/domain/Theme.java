@@ -5,9 +5,7 @@ import com.bangtalboys.BTS_Backend.store.domain.Store;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @ToString
 @NoArgsConstructor
 @Table(name = "theme")
@@ -69,4 +68,5 @@ public class Theme {
     @OneToMany(mappedBy = "theme", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonManagedReference
     private List<ThemeLike> themeLikeList = new ArrayList<>();
+
 }

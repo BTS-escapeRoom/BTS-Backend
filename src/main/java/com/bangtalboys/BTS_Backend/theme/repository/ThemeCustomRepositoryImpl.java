@@ -33,13 +33,63 @@ public class ThemeCustomRepositoryImpl implements ThemeCustomRepository {
         QCity c = QCity.city;
         QThemeLike l = QThemeLike.themeLike;
 
+        BooleanBuilder where = buildWhere(req);
+
         JPQLQuery<Theme> query = jpaQueryFactory
                 .selectFrom(t)
                 .leftJoin(t.store, s).fetchJoin()
                 .leftJoin(s.district, d).fetchJoin()
                 .leftJoin(d.city, c).fetchJoin()
                 .leftJoin(t.themeLikeList, l)
+                .where(where)
                 .distinct();
+
+        // 정렬 처리
+        if ("recent".equals(req.getSort())) {
+            query.orderBy(t.registrationDate.desc());
+        } else if ("popular".equals(req.getSort())) {
+            query.groupBy(t).orderBy(l.count().desc());
+        } else if ("distance".equals(req.getSort()) && req.getLatitude() != null && req.getLongitude() != null) {
+            NumberExpression<Double> distance = Expressions.numberTemplate(
+                    Double.class,
+                    "ST_Distance_Sphere(POINT({0}, {1}), POINT({2}, {3}))",
+                    req.getLongitude(), req.getLatitude(),
+                    s.longitude, s.latitude
+            );
+            query.orderBy(distance.asc());
+        }
+
+        query.limit(20).offset((req.getPage()-1)* 20L);
+
+        return query.fetch();
+    }
+
+    @Override
+    public long countThemes(ThemeListRequest req) {
+        QTheme t = QTheme.theme;
+        QStore s = QStore.store;
+        QDistrict d = QDistrict.district;
+        QCity c = QCity.city;
+
+        BooleanBuilder where = buildWhere(req);
+
+        Long result = jpaQueryFactory
+                .select(t.count())
+                .from(t)
+                .join(t.store, s)
+                .join(s.district, d)
+                .join(d.city, c)
+                .where(where)
+                .fetchOne();
+
+        return result != null? result : 0L;
+    }
+
+    private BooleanBuilder buildWhere(ThemeListRequest req) {
+        QTheme t = QTheme.theme;
+        QStore s = QStore.store;
+        QDistrict d = QDistrict.district;
+        QCity c = QCity.city;
 
         BooleanBuilder where = new BooleanBuilder();
 
@@ -71,25 +121,6 @@ public class ThemeCustomRepositoryImpl implements ThemeCustomRepository {
             where.and(c.id.in(req.getCityIdList()));
         }
 
-        query.where(where);
-
-        // 정렬 처리
-        if ("recent".equals(req.getSort())) {
-            query.orderBy(t.registrationDate.desc());
-        } else if ("popular".equals(req.getSort())) {
-            query.groupBy(t).orderBy(l.count().desc());
-        } else if ("distance".equals(req.getSort()) && req.getLatitude() != null && req.getLongitude() != null) {
-            NumberExpression<Double> distance = Expressions.numberTemplate(
-                    Double.class,
-                    "ST_Distance_Sphere(POINT({0}, {1}), POINT({2}, {3}))",
-                    req.getLongitude(), req.getLatitude(),
-                    s.longitude, s.latitude
-            );
-            query.orderBy(distance.asc());
-        }
-
-        query.limit(req.getLimit()).offset(req.getOffset());
-
-        return query.fetch();
+        return where;
     }
 }

@@ -105,12 +105,18 @@ public class ReviewService {
         return "Review deleted";
     }
 
-    public List<ReviewListResponse> getMyReview(Long memberId) {
-        List<Review> reviewList = reviewRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId);
+    public List<ReviewListResponse> getMyReview(Long memberId, Long myMemberId) {
+        boolean isOwner = memberId.equals(myMemberId);
+
+        List<Review> reviewList = isOwner
+                ? reviewRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId)
+                : reviewRepository.findAllByMemberIdAndIsVisibleOrderByCreatedAtDesc(memberId, true);
+
         return reviewList.stream()
-                .map(review -> new ReviewListResponse(review, true))
+                .map(review -> new ReviewListResponse(review, isOwner))
                 .collect(Collectors.toList());
     }
+
 
     public ReviewAvailableResponse getReviewAvailable(Long themeId, Long memberId) {
         LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);

@@ -36,7 +36,10 @@ public class Review extends BaseEntity {
     private LocalDateTime visitDate;
 
     private Integer hints;
+
     private Boolean isSuccess;
+
+    private Boolean isVisible;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_id")

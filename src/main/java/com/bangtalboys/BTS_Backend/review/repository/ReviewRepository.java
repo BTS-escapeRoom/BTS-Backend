@@ -13,6 +13,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("SELECT r FROM Review r WHERE (:themeId IS NULL OR r.theme.id = :themeId)")
     List<Review> findAllByThemeIdOrAllOrderByCreatedAtDesc(Long themeId);
     List<Review> findAllByMemberIdOrderByCreatedAtDesc(Long memberId);
+    List<Review> findAllByMemberIdAndIsVisibleOrderByCreatedAtDesc(Long memberId, boolean isVisible);
     @Query("SELECT COUNT(r) > 0 FROM Review r " +
             "WHERE r.theme.id = :themeId " +
             "AND r.member.id = :memberId " +

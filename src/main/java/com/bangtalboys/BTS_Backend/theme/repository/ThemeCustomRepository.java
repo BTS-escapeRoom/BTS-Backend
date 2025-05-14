@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ThemeCustomRepository {
     List<Theme> findThemes(ThemeListRequest themeListRequest);
+    long countThemes(ThemeListRequest req);
 }

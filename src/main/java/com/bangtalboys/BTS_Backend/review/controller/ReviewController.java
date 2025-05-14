@@ -85,11 +85,12 @@ public class ReviewController {
     @Operation(summary = "내가 쓴 리뷰 조회")
     @GetMapping("/me")
     public ResponseEntity<Response<List<ReviewListResponse>>> getMyReview(
-            @AuthenticationPrincipal CustomOAuth2User oauth2User
+            @AuthenticationPrincipal CustomOAuth2User oauth2User,
+            @RequestParam Long myMemberId
     ) {
 
         Long memberId = oauth2User.getId();
-        return ResponseEntity.ok(Response.ok(reviewService.getMyReview(memberId)));
+        return ResponseEntity.ok(Response.ok(reviewService.getMyReview(memberId, myMemberId)));
     }
 
     @Operation(summary = "리뷰 작성 가능 여부 조회")

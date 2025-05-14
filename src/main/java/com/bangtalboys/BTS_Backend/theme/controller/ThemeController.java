@@ -3,6 +3,7 @@ package com.bangtalboys.BTS_Backend.theme.controller;
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeListRequest;
+import com.bangtalboys.BTS_Backend.theme.dto.ThemeListPageResponse;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeListResponse;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeResponse;
 import com.bangtalboys.BTS_Backend.theme.service.ThemeService;
@@ -10,9 +11,9 @@ import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class ThemeController {
 
     @Operation(summary = "테마 리스트 조회", description = "제목, 가게, 사람수, 난이도, 장르, 지역으로 필터링하여 전달")
     @GetMapping("")
-    public ResponseEntity<Response<List<ThemeListResponse>>> getAllTheme(
+    public ResponseEntity<Response<ThemeListPageResponse>> getAllTheme(
             @RequestParam(required = false) @Parameter(description = "검색할 키워드") String keyword,
             @RequestParam(required = false) @Parameter(description = "인원수") Integer peoples,
             @RequestParam(required = false) @Parameter(description = "최소 난이도") Integer minDiff,
@@ -39,12 +40,15 @@ public class ThemeController {
             @RequestParam(required = false) @Parameter(description = "정렬 기준 (recent, popular, distance)") String sort,
             @RequestParam(required = false) @Parameter(description = "위도 (거리 정렬 시 필요)") Double latitude,
             @RequestParam(required = false) @Parameter(description = "경도 (거리 정렬 시 필요)") Double longitude,
-            @RequestParam(required = false, defaultValue = "10") @Parameter(description = "페이징 처리에서 사용될 limit 값",  example = "10") Integer limit,
-            @RequestParam(required = false, defaultValue = "0") @Parameter(description = "페이징 처리에서 사용될 offset 값", example = "0") Integer offset
+            @Valid @RequestParam(required = false) @Parameter(description = "페이지",  example = "1") Integer page
     ) {
 
+        if (page != null && page < 1) {
+            throw new IllegalArgumentException("page는 1 이상이어야 합니다.");
+        }
+
         ThemeListRequest themeListRequest = new ThemeListRequest(
-                keyword, peoples, minDiff, maxDiff, genreIdList, districtIdList, cityIdList, sort, latitude, longitude, limit, offset);
+                keyword, peoples, minDiff, maxDiff, genreIdList, districtIdList, cityIdList, sort, latitude, longitude, page);
 
         return ResponseEntity.ok(Response.ok(themeService.getAllTheme(themeListRequest)));
     }

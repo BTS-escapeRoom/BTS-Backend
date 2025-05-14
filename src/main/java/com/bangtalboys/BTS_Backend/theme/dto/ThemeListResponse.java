@@ -1,9 +1,7 @@
 package com.bangtalboys.BTS_Backend.theme.dto;
 
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class ThemeListResponse {
@@ -19,7 +17,7 @@ public class ThemeListResponse {
     private String status;
     private String store;
     private String city;
-    private String dictrict;
+    private String district;
 
 
     public ThemeListResponse(Theme theme) {
@@ -34,6 +32,6 @@ public class ThemeListResponse {
         genreType = theme.getGenreType().getName();
         store = theme.getStore().getName();
         city = theme.getStore().getDistrict().getCity().getName();
-        dictrict = theme.getStore().getDistrict().getName();
+        district = theme.getStore().getDistrict().getName();
     }
 }
