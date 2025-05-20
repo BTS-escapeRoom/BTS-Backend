@@ -9,6 +9,7 @@ import com.bangtalboys.BTS_Backend.review.domain.ReviewReport;
 import com.bangtalboys.BTS_Backend.review.dto.request.ReviewReportRequest;
 import com.bangtalboys.BTS_Backend.review.dto.request.ReviewRequest;
 import com.bangtalboys.BTS_Backend.review.dto.response.ReviewAvailableResponse;
+import com.bangtalboys.BTS_Backend.review.dto.response.ReviewHistoryResponse;
 import com.bangtalboys.BTS_Backend.review.dto.response.ReviewListResponse;
 import com.bangtalboys.BTS_Backend.review.dto.response.ReviewResponse;
 import com.bangtalboys.BTS_Backend.review.repository.ReviewReportRepository;
@@ -64,6 +65,7 @@ public class ReviewService {
                 .visitDate(reviewRequest.getVisitDate())
                 .hints(reviewRequest.getHints())
                 .isSuccess(reviewRequest.getIsSuccess())
+                .isDisplay(true)
                 .theme(theme)
                 .member(member)
                 .build();
@@ -105,15 +107,11 @@ public class ReviewService {
         return "Review deleted";
     }
 
-    public List<ReviewListResponse> getMyReview(Long memberId, Long myMemberId) {
-        boolean isOwner = memberId.equals(myMemberId);
-
-        List<Review> reviewList = isOwner
-                ? reviewRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId)
-                : reviewRepository.findAllByMemberIdAndIsVisibleOrderByCreatedAtDesc(memberId, true);
+    public List<ReviewListResponse> getMyReview(Long memberId) {
+        List<Review> reviewList = reviewRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId);
 
         return reviewList.stream()
-                .map(review -> new ReviewListResponse(review, isOwner))
+                .map(review -> new ReviewListResponse(review, true))
                 .collect(Collectors.toList());
     }
 
@@ -142,5 +140,27 @@ public class ReviewService {
                 .build();
         reviewReportRepository.save(reviewReport);
         return "리뷰 신고 완료";
+    }
+
+    public List<ReviewHistoryResponse> getReviewHistory(Long memberId, Long viewerMemberId) {
+        List<Review> reviewList;
+
+        if (memberId.equals(viewerMemberId)) {
+            reviewList = reviewRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId);
+        } else {
+            reviewList = reviewRepository.findAllByMemberIdAndIsDisplayTrueOrderByCreatedAtDesc(memberId);
+        }
+        return reviewList.stream().map(ReviewHistoryResponse::new).collect(Collectors.toList());
+    }
+
+    public String updateHistoryDisplay(Long memberId, List<Long> reviewIds) {
+        List<Review> reviewList = reviewRepository.findAllByMemberIdAndIdIn(memberId, reviewIds);
+
+        for (Review review : reviewList) {
+            review.setIsDisplay(!review.getIsDisplay());
+        }
+
+        reviewRepository.saveAll(reviewList);
+        return "방탈출 기록 노출 정보 수정 완료";
     }
 }

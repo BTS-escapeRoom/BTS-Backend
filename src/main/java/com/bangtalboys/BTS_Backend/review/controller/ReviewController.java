@@ -5,6 +5,7 @@ import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.review.dto.request.ReviewReportRequest;
 import com.bangtalboys.BTS_Backend.review.dto.request.ReviewRequest;
 import com.bangtalboys.BTS_Backend.review.dto.response.ReviewAvailableResponse;
+import com.bangtalboys.BTS_Backend.review.dto.response.ReviewHistoryResponse;
 import com.bangtalboys.BTS_Backend.review.dto.response.ReviewListResponse;
 import com.bangtalboys.BTS_Backend.review.dto.response.ReviewResponse;
 import com.bangtalboys.BTS_Backend.review.service.ReviewService;
@@ -85,12 +86,11 @@ public class ReviewController {
     @Operation(summary = "내가 쓴 리뷰 조회")
     @GetMapping("/me")
     public ResponseEntity<Response<List<ReviewListResponse>>> getMyReview(
-            @AuthenticationPrincipal CustomOAuth2User oauth2User,
-            @RequestParam Long myMemberId
+            @AuthenticationPrincipal CustomOAuth2User oauth2User
     ) {
 
         Long memberId = oauth2User.getId();
-        return ResponseEntity.ok(Response.ok(reviewService.getMyReview(memberId, myMemberId)));
+        return ResponseEntity.ok(Response.ok(reviewService.getMyReview(memberId)));
     }
 
     @Operation(summary = "리뷰 작성 가능 여부 조회")
@@ -112,5 +112,25 @@ public class ReviewController {
     ) {
         Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(reviewService.createReviewReport(memberId, reviewReportRequest)));
+    }
+
+    @Operation(summary = "방탈출 기록 조회")
+    @GetMapping("/history/{memberId}")
+    public ResponseEntity<Response<List<ReviewHistoryResponse>>> getHistory(
+            @AuthenticationPrincipal CustomOAuth2User oauth2User,
+            @PathVariable Long memberId
+    ) {
+        Long viewerMemberId = oauth2User.getId();
+        return ResponseEntity.ok(Response.ok(reviewService.getReviewHistory(memberId, viewerMemberId)));
+    }
+
+    @Operation(summary = "방탈출 기록 노출 정보 수정 (토글)")
+    @PutMapping("/history-display")
+    public ResponseEntity<Response<String>> UpdateHistoryDisplay(
+            @AuthenticationPrincipal CustomOAuth2User oauth2User,
+            @RequestParam List<Long> reviewIds
+    ) {
+        Long memberId = oauth2User.getId();
+        return ResponseEntity.ok(Response.ok(reviewService.updateHistoryDisplay(memberId, reviewIds)));
     }
 }

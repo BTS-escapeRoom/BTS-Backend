@@ -39,7 +39,7 @@ public class Review extends BaseEntity {
 
     private Boolean isSuccess;
 
-    private Boolean isVisible;
+    private Boolean isDisplay;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_id")
@@ -50,7 +50,7 @@ public class Review extends BaseEntity {
     private Member member;
 
     @Builder
-    public Review(String content, Integer people, Integer time, Integer scareScore, Integer activityScore, Float difficulty, LocalDateTime visitDate, Integer hints, boolean isSuccess, Theme theme, Member member) {
+    public Review(String content, Integer people, Integer time, Integer scareScore, Integer activityScore, Float difficulty, LocalDateTime visitDate, Integer hints, boolean isSuccess, boolean isDisplay, Theme theme, Member member) {
         this.content = content;
         this.people = people;
         this.time = time;
@@ -60,6 +60,7 @@ public class Review extends BaseEntity {
         this.visitDate = visitDate;
         this.hints = hints;
         this.isSuccess = isSuccess;
+        this.isDisplay = isDisplay;
         this.theme = theme;
         this.member = member;
     }

@@ -32,6 +32,7 @@ public class ReviewResponse {
         activityScore = review.getActivityScore();
         difficulty = review.getDifficulty();
         visitDate = review.getVisitDate();
+        hints = review.getHints();
         isSuccess = review.getIsSuccess();
         createdAt = review.getCreatedAt();
         isMyReview = isMine;
