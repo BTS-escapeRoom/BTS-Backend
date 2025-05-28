@@ -82,4 +82,13 @@ public class BoardController {
         return ResponseEntity.ok(Response.ok(boardService.getLikeBoard(memberId)));
     }
 
+    @Operation(summary =  "내가 쓴 게시글 조회")
+    @GetMapping("/my")
+    public ResponseEntity<Response<List<ListBoardResponse>>> getMyBoards(
+            @AuthenticationPrincipal CustomOAuth2User oauth2User
+    ) {
+        Long memberId = oauth2User.getId();
+        return ResponseEntity.ok(Response.ok(boardService.getMyBoardList(memberId)));
+    }
+
 }

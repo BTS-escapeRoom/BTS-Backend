@@ -16,14 +16,12 @@ import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
-import com.bangtalboys.BTS_Backend.theme.dto.ThemeListResponse;
 import com.bangtalboys.BTS_Backend.theme.repository.ThemeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -142,7 +140,12 @@ public class BoardService {
     }
 
     public List<ListBoardResponse> getLikeBoard(Long memberId) {
-        List<Board> boards = boardRepository.findBoardByMemberId(memberId);
+        List<Board> boards = boardRepository.findLikedBoardByMemberId(memberId);
+        return boards.stream().map(ListBoardResponse::new).collect(Collectors.toList());
+    }
+
+    public List<ListBoardResponse> getMyBoardList(Long memberId) {
+        List<Board> boards = boardRepository.findAllByMemberId(memberId);
         return boards.stream().map(ListBoardResponse::new).collect(Collectors.toList());
     }
 

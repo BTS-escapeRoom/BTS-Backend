@@ -14,8 +14,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT b FROM  Board b " +
             "JOIN BoardLike bl ON b.id = bl.board.id " +
             "WHERE bl.member.id = :memberId")
-    List<Board> findBoardByMemberId(
+    List<Board> findLikedBoardByMemberId(
             @Param("memberId") Long memberId);
+
+    List<Board> findAllByMemberId(Long memberId);
+
 
     @Query("SELECT b FROM Board b " +
             "WHERE (:keyword IS NULL OR b.title LIKE %:keyword% OR b.description LIKE %:keyword%)" +
@@ -37,4 +40,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             @Param("keyword") String keyword,
             @Param("type")    String type
     );
+
+
 }
