@@ -17,34 +17,6 @@ public class NaverResponse implements OAuth2Response{
         this.attribute = (Map<String, Object>) attribute.get("response");
     }
 
-//    @Override
-//    public String getNickname() {
-//        if (attribute == null) {
-//            return "방탈이";
-//        }
-//
-//        String nickname = attribute.get("name").toString();
-//        if (Objects.equals(nickname, "null")) {
-//            return "방탈이";
-//        }
-//
-//        return nickname;
-//    }
-//
-//    @Override
-//    public String getProfileImg() {
-//        if (attribute == null) {
-//            return null;
-//        }
-//
-//        String profileImg = attribute.get("profile_image").toString();
-//        if (Objects.equals(profileImg, "null")) {
-//            return null;
-//        }
-//
-//        return profileImg;
-//    }
-
     @Override
     public SocialType getSocialType() {
         return SocialType.NAVER;

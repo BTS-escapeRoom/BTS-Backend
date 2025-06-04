@@ -8,7 +8,8 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E0", "예상치 못한 에러가 발생했습니다."),
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "E1", "올바르지 않은 입력값입니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "E2", "잘못된 HTTP 메서드를 호출했습니다."),
-    NOT_FOUND(HttpStatus.NOT_FOUND, "E3", "해당 데이터가 없습니다.");
+    NOT_FOUND(HttpStatus.NOT_FOUND, "E3", "해당 데이터가 없습니다."),
+    INVALID_ACCESS_TOKEN(HttpStatus.BAD_REQUEST, "E4", "access token이 없습니다.");
 
     private final String message;
 

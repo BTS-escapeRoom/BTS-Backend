@@ -53,12 +53,13 @@ public class ReissueController {
         }
 
         Long id = jwtUtil.getId(refresh);
-        String username = jwtUtil.getUsername(refresh);
+        String socialType = jwtUtil.getSocialType(refresh);
+        String socialId = jwtUtil.getSocialId(refresh);
         String role = jwtUtil.getRole(refresh);
 
         //make new JWT
-        String newAccess = jwtUtil.createJwt(Token.AccessToken.getType(), id, username, role, 600000L);
-        String newRefresh = jwtUtil.createJwt(Token.RefreshToken.getType(), id, username, role, 86400000L);
+        String newAccess = jwtUtil.createJwt(Token.AccessToken.getType(), id, socialType, socialId, role, 600000L);
+        String newRefresh = jwtUtil.createJwt(Token.RefreshToken.getType(), id, socialType, socialId, role, 86400000L);
 
         //response
         response.setHeader(Token.AccessToken.getType(), newAccess);

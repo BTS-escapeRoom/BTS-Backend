@@ -12,7 +12,7 @@ public class UserDto {
     private Long id;
     private String profileImg;
     private String nickname;
-    private SocialType socialType;
-    private String username;
+    private String socialType;
+    private String socialId;
     private Role role;
 }

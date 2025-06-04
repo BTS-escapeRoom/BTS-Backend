@@ -15,37 +15,7 @@ public class KakaoResponse implements OAuth2Response {
 
     public KakaoResponse(Map<String, Object> attribute) {
         this.socialId = attribute.get("id").toString();
-//        this.account = (Map<String, Object>) attribute.get("kakao_account");
-//        this.profile = (Map<String, Object>) account.get("profile");
     }
-
-//    @Override
-//    public String getNickname() {
-//        if (profile == null) {
-//            return "방탈이";
-//        }
-//
-//        String nickname = profile.get("nickname").toString();
-//        if (Objects.equals(nickname, "null")) {
-//            return "방탈이";
-//        }
-//
-//        return nickname;
-//    }
-//
-//    @Override
-//    public String getProfileImg() {
-//        if (profile == null) {
-//            return null;
-//        }
-//
-//        String profileImg = profile.get("profile_img_url").toString();
-//        if (Objects.equals(profileImg, "null")) {
-//            return null;
-//        }
-//
-//        return profileImg;
-//    }
 
     @Override
     public SocialType getSocialType() {

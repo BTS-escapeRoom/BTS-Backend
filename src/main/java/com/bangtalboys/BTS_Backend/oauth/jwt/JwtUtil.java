@@ -18,8 +18,12 @@ public class JwtUtil {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-    public String getUsername(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+    public String getSocialType(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("socialType", String.class);
+    }
+
+    public String getSocialId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("socialId", String.class);
     }
 
     public String getRole(String token) {
@@ -38,11 +42,12 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createJwt(String tokenType, Long id, String username, String role, Long expiredMs) {
+    public String createJwt(String tokenType, Long id, String socialType, String socialId, String role, Long expiredMs) {
         return Jwts.builder()
                 .claim("type", tokenType)
                 .claim("id", id)
-                .claim("username", username)
+                .claim("socialType", socialType)
+                .claim("socialId", socialId)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))

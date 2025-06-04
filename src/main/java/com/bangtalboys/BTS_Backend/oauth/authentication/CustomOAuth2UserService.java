@@ -26,7 +26,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
@@ -41,21 +40,23 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return null;
         }
 
-        String username = oAuth2Response.getSocialType() + oAuth2Response.getSocialId();
-        Member existData = memberRepository.findByUsername(username);
+        System.out.println("-----------------------------");
+        System.out.println(oAuth2Response.getSocialId());
+        System.out.println(oAuth2Response.getSocialType());
+        Member existData = memberRepository.findBySocialTypeAndSocialId(oAuth2Response.getSocialType(), oAuth2Response.getSocialId());
 
         if (existData == null) {
             Member member = Member.builder()
-                    .username(username)
                     .socialType(oAuth2Response.getSocialType())
+                    .socialId(oAuth2Response.getSocialId())
                     .role(Role.ROLE_USER)
                     .build();
 
             memberRepository.save(member);
             UserDto userDto = UserDto.builder()
                     .id(member.getId())
-                    .username(username)
-                    .socialType(oAuth2Response.getSocialType())
+                    .socialType(oAuth2Response.getSocialType().toString())
+                    .socialId(oAuth2Response.getSocialId())
                     .role(Role.ROLE_USER)
                     .build();
 
@@ -63,10 +64,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else {
             UserDto userDto = UserDto.builder()
                     .id(existData.getId())
-                    .username(existData.getUsername())
                     .profileImg(existData.getProfileImg())
                     .nickname(existData.getNickname())
-                    .socialType(existData.getSocialType())
+                    .socialType(existData.getSocialType().toString())
+                    .socialId(oAuth2Response.getSocialId())
                     .role(existData.getRole())
                     .build();
 

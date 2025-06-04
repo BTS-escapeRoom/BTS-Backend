@@ -31,7 +31,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         //OAuth2User
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
 
-        String username = customUserDetails.getUsername();
+        String socialType = customUserDetails.getSocialType();
+        String socialId = customUserDetails.getSocialId();
         Long id = customUserDetails.getId();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -40,7 +41,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String role = auth.getAuthority();
 
 //        String accessToken = jwtUtil.createJwt(Token.AccessToken.getType(), id, username, role, Token.AccessToken.getTtl());
-        String refreshToken = jwtUtil.createJwt(Token.RefreshToken.getType(), id, username, role, Token.RefreshToken.getTtl());
+        String refreshToken = jwtUtil.createJwt(Token.RefreshToken.getType(), id, socialType, socialId, role, Token.RefreshToken.getTtl());
 
 //        response.addCookie(createCookie(Token.AccessToken.getType(), accessToken));
         response.addCookie(createCookie(Token.RefreshToken.getType(), refreshToken));

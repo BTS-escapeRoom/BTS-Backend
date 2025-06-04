@@ -40,4 +40,17 @@ public class MemberController {
         Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(memberService.updateMember(memberId, memberRequest)));
     }
+
+    @Operation(summary = "회원 탈퇴")
+    @DeleteMapping("")
+    public ResponseEntity<?> DeleteMember(
+            @AuthenticationPrincipal CustomOAuth2User oauth2User,
+            @RequestHeader("naverAccessToken") String naverAccessToken
+    ) {
+
+        Long memberId = oauth2User.getId();
+        memberService.deleteMember(memberId, naverAccessToken);
+
+        return ResponseEntity.ok(null);
+    }
 }

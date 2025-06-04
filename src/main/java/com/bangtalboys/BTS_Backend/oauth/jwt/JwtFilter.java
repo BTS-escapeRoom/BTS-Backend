@@ -3,6 +3,7 @@ package com.bangtalboys.BTS_Backend.oauth.jwt;
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
 import com.bangtalboys.BTS_Backend.oauth.dto.UserDto;
 import com.bangtalboys.BTS_Backend.utils.enums.Role;
+import com.bangtalboys.BTS_Backend.utils.enums.SocialType;
 import com.bangtalboys.BTS_Backend.utils.enums.Token;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -121,13 +122,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
         //토큰에서 id, username과 role 획득
         Long id = jwtUtil.getId(token);
-        String username = jwtUtil.getUsername(token);
+        String socialType = jwtUtil.getSocialType(token);
+        String socialId = jwtUtil.getSocialId(token);
         String role = jwtUtil.getRole(token);
 
         //userDTO를 생성하여 값 set
         UserDto userDto = UserDto.builder()
                 .id(id)
-                .username(username)
+                .socialType(socialType)
+                .socialId(socialId)
                 .role(Role.valueOf(role))
                 .build();
 

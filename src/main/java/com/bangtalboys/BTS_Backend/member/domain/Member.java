@@ -25,19 +25,19 @@ public class Member {
     @Enumerated(value = EnumType.STRING)
     private SocialType socialType;
 
-    private String username;
+    private String socialId;
 
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
     @Builder
-    public Member(Long id, String profileImg, String nickname, String description, SocialType socialType, String username, Role role) {
+    public Member(Long id, String profileImg, String nickname, String description, SocialType socialType, String socialId, Role role) {
         this.id = id;
         this.profileImg = profileImg;
         this.nickname = nickname;
         this.description = description;
         this.socialType = socialType;
-        this.username = username;
+        this.socialId = socialId;
         this.role = role;
     }
 }

@@ -60,6 +60,11 @@ decorator:
       enable-logging: true
 springdoc:
   show-login-endpoint: true
+kakao:
+  admin-key: e9852da424682bb32f23283f28aa2e7c
+naver:
+  client-id: 87XRcRkTrKm_jRmKqsVb
+  client-secret: XRsjyrij5R
 apple:
   key-id:
   team-id:
