@@ -15,4 +15,5 @@ public class UserDto {
     private String socialType;
     private String socialId;
     private Role role;
+    private Boolean isNewUser;
 }

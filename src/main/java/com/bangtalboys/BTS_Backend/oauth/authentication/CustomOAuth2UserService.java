@@ -28,7 +28,54 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
+        OAuth2Response oAuth2Response = getOAuth2Response(userRequest, oAuth2User);
+
+        try {
+            Member existData = memberRepository.findBySocialTypeAndSocialId(
+                    oAuth2Response.getSocialType(), oAuth2Response.getSocialId()
+            );
+
+            if (existData == null) {
+                Member newMember = Member.builder()
+                        .socialType(oAuth2Response.getSocialType())
+                        .socialId(oAuth2Response.getSocialId())
+                        .role(Role.ROLE_USER)
+                        .build();
+
+                Member saved = memberRepository.save(newMember);
+
+                UserDto userDto = UserDto.builder()
+                        .id(saved.getId())
+                        .socialType(saved.getSocialType().toString())
+                        .socialId(saved.getSocialId())
+                        .role(saved.getRole())
+                        .isNewUser(true)
+                        .build();
+
+                return new CustomOAuth2User(userDto);
+
+            } else {
+                UserDto userDto = UserDto.builder()
+                        .id(existData.getId())
+                        .profileImg(existData.getProfileImg())
+                        .nickname(existData.getNickname())
+                        .socialType(existData.getSocialType().toString())
+                        .socialId(existData.getSocialId())
+                        .role(existData.getRole())
+                        .isNewUser(false)
+                        .build();
+
+                return new CustomOAuth2User(userDto);
+            }
+
+        } catch (Exception e) {
+            throw new OAuth2AuthenticationException("서버 내부 오류로 인해 로그인에 실패했습니다.");
+        }
+    }
+
+    private static OAuth2Response getOAuth2Response(OAuth2UserRequest userRequest, OAuth2User oAuth2User) {
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
+
         OAuth2Response oAuth2Response = null;
         if (registrationId.equals("kakao")) {
             oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
@@ -37,41 +84,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else if (registrationId.equals("apple")) {
             oAuth2Response = new AppleResponse(userRequest.getAdditionalParameters());
         } else {
-            return null;
+            throw new OAuth2AuthenticationException("Unsupported OAuth provider: " + registrationId);
         }
 
-        System.out.println("-----------------------------");
-        System.out.println(oAuth2Response.getSocialId());
-        System.out.println(oAuth2Response.getSocialType());
-        Member existData = memberRepository.findBySocialTypeAndSocialId(oAuth2Response.getSocialType(), oAuth2Response.getSocialId());
-
-        if (existData == null) {
-            Member member = Member.builder()
-                    .socialType(oAuth2Response.getSocialType())
-                    .socialId(oAuth2Response.getSocialId())
-                    .role(Role.ROLE_USER)
-                    .build();
-
-            memberRepository.save(member);
-            UserDto userDto = UserDto.builder()
-                    .id(member.getId())
-                    .socialType(oAuth2Response.getSocialType().toString())
-                    .socialId(oAuth2Response.getSocialId())
-                    .role(Role.ROLE_USER)
-                    .build();
-
-            return new CustomOAuth2User(userDto);
-        } else {
-            UserDto userDto = UserDto.builder()
-                    .id(existData.getId())
-                    .profileImg(existData.getProfileImg())
-                    .nickname(existData.getNickname())
-                    .socialType(existData.getSocialType().toString())
-                    .socialId(oAuth2Response.getSocialId())
-                    .role(existData.getRole())
-                    .build();
-
-            return new CustomOAuth2User(userDto);
-        }
+        return oAuth2Response;
     }
 }

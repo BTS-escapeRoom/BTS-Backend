@@ -28,24 +28,42 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-        //OAuth2User
-        CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
+        try {
+            //OAuth2User
+            CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
 
-        String socialType = customUserDetails.getSocialType();
-        String socialId = customUserDetails.getSocialId();
-        Long id = customUserDetails.getId();
+            String nickname = customUserDetails.getNickname();
+            String socialType = customUserDetails.getSocialType();
+            String socialId = customUserDetails.getSocialId();
+            Long id = customUserDetails.getId();
+            boolean isNewUser = customUserDetails.getIsNewUser();
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority();
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+            GrantedAuthority auth = iterator.next();
+            String role = auth.getAuthority();
 
-//        String accessToken = jwtUtil.createJwt(Token.AccessToken.getType(), id, username, role, Token.AccessToken.getTtl());
-        String refreshToken = jwtUtil.createJwt(Token.RefreshToken.getType(), id, socialType, socialId, role, Token.RefreshToken.getTtl());
+            String refreshToken = jwtUtil.createJwt(Token.RefreshToken.getType(), id, socialType, socialId, role, Token.RefreshToken.getTtl());
 
 //        response.addCookie(createCookie(Token.AccessToken.getType(), accessToken));
-        response.addCookie(createCookie(Token.RefreshToken.getType(), refreshToken));
-        response.sendRedirect("http://localhost:3000?result=success");
+            response.addCookie(createCookie(Token.RefreshToken.getType(), refreshToken));
+            String redirectUrl = "http://localhost:3000/oauth/login";
+
+            if (isNewUser) {
+                redirectUrl += "?result=signup";
+            } else {
+                if (nickname == null || nickname.trim().isEmpty()) {
+                    redirectUrl += "?result=emptyNickname";
+                } else {
+                    redirectUrl += "?result=success";
+                }
+            }
+
+            response.sendRedirect(redirectUrl);
+
+        } catch (Exception e) {
+            response.sendRedirect("https://bangtal-boys.com/oauth/login?result=fail");
+        }
     }
 
     private Cookie createCookie(String key, String value) {

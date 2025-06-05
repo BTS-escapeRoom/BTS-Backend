@@ -1,5 +1,6 @@
 package com.bangtalboys.BTS_Backend.config;
 
+import com.bangtalboys.BTS_Backend.oauth.authentication.CustomFailureHandler;
 import com.bangtalboys.BTS_Backend.oauth.authentication.CustomOAuth2UserService;
 import com.bangtalboys.BTS_Backend.oauth.authentication.CustomSuccessHandler;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtFilter;
@@ -20,11 +21,13 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
+    private final CustomFailureHandler customFailureHandler;
     private final JwtUtil jwtUtil;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler, JwtUtil jwtUtil) {
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler, CustomFailureHandler customFailureHandler, JwtUtil jwtUtil) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.customSuccessHandler = customSuccessHandler;
+        this.customFailureHandler = customFailureHandler;
         this.jwtUtil = jwtUtil;
     }
 
@@ -72,6 +75,7 @@ public class SecurityConfig {
                 .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
                         .userService(customOAuth2UserService))
                 .successHandler(customSuccessHandler)
+                .failureHandler(customFailureHandler)
         );
 
         // 경로별 인가 설정
