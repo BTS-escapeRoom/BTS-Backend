@@ -2,11 +2,11 @@ package com.bangtalboys.BTS_Backend.board.controller;
 
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.UpdateBoardRequest;
+import com.bangtalboys.BTS_Backend.board.dto.response.BoardListPageResponse;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardResponse;
-import com.bangtalboys.BTS_Backend.board.dto.response.ListBoardResponse;
+import com.bangtalboys.BTS_Backend.board.dto.response.BoardListResponse;
 import com.bangtalboys.BTS_Backend.board.service.BoardService;
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
-import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,8 +37,8 @@ public class BoardController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Response<List<ListBoardResponse>>> getAllBoards(String keyword, String type, String sortType) {
-        return ResponseEntity.ok(Response.ok(boardService.getAllBoards(keyword, type, sortType)));
+    public ResponseEntity<Response<BoardListPageResponse>> getAllBoards(@RequestParam(required = false) String keyword, @RequestParam(required = false) String type,@RequestParam(required = false) String sortType, @RequestParam(required = false, defaultValue = "0") Integer page) {
+        return ResponseEntity.ok(Response.ok(boardService.getAllBoards(keyword, type, sortType, page)));
     }
 
     @PatchMapping("/{boardId}")
@@ -75,7 +75,7 @@ public class BoardController {
 
     @Operation(summary = "내가 찜한 게시글 조회")
     @GetMapping("/like")
-    public ResponseEntity<Response<List<ListBoardResponse>>> getMemberLikeBoards(
+    public ResponseEntity<Response<List<BoardListResponse>>> getMemberLikeBoards(
             @AuthenticationPrincipal CustomOAuth2User oauth2User
     ) {
         Long memberId = oauth2User.getId();
@@ -84,7 +84,7 @@ public class BoardController {
 
     @Operation(summary =  "내가 쓴 게시글 조회")
     @GetMapping("/my")
-    public ResponseEntity<Response<List<ListBoardResponse>>> getMyBoards(
+    public ResponseEntity<Response<List<BoardListResponse>>> getMyBoards(
             @AuthenticationPrincipal CustomOAuth2User oauth2User
     ) {
         Long memberId = oauth2User.getId();

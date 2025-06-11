@@ -6,8 +6,9 @@ import com.bangtalboys.BTS_Backend.board.domain.BoardLike;
 import com.bangtalboys.BTS_Backend.board.domain.BoardReport;
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.UpdateBoardRequest;
+import com.bangtalboys.BTS_Backend.board.dto.response.BoardListPageResponse;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardResponse;
-import com.bangtalboys.BTS_Backend.board.dto.response.ListBoardResponse;
+import com.bangtalboys.BTS_Backend.board.dto.response.BoardListResponse;
 import com.bangtalboys.BTS_Backend.board.repository.BoardLikeRepository;
 import com.bangtalboys.BTS_Backend.board.repository.BoardReportRepository;
 import com.bangtalboys.BTS_Backend.board.repository.BoardRepository;
@@ -19,6 +20,9 @@ import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.theme.repository.ThemeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -58,33 +62,46 @@ public class BoardService {
 
         return new BoardResponse(board.get(), "in-active");
     }
-
-    public List<ListBoardResponse> getAllBoards(
+    public BoardListPageResponse getAllBoards(
             String keyword,
             String type,
-            String sortType
+            String sortType,
+            Integer page   // 0부터 시작
     ) {
-        List<Board> boardList;
-
-        // popular 만 별도 메서드, 나머지는 Sort로 호출
+        // 1) Sort 결정
+        Sort sort;
         if ("popular".equals(sortType)) {
-            boardList = boardRepository
-                    .searchBoardByKeywordOrderByLikes(keyword, type);
-        } else {
-            Sort sort;
-            if ("viewed".equals(sortType)) {
-                sort = Sort.by(Sort.Direction.DESC, "hit");
-            } else { // latest 또는 기본
-                sort = Sort.by(Sort.Direction.DESC, "created_at");
-            }
-            boardList = boardRepository
-                    .searchBoardByKeyword(keyword, type, sort);
+            sort = Sort.by(Sort.Direction.DESC, "likes.size"); // or ignore, 쿼리문 ORDER BY 로 처리
+        } else if ("viewed".equals(sortType)) {
+            sort = Sort.by(Sort.Direction.DESC, "hit");
+        } else { // latest 또는 기본
+            sort = Sort.by(Sort.Direction.DESC, "created_at");
         }
 
-        // DTO 변환
-        return boardList.stream()
-                .map(ListBoardResponse::new)
+        // 2) Pageable 생성
+        Pageable pageable = PageRequest.of(page, 20, sort);
+
+        // 3) 페이지 조회
+        Page<Board> boardPage;
+        if ("popular".equals(sortType)) {
+            boardPage = boardRepository.searchBoardByKeywordOrderByLikes(keyword, type, pageable);
+        } else {
+            boardPage = boardRepository.searchBoardByKeyword(keyword, type, pageable);
+        }
+
+        // 4) DTO 변환
+        List<BoardListResponse> dtos = boardPage.getContent().stream()
+                .map(BoardListResponse::new)
                 .collect(Collectors.toList());
+
+        // 5) 전체 페이지 수 & 다음 페이지 번호 계산
+        long totalPage = boardPage.getTotalPages();
+        long nextPage  = boardPage.hasNext()
+                ? page + 1
+                : -1;   // 다음 페이지 없으면 -1, 필요에 따라 0으로 할 수도 있음
+
+        // 6) 응답 생성
+        return new BoardListPageResponse(dtos, nextPage, totalPage);
     }
 
     public BoardResponse updateBoard(Long boardId, Long memberId, UpdateBoardRequest updateBoardRequest) {
@@ -139,14 +156,14 @@ public class BoardService {
         return "게시글 신고 완료";
     }
 
-    public List<ListBoardResponse> getLikeBoard(Long memberId) {
+    public List<BoardListResponse> getLikeBoard(Long memberId) {
         List<Board> boards = boardRepository.findLikedBoardByMemberId(memberId);
-        return boards.stream().map(ListBoardResponse::new).collect(Collectors.toList());
+        return boards.stream().map(BoardListResponse::new).collect(Collectors.toList());
     }
 
-    public List<ListBoardResponse> getMyBoardList(Long memberId) {
+    public List<BoardListResponse> getMyBoardList(Long memberId) {
         List<Board> boards = boardRepository.findAllByMemberId(memberId);
-        return boards.stream().map(ListBoardResponse::new).collect(Collectors.toList());
+        return boards.stream().map(BoardListResponse::new).collect(Collectors.toList());
     }
 
 }

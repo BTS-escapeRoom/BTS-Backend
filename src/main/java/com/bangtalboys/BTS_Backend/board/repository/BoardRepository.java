@@ -1,6 +1,8 @@
 package com.bangtalboys.BTS_Backend.board.repository;
 
 import com.bangtalboys.BTS_Backend.board.domain.Board;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,25 +22,25 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findAllByMemberId(Long memberId);
 
 
-    @Query("SELECT b FROM Board b " +
-            "WHERE (:keyword IS NULL OR b.title LIKE %:keyword% OR b.description LIKE %:keyword%)" +
-            "AND (:type IS NULL OR b.type = :type)")
-    List<Board> searchBoardByKeyword(@Param("keyword") String keyword, @Param("type") String type, Sort sort);
-
-    @Query("""
-        SELECT b
-          FROM Board b
-     LEFT JOIN b.likes bl
-         WHERE (:keyword IS NULL 
-                OR b.title       LIKE CONCAT('%', :keyword, '%') 
-                OR b.description LIKE CONCAT('%', :keyword, '%'))
-           AND (:type    IS NULL OR b.type = :type)
-      GROUP BY b
-      ORDER BY COUNT(bl) DESC
-        """)
-    List<Board> searchBoardByKeywordOrderByLikes(
+    // 인기순
+    @Query("SELECT b FROM Board b "
+            + "WHERE (:keyword IS NULL OR b.title LIKE %:keyword%) "
+            + "  AND (:type IS NULL OR b.type = :type) "
+            + "ORDER BY size(b.likes) DESC")
+    Page<Board> searchBoardByKeywordOrderByLikes(
             @Param("keyword") String keyword,
-            @Param("type")    String type
+            @Param("type")    String type,
+            Pageable pageable
+    );
+
+    // 날짜순·조회순 등 Sort 처리용
+    @Query("SELECT b FROM Board b "
+            + "WHERE (:keyword IS NULL OR b.title LIKE %:keyword%) "
+            + "  AND (:type IS NULL OR b.type = :type)")
+    Page<Board> searchBoardByKeyword(
+            @Param("keyword") String keyword,
+            @Param("type")    String type,
+            Pageable pageable
     );
 
 
