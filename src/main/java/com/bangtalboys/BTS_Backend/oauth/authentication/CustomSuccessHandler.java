@@ -9,10 +9,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -20,16 +24,36 @@ import java.util.Iterator;
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
+    private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo;
 
-    public CustomSuccessHandler(JwtUtil jwtUtil) {
+    private static final String DEFAULT_REDIRECT_URL = "/";
+
+    // 생성자 주입
+    public CustomSuccessHandler(JwtUtil jwtUtil,
+                                AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo) {
         this.jwtUtil = jwtUtil;
+        this.authRequestRepo = authRequestRepo;
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        // returnUrl 검증
+        OAuth2AuthorizationRequest authRequest = authRequestRepo.removeAuthorizationRequest(request, response);
+
+        String returnUrl = DEFAULT_REDIRECT_URL;
+
+        if (authRequest != null) {
+            Object returnUrlObj = authRequest.getAdditionalParameters().get("return-url");
+
+            if (returnUrlObj instanceof String) {
+                String decodedUrl = (String) returnUrlObj;
+                if (isSafeReturnUrl(decodedUrl)) {
+                    returnUrl = decodedUrl;
+                }
+            }
+        }
 
         try {
-            //OAuth2User
             CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
 
             String nickname = customUserDetails.getNickname();
@@ -45,24 +69,27 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
             String refreshToken = jwtUtil.createJwt(Token.RefreshToken.getType(), id, socialType, socialId, role, Token.RefreshToken.getTtl());
 
-//        response.addCookie(createCookie(Token.AccessToken.getType(), accessToken));
             response.addCookie(createCookie(Token.RefreshToken.getType(), refreshToken));
-            String redirectUrl = "http://localhost:3000/oauth/login";
+
+            // returnUrl이 이미 쿼리 파라미터를 포함하는지 확인
+            String delimiter = returnUrl.contains("?") ? "&" : "?";
+            String resultParam;
 
             if (isNewUser) {
-                redirectUrl += "?result=signup";
+                resultParam = "result=signup";
+            } else if (nickname == null || nickname.trim().isEmpty()) {
+                resultParam = "result=emptyNickname";
             } else {
-                if (nickname == null || nickname.trim().isEmpty()) {
-                    redirectUrl += "?result=emptyNickname";
-                } else {
-                    redirectUrl += "?result=success";
-                }
+                resultParam = "result=success";
             }
+
+            String redirectUrl = returnUrl + delimiter + resultParam;
 
             response.sendRedirect(redirectUrl);
 
         } catch (Exception e) {
-            response.sendRedirect("https://bangtal-boys.com/oauth/login?result=fail");
+            // 인증 중 예외가 발생했을 경우 fallback URL로 리다이렉트
+            response.sendRedirect("http://localhostL3000/oauth/login?result=fail");
         }
     }
 
@@ -77,4 +104,17 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         return cookie;
     }
 
+    private boolean isSafeReturnUrl(String url) {
+        try {
+            URI uri = new URI(url);
+            String host = uri.getHost();
+
+            // 로컬 개발 환경 허용 (선택)
+            if (host == null) return false;
+
+            return host.endsWith("bangtal-boys.com") || host.equals("localhost");
+        } catch (URISyntaxException e) {
+            return false;
+        }
+    }
 }

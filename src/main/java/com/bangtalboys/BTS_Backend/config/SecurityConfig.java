@@ -1,14 +1,15 @@
 package com.bangtalboys.BTS_Backend.config;
 
-import com.bangtalboys.BTS_Backend.oauth.authentication.CustomFailureHandler;
-import com.bangtalboys.BTS_Backend.oauth.authentication.CustomOAuth2UserService;
-import com.bangtalboys.BTS_Backend.oauth.authentication.CustomSuccessHandler;
+import com.bangtalboys.BTS_Backend.oauth.authentication.*;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtFilter;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -20,19 +21,29 @@ import java.util.List;
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final CustomSuccessHandler customSuccessHandler;
     private final CustomFailureHandler customFailureHandler;
     private final JwtUtil jwtUtil;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler, CustomFailureHandler customFailureHandler, JwtUtil jwtUtil) {
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomFailureHandler customFailureHandler, JwtUtil jwtUtil) {
         this.customOAuth2UserService = customOAuth2UserService;
-        this.customSuccessHandler = customSuccessHandler;
         this.customFailureHandler = customFailureHandler;
         this.jwtUtil = jwtUtil;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
+    }
+
+    @Bean
+    public CustomSuccessHandler customSuccessHandler(AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo) {
+        return new CustomSuccessHandler(jwtUtil, authRequestRepo);
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository,
+                                           AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo,
+                                           CustomSuccessHandler customSuccessHandler) throws Exception {
 
         // CORS 설정
         http
@@ -72,14 +83,22 @@ public class SecurityConfig {
 
         // OAuth2 로그인 설정
         http.oauth2Login((oauth2) -> oauth2
-                .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                        .userService(customOAuth2UserService))
+                .authorizationEndpoint(authorizationEndpointConfig ->
+                        authorizationEndpointConfig
+                                .authorizationRequestResolver(
+                                        new CustomAuthorizationRequestResolver(clientRegistrationRepository)
+                                )
+                                .authorizationRequestRepository(authRequestRepo)
+                )
+                .userInfoEndpoint(userInfoEndpointConfig ->
+                        userInfoEndpointConfig.userService(customOAuth2UserService))
                 .successHandler(customSuccessHandler)
                 .failureHandler(customFailureHandler)
         );
 
         // 경로별 인가 설정
         http.authorizeHttpRequests((auth) -> auth
+                .requestMatchers("/check-signup").permitAll()
                 .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/reissue").permitAll()
                 .anyRequest().authenticated()

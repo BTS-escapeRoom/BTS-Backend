@@ -13,10 +13,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,11 +28,25 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2Response oAuth2Response = getOAuth2Response(userRequest, oAuth2User);
 
         try {
-            Member existData = memberRepository.findBySocialTypeAndSocialId(
+            Optional<Member> memberOpt = memberRepository.findBySocialTypeAndSocialId(
                     oAuth2Response.getSocialType(), oAuth2Response.getSocialId()
             );
 
-            if (existData == null) {
+            if (memberOpt.isPresent()) {
+                Member member = memberOpt.get();
+                UserDto userDto = UserDto.builder()
+                        .id(member.getId())
+                        .profileImg(member.getProfileImg())
+                        .nickname(member.getNickname())
+                        .socialType(member.getSocialType().toString())
+                        .socialId(member.getSocialId())
+                        .role(member.getRole())
+                        .isNewUser(false)
+                        .build();
+
+                return new CustomOAuth2User(userDto);
+
+            } else {
                 Member newMember = Member.builder()
                         .socialType(oAuth2Response.getSocialType())
                         .socialId(oAuth2Response.getSocialId())
@@ -50,19 +61,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         .socialId(saved.getSocialId())
                         .role(saved.getRole())
                         .isNewUser(true)
-                        .build();
-
-                return new CustomOAuth2User(userDto);
-
-            } else {
-                UserDto userDto = UserDto.builder()
-                        .id(existData.getId())
-                        .profileImg(existData.getProfileImg())
-                        .nickname(existData.getNickname())
-                        .socialType(existData.getSocialType().toString())
-                        .socialId(existData.getSocialId())
-                        .role(existData.getRole())
-                        .isNewUser(false)
                         .build();
 
                 return new CustomOAuth2User(userDto);

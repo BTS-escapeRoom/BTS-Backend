@@ -2,6 +2,7 @@ package com.bangtalboys.BTS_Backend.member.service;
 
 import com.bangtalboys.BTS_Backend.member.client.KakaoUnlinkClient;
 import com.bangtalboys.BTS_Backend.member.client.NaverUnlinkClient;
+import com.bangtalboys.BTS_Backend.utils.enums.SocialType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,6 @@ public class UnlinkService {
 
     @Value("${kakao.admin-key}") // application.yml 등에 설정
     private String adminKey;
-
 
     @Value("${naver.client-id}")
     private String clientId;
@@ -33,7 +33,7 @@ public class UnlinkService {
                 clientId,
                 clientSecret,
                 accessToken,
-                "NAVER"
+                SocialType.NAVER.toString()
         );
     }
 }
