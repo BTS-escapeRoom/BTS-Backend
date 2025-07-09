@@ -1,5 +1,6 @@
-package com.bangtalboys.BTS_Backend.board.domain;
+package com.bantalboys.BTS_Backend.board.domain;
 
+import com.bangtalboys.BTS_Backend.board.domain.BoardLike;
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
@@ -41,7 +42,7 @@ public class Board {
 
     private String description;
 
-    private Long hit = 0L;
+    private Long hit;
 
     private Date recruit_deadline;
 
@@ -53,7 +54,7 @@ public class Board {
 
     private String contact_method;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     private List<BoardLike> likes = new ArrayList<>();
 
     @CreationTimestamp

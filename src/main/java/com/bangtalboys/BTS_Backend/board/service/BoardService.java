@@ -51,6 +51,9 @@ public class BoardService {
     @Transactional
     public BoardResponse getOneBoard(Long boardId, Long memberId) {
         Optional<Board> board = boardRepository.findById(boardId);
+        if (!board.isPresent()) {
+            throw new NotFoundException();
+        }
         board.get().setHit(board.get().getHit() + 1);
         if (memberId != null) {
             Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
