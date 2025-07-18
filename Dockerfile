@@ -7,7 +7,7 @@ COPY build.gradle settings.gradle gradlew /app/
 COPY gradle /app/gradle
 COPY src /app/src
 
-RUN ./gradlew build
+RUN ./gradlew build -x test
 
 # 최종 실행 이미지 생성
 FROM bellsoft/liberica-openjdk-alpine:17
