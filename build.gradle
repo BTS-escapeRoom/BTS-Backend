@@ -85,21 +85,21 @@ dependencies {
 }
 
 
-def querydslDir = "$buildDir/generated/querydsl" // 임시 디렉토리에 생성
+//def querydslDir = "$buildDir/generated/querydsl" // 임시 디렉토리에 생성
 
 sourceSets {
 	main {
 		java {
-			srcDir querydslDir
+//			srcDir querydslDir
 		}
 	}
 }
 
-tasks.withType(JavaCompile).configureEach {
-	options.compilerArgs += [
-			"-Aquerydsl.generatedSourcesDir=${querydslDir}"
-	]
-}
+//tasks.withType(JavaCompile).configureEach {
+//	options.compilerArgs += [
+//			"-Aquerydsl.generatedSourcesDir=${querydslDir}"
+//	]
+//}
 
 
 tasks.named('test') {
