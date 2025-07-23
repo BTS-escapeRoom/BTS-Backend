@@ -52,10 +52,10 @@ public class SecurityConfig {
                     CorsConfiguration configuration = new CorsConfiguration();
 
                     // 허용할 출처
-                    configuration.setAllowedOrigins(List.of(
+                    configuration.setAllowedOriginPatterns(List.of(
                             "http://localhost:3000", // 개발 환경
                             "http://localhost:8080",
-                            "https://apis.bangtal-boys.com" // 배포 환경
+                            "https://bangtal-boys.com" // 배포 환경
                     ));
                     // 허용할 HTTP 메서드
                     configuration.setAllowedMethods(List.of("OPTIONS", "GET", "POST", "PUT", "DELETE"));
