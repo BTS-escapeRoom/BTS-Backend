@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -69,7 +71,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
             String refreshToken = jwtUtil.createJwt(Token.RefreshToken.getType(), id, socialType, socialId, role, Token.RefreshToken.getTtl());
 
-            response.addCookie(createCookie(Token.RefreshToken.getType(), refreshToken));
+//            response.addCookie(createCookie(Token.RefreshToken.getType(), refreshToken));
 
             // returnUrl이 이미 쿼리 파라미터를 포함하는지 확인
             String delimiter = returnUrl.contains("?") ? "&" : "?";
@@ -83,7 +85,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 resultParam = "result=success";
             }
 
-            String redirectUrl = returnUrl + delimiter + resultParam;
+            String redirectUrl = returnUrl + delimiter + resultParam +
+                    "&refresh-token=" + URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
 
             response.sendRedirect(redirectUrl);
 
@@ -93,16 +96,16 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
     }
 
-    private Cookie createCookie(String key, String value) {
-
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-
-        return cookie;
-    }
+//    private Cookie createCookie(String key, String value) {
+//
+//        Cookie cookie = new Cookie(key, value);
+//        cookie.setMaxAge(24*60*60);
+//        cookie.setSecure(true);
+//        cookie.setPath("/");
+//        cookie.setHttpOnly(true);
+//
+//        return cookie;
+//    }
 
     private boolean isSafeReturnUrl(String url) {
         try {

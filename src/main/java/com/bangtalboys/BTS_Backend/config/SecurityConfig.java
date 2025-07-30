@@ -48,14 +48,14 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of(
-                "http://localhost:3000",
-                "http://localhost:8080",
-                "https://bangtal-boys.com"  // 와일드카드 패턴 가능
-        ));
+
+        // 모든 Origin 허용
+        configuration.setAllowedOriginPatterns(List.of("*")); // or use setAllowedOrigins(List.of("*"))
+
         configuration.setAllowedMethods(List.of("OPTIONS", "GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(false); // 쿠키 등 인증 정보는 안 보냄
         configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("Set-Cookie")); // 필요 시
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
