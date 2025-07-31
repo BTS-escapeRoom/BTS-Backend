@@ -49,12 +49,16 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 모든 Origin 허용
-        configuration.setAllowedOriginPatterns(List.of("*")); // or use setAllowedOrigins(List.of("*"))
-
+        configuration.setAllowedOriginPatterns(List.of(
+                "http://localhost:3000",
+                "http://localhost:8080",
+                "https://bangtal-boys.com"
+        ));
         configuration.setAllowedMethods(List.of("OPTIONS", "GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowCredentials(false); // 쿠키 등 인증 정보는 안 보냄
+        configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("*"));
+
+
         configuration.setExposedHeaders(List.of("Set-Cookie")); // 필요 시
         configuration.setMaxAge(3600L);
 

@@ -71,7 +71,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
             String refreshToken = jwtUtil.createJwt(Token.RefreshToken.getType(), id, socialType, socialId, role, Token.RefreshToken.getTtl());
 
-//            response.addCookie(createCookie(Token.RefreshToken.getType(), refreshToken));
+            response.addCookie(createCookie(Token.RefreshToken.getType(), refreshToken));
 
             // returnUrl이 이미 쿼리 파라미터를 포함하는지 확인
             String delimiter = returnUrl.contains("?") ? "&" : "?";
@@ -85,9 +85,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 resultParam = "result=success";
             }
 
-            String redirectUrl = returnUrl + delimiter + resultParam +
-                    "&refresh-token=" + URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
-
+            String redirectUrl = returnUrl + delimiter + resultParam;
             response.sendRedirect(redirectUrl);
 
         } catch (Exception e) {
@@ -96,16 +94,16 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
     }
 
-//    private Cookie createCookie(String key, String value) {
-//
-//        Cookie cookie = new Cookie(key, value);
-//        cookie.setMaxAge(24*60*60);
-//        cookie.setSecure(true);
-//        cookie.setPath("/");
-//        cookie.setHttpOnly(true);
-//
-//        return cookie;
-//    }
+    private Cookie createCookie(String key, String value) {
+
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24*60*60);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+
+        return cookie;
+    }
 
     private boolean isSafeReturnUrl(String url) {
         try {
