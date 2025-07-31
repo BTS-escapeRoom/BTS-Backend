@@ -45,27 +45,27 @@ public class SecurityConfig {
         return new CustomSuccessHandler(jwtUtil, authRequestRepo);
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOriginPatterns(List.of(
-                "http://localhost:3000",
-                "http://localhost:8080",
-                "https://bangtal-boys.com"
-        ));
-        configuration.setAllowedMethods(List.of("OPTIONS", "GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(List.of("*"));
-
-
-        configuration.setExposedHeaders(List.of("Set-Cookie")); // 필요 시
-        configuration.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//
+//        configuration.setAllowedOriginPatterns(List.of(
+//                "http://localhost:3000",
+//                "http://localhost:8080",
+//                "https://bangtal-boys.com"
+//        ));
+//        configuration.setAllowedMethods(List.of("OPTIONS", "GET", "POST", "PUT", "DELETE"));
+//        configuration.setAllowCredentials(true);
+//        configuration.setAllowedHeaders(List.of("*"));
+//
+//
+//        configuration.setExposedHeaders(List.of("Set-Cookie")); // 필요 시
+//        configuration.setMaxAge(3600L);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository,
@@ -73,7 +73,7 @@ public class SecurityConfig {
                                            CustomSuccessHandler customSuccessHandler) throws Exception {
 
         // CORS 설정
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+//        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
         // CSRF 비활성화
         http.csrf((auth) -> auth.disable());
 
