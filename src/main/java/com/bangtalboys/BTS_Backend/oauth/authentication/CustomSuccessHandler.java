@@ -90,7 +90,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         } catch (Exception e) {
             // 인증 중 예외가 발생했을 경우 fallback URL로 리다이렉트
-            response.sendRedirect("http://localhostL3000/oauth/login?result=fail");
+            response.sendRedirect("http://localhost:3000/oauth/login?result=fail");
         }
     }
 

@@ -3,6 +3,7 @@ package com.bangtalboys.BTS_Backend.config;
 import com.bangtalboys.BTS_Backend.oauth.authentication.*;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtFilter;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -74,6 +75,7 @@ public class SecurityConfig {
 
         // CORS 설정
 //        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
         // CSRF 비활성화
         http.csrf((auth) -> auth.disable());
 
@@ -99,6 +101,13 @@ public class SecurityConfig {
                         userInfoEndpointConfig.userService(customOAuth2UserService))
                 .successHandler(customSuccessHandler)
                 .failureHandler(customFailureHandler)
+        );
+
+        // 인증 실패시 302 -> 401 Unauthorized 응답 처리 추가
+        http.exceptionHandling(exceptionHandling -> exceptionHandling
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                })
         );
 
         // 경로별 인가 설정
