@@ -62,9 +62,11 @@ public class ReissueController {
         String newRefresh = jwtUtil.createJwt(Token.RefreshToken.getType(), id, socialType, socialId, role, 86400000L);
 
         //response
-        response.setHeader(Token.AccessToken.getType(), newAccess);
-        Cookie myCookie = createCookie(Token.RefreshToken.getType(), newRefresh);
-        addSameSiteCookie(response, myCookie);
+//        response.setHeader(Token.AccessToken.getType(), newAccess);
+        Cookie refreshCookie = createCookie(Token.RefreshToken.getType(), newRefresh);
+        addSameSiteCookie(response, refreshCookie);
+        Cookie accessCookie = createCookie(Token.AccessToken.getType(), newAccess);
+        addSameSiteCookie(response, accessCookie);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
