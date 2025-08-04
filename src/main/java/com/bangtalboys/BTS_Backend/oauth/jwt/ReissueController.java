@@ -63,19 +63,27 @@ public class ReissueController {
 
         //response
         response.setHeader(Token.AccessToken.getType(), newAccess);
-        response.addCookie(createCookie("refresh", newRefresh));
+        Cookie myCookie = createCookie(Token.RefreshToken.getType(), newRefresh);
+        addSameSiteCookie(response, myCookie);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private Cookie createCookie(String key, String value) {
-
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(true);
-        //cookie.setPath("/");
+        cookie.setSecure(true);
+        cookie.setPath("/");
         cookie.setHttpOnly(true);
+        cookie.setDomain("bangtal-boys.com");
 
         return cookie;
+    }
+
+    private void addSameSiteCookie(HttpServletResponse response, Cookie cookie) {
+        String cookieStr = String.format("%s=%s; Max-Age=%d; Path=%s; Secure; HttpOnly; SameSite=None; Domain=%s",
+                cookie.getName(), cookie.getValue(), cookie.getMaxAge(), cookie.getPath(), cookie.getDomain());
+
+        response.addHeader("Set-Cookie", cookieStr);
     }
 }

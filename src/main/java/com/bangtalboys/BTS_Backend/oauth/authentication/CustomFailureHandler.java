@@ -16,7 +16,7 @@ public class CustomFailureHandler implements AuthenticationFailureHandler {
                                         HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
         // 실패 시 리다이렉트 URL 지정
-        response.sendRedirect("https://bangtal-boys.com/oauth/login?result=error");
+        response.sendRedirect("http://localhost:3000/oauth/login?result=error");
     }
 }
 

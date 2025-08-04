@@ -71,7 +71,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
             String refreshToken = jwtUtil.createJwt(Token.RefreshToken.getType(), id, socialType, socialId, role, Token.RefreshToken.getTtl());
 
-            response.addCookie(createCookie(Token.RefreshToken.getType(), refreshToken));
+            Cookie myCookie = createCookie(Token.RefreshToken.getType(), refreshToken);
+            addSameSiteCookie(response, myCookie);
 
             // returnUrl이 이미 쿼리 파라미터를 포함하는지 확인
             String delimiter = returnUrl.contains("?") ? "&" : "?";
@@ -89,20 +90,28 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             response.sendRedirect(redirectUrl);
 
         } catch (Exception e) {
+            System.out.println("🔥 예외 발생: " + e.getMessage());
             // 인증 중 예외가 발생했을 경우 fallback URL로 리다이렉트
             response.sendRedirect("http://localhost:3000/oauth/login?result=fail");
         }
     }
 
     private Cookie createCookie(String key, String value) {
-
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
+        cookie.setDomain("bangtal-boys.com");
 
         return cookie;
+    }
+
+    private void addSameSiteCookie(HttpServletResponse response, Cookie cookie) {
+        String cookieStr = String.format("%s=%s; Max-Age=%d; Path=%s; Secure; HttpOnly; SameSite=None; Domain=%s",
+                cookie.getName(), cookie.getValue(), cookie.getMaxAge(), cookie.getPath(), cookie.getDomain());
+
+        response.addHeader("Set-Cookie", cookieStr);
     }
 
     private boolean isSafeReturnUrl(String url) {
@@ -118,4 +127,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             return false;
         }
     }
+
+    public String getDomain(String input) {
+        int index = input.indexOf('?');
+        if (index == -1) {
+            return input;
+        }
+        return input.substring(0, index);
+    }
 }
+

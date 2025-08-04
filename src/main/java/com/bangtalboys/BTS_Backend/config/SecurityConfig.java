@@ -116,6 +116,7 @@ public class SecurityConfig {
                 .requestMatchers("/check-signup").permitAll()
                 .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/reissue").permitAll()
+                .requestMatchers("/oauth2/**").permitAll()
                 .anyRequest().authenticated()
         );
 
