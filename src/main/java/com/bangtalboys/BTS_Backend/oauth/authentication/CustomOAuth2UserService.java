@@ -40,7 +40,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         .nickname(member.getNickname())
                         .socialType(member.getSocialType().toString())
                         .socialId(member.getSocialId())
-                        .role(member.getRole())
+                        .role(member.getRole().toString())
                         .isNewUser(false)
                         .build();
 
@@ -59,7 +59,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         .id(saved.getId())
                         .socialType(saved.getSocialType().toString())
                         .socialId(saved.getSocialId())
-                        .role(saved.getRole())
+                        .role(saved.getRole().toString())
                         .isNewUser(true)
                         .build();
 

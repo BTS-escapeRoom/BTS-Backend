@@ -131,7 +131,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 .id(id)
                 .socialType(socialType)
                 .socialId(socialId)
-                .role(Role.valueOf(role))
+                .role(role)
                 .build();
 
         //UserDetails에 회원 정보 객체 담기

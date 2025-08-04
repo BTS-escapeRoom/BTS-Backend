@@ -14,6 +14,6 @@ public class UserDto {
     private String nickname;
     private String socialType;
     private String socialId;
-    private Role role;
+    private String role;
     private Boolean isNewUser;
 }
