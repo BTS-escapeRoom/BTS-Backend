@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -62,13 +63,10 @@ public class ReissueController {
         String newRefresh = jwtUtil.createJwt(Token.RefreshToken.getType(), id, socialType, socialId, role, 86400000L);
 
         //response
-//        response.setHeader(Token.AccessToken.getType(), newAccess);
         Cookie refreshCookie = createCookie(Token.RefreshToken.getType(), newRefresh);
         addSameSiteCookie(response, refreshCookie);
-        Cookie accessCookie = createCookie(Token.AccessToken.getType(), newAccess);
-        addSameSiteCookie(response, accessCookie);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(new ReissueResponse(newAccess));
     }
 
     private Cookie createCookie(String key, String value) {
@@ -87,5 +85,10 @@ public class ReissueController {
                 cookie.getName(), cookie.getValue(), cookie.getMaxAge(), cookie.getPath(), cookie.getDomain());
 
         response.addHeader("Set-Cookie", cookieStr);
+    }
+
+    @Data
+    public static class ReissueResponse {
+        private final String accessToken;
     }
 }
