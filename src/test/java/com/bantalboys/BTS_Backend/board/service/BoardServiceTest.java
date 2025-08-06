@@ -2,7 +2,6 @@ package com.bantalboys.BTS_Backend.board.service;
 
 import com.bangtalboys.BTS_Backend.board.domain.Board;
 import com.bangtalboys.BTS_Backend.board.domain.BoardLike;
-import com.bangtalboys.BTS_Backend.board.domain.BoardReport;
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.UpdateBoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardResponse;
@@ -11,7 +10,6 @@ import com.bangtalboys.BTS_Backend.board.repository.BoardReportRepository;
 import com.bangtalboys.BTS_Backend.board.repository.BoardRepository;
 import com.bangtalboys.BTS_Backend.board.service.BoardService;
 import com.bangtalboys.BTS_Backend.config.error.exception.ForbiddenException;
-import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
