@@ -20,6 +20,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import static com.bangtalboys.BTS_Backend.config.PermitAllPaths.PATHS;
+import static com.bangtalboys.BTS_Backend.config.PermitAllPaths.SWAGGER_PATHS;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -111,14 +113,23 @@ public class SecurityConfig {
         );
 
         // 경로별 인가 설정
-        http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // OPTIONS 요청 허용
-                .requestMatchers("/check-signup").permitAll()
-                .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/reissue").permitAll()
-                .requestMatchers("/oauth2/**").permitAll()
-                .anyRequest().authenticated()
-        );
+        http.authorizeHttpRequests(auth -> {
+            auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+
+            for (PermitAllPaths.PermitPath p : PATHS) {
+                if (p.getMethod() != null) {
+                    auth.requestMatchers(p.getMethod(), p.getPattern()).permitAll();
+                } else {
+                    auth.requestMatchers(p.getPattern()).permitAll();
+                }
+            }
+
+            for (String swagger : SWAGGER_PATHS) {
+                auth.requestMatchers(swagger).permitAll();
+            }
+
+            auth.anyRequest().authenticated();
+        });
 
         // 세션 상태를 STATELESS로 설정
         http.sessionManagement((session) -> session
