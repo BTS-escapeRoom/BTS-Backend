@@ -1,6 +1,7 @@
 services:
   bts-backend-db:
     image: mysql
+    restart: always
     environment:
       MYSQL_DATABASE: bts
       MYSQL_ROOT_PASSWORD: bangtal-boys
