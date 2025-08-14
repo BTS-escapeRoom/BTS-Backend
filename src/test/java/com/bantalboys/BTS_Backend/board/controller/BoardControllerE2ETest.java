@@ -3,17 +3,11 @@ package com.bantalboys.BTS_Backend.board.controller;
 import com.bangtalboys.BTS_Backend.BtsBackendApplication;
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.UpdateBoardRequest;
-import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;

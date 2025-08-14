@@ -1,4 +1,4 @@
-package com.bangtalboys.BTS_Backend.review.dto.request;
+package com.bantalboys.BTS_Backend.review.dto.request;
 
 import lombok.Data;
 
