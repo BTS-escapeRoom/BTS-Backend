@@ -69,43 +69,33 @@ public class BoardService {
             String keyword,
             String type,
             String sortType,
-            Integer page   // 0부터 시작
+            Integer page // 0부터 시작
     ) {
-        // 1) Sort 결정
-        Sort sort;
-        if ("popular".equals(sortType)) {
-            sort = Sort.by(Sort.Direction.DESC, "likes.size"); // or ignore, 쿼리문 ORDER BY 로 처리
-        } else if ("viewed".equals(sortType)) {
-            sort = Sort.by(Sort.Direction.DESC, "hit");
-        } else { // latest 또는 기본
-            sort = Sort.by(Sort.Direction.DESC, "created_at");
-        }
+        Pageable pageable;
 
-        // 2) Pageable 생성
-        Pageable pageable = PageRequest.of(page, 20, sort);
-
-        // 3) 페이지 조회
         Page<Board> boardPage;
         if ("popular".equals(sortType)) {
+            // 정렬은 JPQL(@Query)에서 ORDER BY COUNT(l) DESC로 처리
+            pageable = PageRequest.of(page, 20); // unsorted
             boardPage = boardRepository.searchBoardByKeywordOrderByLikes(keyword, type, pageable);
-        } else {
+        } else if ("viewed".equals(sortType)) {
+            pageable = PageRequest.of(page, 20, Sort.by(Sort.Direction.DESC, "hit"));
+            boardPage = boardRepository.searchBoardByKeyword(keyword, type, pageable);
+        } else { // latest 또는 기본
+            pageable = PageRequest.of(page, 20, Sort.by(Sort.Direction.DESC, "created_at"));
             boardPage = boardRepository.searchBoardByKeyword(keyword, type, pageable);
         }
 
-        // 4) DTO 변환
         List<BoardListResponse> dtos = boardPage.getContent().stream()
                 .map(BoardListResponse::new)
-                .collect(Collectors.toList());
+                .toList();
 
-        // 5) 전체 페이지 수 & 다음 페이지 번호 계산
         long totalPage = boardPage.getTotalPages();
-        long nextPage  = boardPage.hasNext()
-                ? page + 1
-                : -1;   // 다음 페이지 없으면 -1, 필요에 따라 0으로 할 수도 있음
+        long nextPage = boardPage.hasNext() ? page + 1 : -1;
 
-        // 6) 응답 생성
         return new BoardListPageResponse(dtos, nextPage, totalPage);
     }
+
 
     public BoardResponse updateBoard(Long boardId, Long memberId, UpdateBoardRequest updateBoardRequest) {
         Board board = boardRepository.findById(boardId).orElseThrow(NotFoundException::new);

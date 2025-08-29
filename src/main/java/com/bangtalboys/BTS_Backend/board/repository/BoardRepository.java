@@ -23,13 +23,20 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
 
     // 인기순
-    @Query("SELECT b FROM Board b "
-            + "WHERE (:keyword IS NULL OR b.title LIKE %:keyword%) "
-            + "  AND (:type IS NULL OR b.type = :type) "
-            + "ORDER BY size(b.likes) DESC")
+    @Query(
+            value = "SELECT b FROM Board b " +
+                    "LEFT JOIN b.likes l " +
+                    "WHERE (:keyword IS NULL OR b.title LIKE %:keyword%) " +
+                    "  AND (:type IS NULL OR b.type = :type) " +
+                    "GROUP BY b " +
+                    "ORDER BY COUNT(l) DESC",
+            countQuery = "SELECT COUNT(b) FROM Board b " +
+                    "WHERE (:keyword IS NULL OR b.title LIKE %:keyword%) " +
+                    "  AND (:type IS NULL OR b.type = :type)"
+    )
     Page<Board> searchBoardByKeywordOrderByLikes(
             @Param("keyword") String keyword,
-            @Param("type")    String type,
+            @Param("type") String type,
             Pageable pageable
     );
 
