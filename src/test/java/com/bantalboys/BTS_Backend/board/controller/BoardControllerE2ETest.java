@@ -3,6 +3,7 @@ package com.bantalboys.BTS_Backend.board.controller;
 import com.bangtalboys.BTS_Backend.BtsBackendApplication;
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.UpdateBoardRequest;
+import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class BoardControllerE2ETest {
     @Test
     void createBoard_E2E() throws Exception {
         BoardRequest request = new BoardRequest(
-                1L, "normal", "Test Title", "Test Description",
+                1L, BoardType.NORMAL, "Test Title", "Test Description",
                 new Date(), new Date(), 3L,
                 "https://open.kakao.com/abc", "KakaoTalk"
         );
@@ -84,7 +85,7 @@ public class BoardControllerE2ETest {
     @Test
     void updateBoard_E2E() throws Exception {
         Long boardId = 7L;
-        UpdateBoardRequest request = new UpdateBoardRequest("Updated Title", "Updated Description");
+        UpdateBoardRequest request = new UpdateBoardRequest("Updated Title", "Updated Description", new Date(), new Date(), 10L, "Updated Contact Url", "Updated Contact Method");
 
         mockMvc.perform(patch("/v1/boards/" + boardId)
                         .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzLXRva2VuIiwiaWQiOjEsInVzZXJuYW1lIjoi6rSA66as7J6QIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpYXQiOjE3MzYyMjgzMDUsImV4cCI6ODA2MzAyMjgzMDV9.SkiUghz1aukqU2UNpUEON-N5mrQs73I1NuaoifjL0DI")

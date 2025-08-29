@@ -7,6 +7,8 @@ import com.bangtalboys.BTS_Backend.board.dto.response.BoardResponse;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardListResponse;
 import com.bangtalboys.BTS_Backend.board.service.BoardService;
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
+import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
+import com.bangtalboys.BTS_Backend.utils.enums.SortType;
 import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,7 +39,7 @@ public class BoardController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Response<BoardListPageResponse>> getAllBoards(@RequestParam(required = false) String keyword, @RequestParam(required = false) String type,@RequestParam(required = false) String sortType, @RequestParam(required = false, defaultValue = "0") Integer page) {
+    public ResponseEntity<Response<BoardListPageResponse>> getAllBoards(@RequestParam(required = false) String keyword, @RequestParam(required = false) BoardType type, @RequestParam(required = false) SortType sortType, @RequestParam(required = false, defaultValue = "0") Integer page) {
         return ResponseEntity.ok(Response.ok(boardService.getAllBoards(keyword, type, sortType, page)));
     }
 

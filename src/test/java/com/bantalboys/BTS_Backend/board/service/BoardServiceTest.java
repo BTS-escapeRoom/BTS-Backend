@@ -14,6 +14,7 @@ import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.theme.repository.ThemeRepository;
+import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -51,7 +52,7 @@ class BoardServiceTest {
 
         BoardRequest request = new BoardRequest(
                 10L,                        // themeId
-                "normal",                  // type
+                BoardType.NORMAL,                  // type
                 "제목",                    // title
                 "본문 내용입니다",         // description
                 new Date(),                // recruit_deadline
@@ -91,7 +92,7 @@ class BoardServiceTest {
         board.setTitle("기존 제목");
         board.setDescription("기존 본문");
 
-        UpdateBoardRequest updateRequest = new UpdateBoardRequest("수정된 제목", "수정된 본문");
+        UpdateBoardRequest updateRequest = new UpdateBoardRequest("수정된 제목", "수정된 본문", new Date(), new Date(), 10L, "Updated Contact Url", "Updated Contact Method");
 
         when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));

@@ -18,6 +18,8 @@ import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.theme.repository.ThemeRepository;
+import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
+import com.bangtalboys.BTS_Backend.utils.enums.SortType;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -67,18 +69,18 @@ public class BoardService {
     }
     public BoardListPageResponse getAllBoards(
             String keyword,
-            String type,
-            String sortType,
+            BoardType type,
+            SortType sortType,
             Integer page // 0부터 시작
     ) {
         Pageable pageable;
 
         Page<Board> boardPage;
-        if ("popular".equals(sortType)) {
+        if (SortType.popular.equals(sortType)) {
             // 정렬은 JPQL(@Query)에서 ORDER BY COUNT(l) DESC로 처리
             pageable = PageRequest.of(page, 20); // unsorted
             boardPage = boardRepository.searchBoardByKeywordOrderByLikes(keyword, type, pageable);
-        } else if ("viewed".equals(sortType)) {
+        } else if (SortType.viewed.equals(sortType)) {
             pageable = PageRequest.of(page, 20, Sort.by(Sort.Direction.DESC, "hit"));
             boardPage = boardRepository.searchBoardByKeyword(keyword, type, pageable);
         } else { // latest 또는 기본

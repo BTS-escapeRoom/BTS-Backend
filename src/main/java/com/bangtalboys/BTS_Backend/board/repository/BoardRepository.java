@@ -1,6 +1,7 @@
 package com.bangtalboys.BTS_Backend.board.repository;
 
 import com.bangtalboys.BTS_Backend.board.domain.Board;
+import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -36,7 +37,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     )
     Page<Board> searchBoardByKeywordOrderByLikes(
             @Param("keyword") String keyword,
-            @Param("type") String type,
+            @Param("type") BoardType type,
             Pageable pageable
     );
 
@@ -46,7 +47,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             + "  AND (:type IS NULL OR b.type = :type)")
     Page<Board> searchBoardByKeyword(
             @Param("keyword") String keyword,
-            @Param("type")    String type,
+            @Param("type")    BoardType type,
             Pageable pageable
     );
 

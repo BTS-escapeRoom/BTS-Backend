@@ -1,12 +1,13 @@
 package com.bangtalboys.BTS_Backend.board.dto.response;
 
 import com.bangtalboys.BTS_Backend.board.domain.Board;
+import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
 import lombok.Data;
 
 @Data
 public class BoardListResponse {
     private Long id;
-    private String type;
+    private BoardType type;
     private String title;
     private Long hit;
     private String memberName;
