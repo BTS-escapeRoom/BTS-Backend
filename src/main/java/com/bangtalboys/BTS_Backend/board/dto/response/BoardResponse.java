@@ -25,6 +25,8 @@ public class BoardResponse  {
     private String contact_method;
     private Long hit;
     private String reportStatus;
+    private int likeCount;
+    private int commentCount;
 
     public BoardResponse(Board board, String status) {
         this.id = board.getId();
@@ -38,6 +40,8 @@ public class BoardResponse  {
         this.contact_method = board.getContact_method();
         this.hit = board.getHit();
         this.reportStatus = status;
+        this.likeCount =  board.getLikes().size();
+        this.commentCount =  board.getComments().size();
     }
 
 }
