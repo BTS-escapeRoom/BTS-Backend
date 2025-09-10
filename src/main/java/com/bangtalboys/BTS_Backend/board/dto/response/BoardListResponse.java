@@ -12,11 +12,13 @@ public class BoardListResponse {
     private Long hit;
     private String memberName;
     private String themeName;
+    private String storeName;
     private String escapeDate;
     private Long recruitPeople;
     private String contactUrl;
     private String contactMethod;
     private int likeCount;
+    private int commentCount;
 
     public BoardListResponse(Board board) {
         this.id = board.getId();
@@ -25,10 +27,12 @@ public class BoardListResponse {
         this.hit = board.getHit();
         this.memberName = board.getMember().getNickname();
         this.themeName = board.getTheme().getTitle();
+        this.storeName = board.getTheme().getStore().getName();
         this.escapeDate = board.getEscape_date().toString();
         this.recruitPeople = board.getRecruit_people();
         this.contactUrl = board.getContact_url();
         this.contactMethod = board.getContact_method();
         this.likeCount =  board.getLikes().size();
+        this.commentCount =  board.getComments().size();
     }
 }

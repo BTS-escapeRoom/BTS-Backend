@@ -1,6 +1,5 @@
 package com.bangtalboys.BTS_Backend.comment.controller;
 
-import com.bangtalboys.BTS_Backend.comment.domain.Comment;
 import com.bangtalboys.BTS_Backend.comment.dto.request.CommentRequest;
 import com.bangtalboys.BTS_Backend.comment.dto.response.CommentResponse;
 import com.bangtalboys.BTS_Backend.comment.service.CommentService;
@@ -14,44 +13,29 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @Tag(name="댓글 API")
 @RequestMapping("/v1/comments")
 public class CommentController {
     private final CommentService commentService;
-    private final JwtUtil jwtUtil;
 
-    @PostMapping("/boards/{boardId}")
-    public ResponseEntity<Response<CommentResponse>> createBoardComment(@RequestBody CommentRequest commentRequest, @PathVariable long boardId, @RequestHeader("Authorization") String accessToken) {
-Long memberId = jwtUtil.getId(accessToken);
-        return ResponseEntity.ok(Response.ok(commentService.createBoardComment(commentRequest, boardId, memberId)));
-    }
-
-    @GetMapping("/{id}/boards")
-    public ResponseEntity<Response<CommentResponse>> getOneBoardComment(@PathVariable long id, @RequestHeader("Authorization") String accessToken) {
-        Long memberId = jwtUtil.getId(accessToken);
-        return ResponseEntity.ok(Response.ok(commentService.getOneBoardComment(id, memberId)));
-    }
-
-    @PutMapping("/{id}/boards")
-    public ResponseEntity<Response<CommentResponse>> updateBoardComment(@PathVariable long id, @RequestBody CommentRequest commentRequest, @AuthenticationPrincipal CustomOAuth2User oauth2User) {
+    @PostMapping("")
+    public ResponseEntity<Response<CommentResponse>> createComment(@RequestBody CommentRequest commentRequest, @AuthenticationPrincipal CustomOAuth2User oauth2User) {
         Long memberId = oauth2User.getId();
-        return ResponseEntity.ok(Response.ok(commentService.updateBoardComment(commentRequest, id, memberId)));
+        return ResponseEntity.ok(Response.ok(commentService.createBoardComment(commentRequest, memberId)));
     }
 
-    @GetMapping("/boards/{boardId}")
-    public ResponseEntity<Response<List<CommentResponse>>> getBoardComment(@PathVariable long boardId, @AuthenticationPrincipal CustomOAuth2User oauth2User) {
+    @PutMapping("{commendId}")
+    public ResponseEntity<Response<CommentResponse>> updateComment(@PathVariable Long commendId, @RequestBody CommentRequest commentRequest,@AuthenticationPrincipal CustomOAuth2User oauth2User) {
         Long memberId = oauth2User.getId();
-        return ResponseEntity.ok(Response.ok(commentService.getBoardComments(boardId)));
+        return ResponseEntity.ok(Response.ok(commentService.updateBoardComment(commentRequest, commendId, memberId)));
     }
 
-    @DeleteMapping("/{id}/boards")
-    public ResponseEntity<Response<String>> deleteBoardComment(@PathVariable long id, @AuthenticationPrincipal CustomOAuth2User oauth2User) {
+    @DeleteMapping("{commentId}")
+    public ResponseEntity<Response<String>> deleteComment(@PathVariable Long commentId, @AuthenticationPrincipal CustomOAuth2User oauth2User) {
         Long memberId = oauth2User.getId();
-        return ResponseEntity.ok(Response.ok(commentService.deleteBoardComment(id, memberId)));
+        return ResponseEntity.ok(Response.ok(commentService.deleteBoardComment(commentId, memberId)));
     }
 
 

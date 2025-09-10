@@ -5,6 +5,7 @@ import com.bangtalboys.BTS_Backend.board.repository.BoardRepository;
 import com.bangtalboys.BTS_Backend.comment.domain.Comment;
 import com.bangtalboys.BTS_Backend.comment.domain.CommentReport;
 import com.bangtalboys.BTS_Backend.comment.dto.request.CommentRequest;
+import com.bangtalboys.BTS_Backend.comment.dto.response.CommentListResponse;
 import com.bangtalboys.BTS_Backend.comment.dto.response.CommentResponse;
 import com.bangtalboys.BTS_Backend.comment.repository.CommentReportRepository;
 import com.bangtalboys.BTS_Backend.comment.repository.CommentRepository;
@@ -26,20 +27,11 @@ public class CommentService {
     private final BoardRepository boardRepository;
     private final CommentReportRepository commentReportRepository;
 
-    public CommentResponse createBoardComment(CommentRequest commentRequest, Long boardId, Long memberId) {
+    public CommentResponse createBoardComment(CommentRequest commentRequest, Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
-        Board board = boardRepository.findById(boardId).orElseThrow(NotFoundException::new);
+        Board board = boardRepository.findById(commentRequest.getBoardId()).orElseThrow(NotFoundException::new);
         Comment comment = new Comment(member, board, commentRequest.getComment());
         commentRepository.save(comment);
-        return new CommentResponse(comment, member);
-    }
-
-    public CommentResponse getOneBoardComment(Long id,Long memberId) {
-        Comment comment = commentRepository.findByIdAndMemberId(id, memberId);
-        if (comment == null) {
-            throw new NotFoundException();
-        }
-        Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
         return new CommentResponse(comment, member);
     }
 
@@ -55,13 +47,13 @@ public class CommentService {
         return new CommentResponse(comment, member);
     }
 
-    public List<CommentResponse> getBoardComments(Long boardId) {
-        List<Comment> comments = commentRepository.findByBoardId(boardId);
+    public CommentListResponse getBoardComments(Long boardId) {
+        List<Comment> comments = commentRepository.findByBoard_Id(boardId);
         List<CommentResponse> commentResponses = new ArrayList<>();
         for (Comment comment : comments) {
             commentResponses.add(new CommentResponse(comment, memberRepository.findById(comment.getMember().getId()).orElseThrow(NotFoundException::new)));
         }
-        return commentResponses;
+        return new CommentListResponse(commentResponses);
     }
 
     public String deleteBoardComment(Long id, Long memberId) {

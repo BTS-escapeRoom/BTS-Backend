@@ -1,6 +1,7 @@
 package com.bangtalboys.BTS_Backend.board.domain;
 
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
+import com.bangtalboys.BTS_Backend.comment.domain.Comment;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
@@ -57,6 +58,9 @@ public class Board {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoardLike> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     @CreationTimestamp
     @Column()
