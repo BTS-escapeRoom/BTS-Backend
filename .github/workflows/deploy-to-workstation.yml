@@ -46,6 +46,6 @@ jobs:
             cd ~/app
             echo "IMAGE_TAG=latest" > .env
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
-            echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
             docker-compose pull
             docker-compose up -d
