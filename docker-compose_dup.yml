@@ -1,4 +1,25 @@
 services:
+  bts-backend-db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: bts
+      MYSQL_ROOT_PASSWORD: bangtal-boys
+    networks:
+      - bts-backend
+    volumes:
+      - bts-backend-db:/var/lib/mysql
+      - bts-backend-db-ini:/etc/mysql/conf.d
+    ports:
+      - "33066:3306"
+    command: ["--character-set-server=utf8mb4","--collation-server=utf8mb4_unicode_ci"]
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
   bts-backend:
     image: ghcr.io/bts-escaperoom/bts-backend:${IMAGE_TAG}
     restart: always
@@ -17,7 +38,7 @@ services:
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI: https://apis.bangtal-boys.com/login/oauth2/code/naver
 
       # Database Configuration
-      SPRING_DATASOURCE_URL: jdbc:mysql://bangtal-boys-database.clmmy2kggqxt.ap-northeast-2.rds.amazonaws.com:3306/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://bts-backend-db:3306/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: bangtal-boys
 
@@ -28,8 +49,16 @@ services:
       - bts-backend
     ports:
       - "127.0.0.1:8881:8080"
+    depends_on:
+       bts-backend-db:
+         condition: service_healthy
 
 
 networks:
   bts-backend:
     driver: bridge
+volumes:
+  bts-backend-db:
+    external: false
+  bts-backend-db-ini:
+    external: false

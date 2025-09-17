@@ -1,136 +1,38 @@
-name: Build & Deploy
+name: Deploy to EC2 (Use built image)
 
 on:
-  pull_request:
   push:
-    branches:
-      - dev
-      - CICD
+    branches: [ "main" ]
 
 jobs:
-  push_container:
-    name: Push Container
+  deploy:
     runs-on: ubuntu-latest
-    services:
-      docker:
-        image: docker:dind
-        options: --privileged --shm-size=2g
-        volumes:
-          - /var/run/docker.sock:/var/run/docker.sock:ro
-    container:
-      image: ubuntu:latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - run: touch ./src/main/resources/application.properties
-      - run: echo "${{ secrets.PROPERTIES }}" > ./src/main/resources/application.properties
-      - run: cat ./src/main/resources/application.properties
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Install Docker and curl
+      # 1) Build & push Docker image to GHCR
+      - name: Build Docker Image
         run: |
-          apt-get update
-          apt-get install -y docker.io
+          docker build -t ghcr.io/bts-escaperoom/bts-backend:latest .
 
-      - name: login to ghcr
-        uses: docker/login-action@v2
+      - name: Login to GitHub Container Registry
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push Docker Image
+        run: docker push ghcr.io/bts-escaperoom/bts-backend:latest
+
+      # 2) Deploy to EC2 by pulling "latest"
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.10
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: convert repository name to lowercase and set it as an environment variable
-        id: set_env
-        run: |
-          echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]' > repository
-          REPO_NAME=$(cat repository)
-          echo "repository=$REPO_NAME" >> $GITHUB_ENV
-
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: ghcr.io/${{ env.repository }}:${{ github.sha }}
-
-  deploy-to-workstation:
-    name: Deploy to Workstation
-    runs-on: ubuntu-latest
-    needs: push_container
-    container:
-      image: ubuntu:latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install curl and ssh-keyscan
-        run: apt-get update && apt-get install -y curl && apt-get install -y openssh-client
-
-      - name: Install Docker and Docker-Compose
-        run: |
-          apt-get update
-          apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
-          curl -fsSL https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]') $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
-          apt-get update
-          apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-
-      - name: Verify docker connection
-        run: docker info
-
-      - name: convert repository name to lowercase and set it as an environment variable
-        id: set_env
-        run: |
-          echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]' > repository
-          REPO_NAME=$(cat repository)
-          echo "repository=$REPO_NAME" >> $GITHUB_ENV
-          PROJ_NAME=$(basename ${{ github.repository }})
-          echo "project=$PROJ_NAME" >> $GITHUB_ENV
-
-      - name: login to ghcr
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-
-
-      - name: test ssh connection
-        run: |
-          mkdir -p $HOME/.ssh
-          echo "${{ secrets.WORKSTATION_SSH_KEY }}" > $HOME/.ssh/id_rsa
-          chmod 600 $HOME/.ssh/id_rsa
-          ssh-keyscan -H -t rsa ${{ secrets.WORKSTATION_ADDR }} >> $HOME/.ssh/known_hosts
-          echo "StrictHostKeyChecking no" >> $HOME/.ssh/config
-          eval $(ssh-agent)
-          echo "${{ secrets.WORKSTATION_SSH_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
-          echo "Host *" > $HOME/.ssh/config
-          echo "  StrictHostKeyChecking no" >> $HOME/.ssh/config
-          echo "  HostKeyAlgorithms ssh-ed25519" >> $HOME/.ssh/config
-          # Test SSH connection and set known_hosts
-          ssh -o StrictHostKeyChecking=no ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} "echo SSH connection successful"
-
-      # SSH_AGENT_PID and SSH_AUTH_SOCK are set by the container-ssh-agent action
-      - uses: PhutureCorp/container-ssh-agent@v0.0.1
-        with:
-          ssh-private-key: |
-            ${{ secrets.WORKSTATION_SSH_KEY }}
-
-      - name: Pull image
-        run: docker pull ghcr.io/${{ env.repository }}:${{ github.sha }}
-
-      - name: Remove containers by pattern
-        run: |
-          ssh ${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }} << EOF
-            docker ps -aq -f name="${{ env.project }}" -f name="${{ env.project }}-deployed" -f name="bts-backend-db" | xargs -r docker rm -f
-          EOF
-          
-
-      - name: Run docker-compose using Docker CLI
-        run: |
-          export DOCKER_HOST=ssh://${{ secrets.WORKSTATION_USER }}@${{ secrets.WORKSTATION_ADDR }}
-          IMAGE_TAG=${{ github.sha }} docker compose up -d
-      
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/app
+            echo "IMAGE_TAG=latest" > .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            docker-compose pull
+            docker-compose up -d
