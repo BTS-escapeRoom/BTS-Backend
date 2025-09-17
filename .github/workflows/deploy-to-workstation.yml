@@ -36,3 +36,8 @@ jobs:
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
             docker-compose pull
             docker-compose up -d
+
+      - name: Debug SSH Key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
+          head -5 key.pem
