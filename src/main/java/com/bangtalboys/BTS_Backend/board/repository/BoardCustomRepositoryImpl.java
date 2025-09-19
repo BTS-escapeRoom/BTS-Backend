@@ -55,19 +55,18 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
         QBoard b = QBoard.board;
         QTheme t = QTheme.theme;
         QStore s = QStore.store;
-        QBoardLike bl = QBoardLike.boardLike;
 
         BooleanBuilder where = buildWhere(boardListRequest);
 
         Long count = jpaQueryFactory
-                .select(b.count())
+                .select(b.id.countDistinct())
                 .from(b)
-                .join(b.theme, t)
-                .join(t.store, s)
-                .join(b.likes, bl)
+                .leftJoin(b.theme, t)
+                .leftJoin(t.store, s)
                 .where(where)
                 .fetchOne();
-        return count != null ? count :0L;
+
+        return count != null ? count : 0L;
     }
 
     private BooleanBuilder buildWhere(BoardListRequest boardListRequest) {

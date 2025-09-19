@@ -17,9 +17,9 @@ services:
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI: https://apis.bangtal-boys.com/login/oauth2/code/naver
 
       # Database Configuration
-      SPRING_DATASOURCE_URL: jdbc:mysql://bangtal-boys-database.clmmy2kggqxt.ap-northeast-2.rds.amazonaws.com:3306/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: bangtal-boys
+      SPRING_DATASOURCE_URL: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
 
       # Optional: 추가 필요 시 Apple Key/Team ID 설정
       APPLE_KEY_ID: <your-apple-key-id>
