@@ -39,7 +39,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             mkdir -p ~/app
-            cat > ~/app/.env << 'EOF'
+            cat > ~/app/.env << EOF
             IMAGE_TAG=${{ github.sha }}
             DB_HOST=${{ secrets.DB_HOST }}
             DB_PORT=${{ secrets.DB_PORT }}
