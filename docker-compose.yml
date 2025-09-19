@@ -1,6 +1,8 @@
 services:
   bts-backend:
     image: ghcr.io/bts-escaperoom/bts-backend:${IMAGE_TAG}
+    env_file:
+      - .env
     restart: always
     environment:
       # JWT Secret Key
