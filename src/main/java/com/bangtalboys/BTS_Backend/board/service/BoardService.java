@@ -4,6 +4,7 @@ package com.bangtalboys.BTS_Backend.board.service;
 import com.bangtalboys.BTS_Backend.board.domain.Board;
 import com.bangtalboys.BTS_Backend.board.domain.BoardLike;
 import com.bangtalboys.BTS_Backend.board.domain.BoardReport;
+import com.bangtalboys.BTS_Backend.board.dto.request.BoardListRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.UpdateBoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardListPageResponse;
@@ -67,35 +68,18 @@ public class BoardService {
 
         return new BoardResponse(board.get(), "in-active");
     }
-    public BoardListPageResponse getAllBoards(
-            String keyword,
-            BoardType type,
-            SortType sortType,
-            Integer page // 0부터 시작
-    ) {
-        Pageable pageable;
+    public BoardListPageResponse getAllBoards(BoardListRequest boardListRequest) {
+        List<Board> boards = boardRepository.findBoards(boardListRequest);
+        long totalCount = boardRepository.countBoards(boardListRequest);
+        long totalPage = totalCount % 20 == 0 ? totalCount / 20 : totalCount / 20 + 1;
+        long nextPage = boardListRequest.getPage() + 1L;
 
-        Page<Board> boardPage;
-        if (SortType.popular.equals(sortType)) {
-            // 정렬은 JPQL(@Query)에서 ORDER BY COUNT(l) DESC로 처리
-            pageable = PageRequest.of(page, 20); // unsorted
-            boardPage = boardRepository.searchBoardByKeywordOrderByLikes(keyword, type, pageable);
-        } else if (SortType.viewed.equals(sortType)) {
-            pageable = PageRequest.of(page, 20, Sort.by(Sort.Direction.DESC, "hit"));
-            boardPage = boardRepository.searchBoardByKeyword(keyword, type, pageable);
-        } else { // latest 또는 기본
-            pageable = PageRequest.of(page, 20, Sort.by(Sort.Direction.DESC, "created_at"));
-            boardPage = boardRepository.searchBoardByKeyword(keyword, type, pageable);
+        if (boardListRequest.getPage() == totalPage) {
+            nextPage = -1L;
         }
 
-        List<BoardListResponse> dtos = boardPage.getContent().stream()
-                .map(BoardListResponse::new)
-                .toList();
-
-        long totalPage = boardPage.getTotalPages();
-        long nextPage = boardPage.hasNext() ? page + 1 : -1;
-
-        return new BoardListPageResponse(dtos, nextPage, totalPage);
+        List<BoardListResponse> boardListResponses = boards.stream().map(BoardListResponse::new).toList();
+        return new BoardListPageResponse(boardListResponses, nextPage, totalPage);
     }
 
 

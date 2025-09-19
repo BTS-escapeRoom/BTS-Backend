@@ -1,5 +1,6 @@
 package com.bangtalboys.BTS_Backend.board.controller;
 
+import com.bangtalboys.BTS_Backend.board.dto.request.BoardListRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.UpdateBoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardListPageResponse;
@@ -31,29 +32,35 @@ public class BoardController {
     private final BoardService boardService;
     private final CommentService commentService;
 
+    @Operation(summary = "게시글 작성")
     @PostMapping("")
     public ResponseEntity<Response<BoardResponse>> createBoard(@RequestBody BoardRequest boardRequest, @AuthenticationPrincipal CustomOAuth2User oauth2User) {
         Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(boardService.createBoard(boardRequest, memberId)));
     }
 
+    @Operation(summary = "게시글 단건 조회")
     @GetMapping("/{boardId}")
     public ResponseEntity<Response<BoardResponse>> getBoard(@PathVariable long boardId, @AuthenticationPrincipal CustomOAuth2User oauth2User) {
         Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(boardService.getOneBoard(boardId, memberId)));
     }
 
+    @Operation(summary = "게시글 목록 조회")
     @GetMapping("")
-    public ResponseEntity<Response<BoardListPageResponse>> getAllBoards(@RequestParam(required = false) String keyword, @RequestParam(required = false) BoardType type, @RequestParam(required = false) SortType sortType, @RequestParam(required = false, defaultValue = "0") Integer page) {
-        return ResponseEntity.ok(Response.ok(boardService.getAllBoards(keyword, type, sortType, page)));
+    public ResponseEntity<Response<BoardListPageResponse>> getAllBoards(@RequestParam(required = false) String keyword, @RequestParam(required = false) BoardType type, @RequestParam(required = false) SortType sortType, @RequestParam(required = false, defaultValue = "1") Integer page) {
+        BoardListRequest boardListRequest = new BoardListRequest(keyword, type, sortType, page);
+        return ResponseEntity.ok(Response.ok(boardService.getAllBoards(boardListRequest)));
     }
 
+    @Operation(summary = "게시글 단건 수정")
     @PatchMapping("/{boardId}")
     public ResponseEntity<Response<BoardResponse>> updateBoard(@PathVariable long boardId, @RequestBody UpdateBoardRequest updateBoardRequest,@AuthenticationPrincipal CustomOAuth2User oauth2User) {
         Long memberId = oauth2User.getId();
         return ResponseEntity.ok(Response.ok(boardService.updateBoard(boardId, memberId, updateBoardRequest)));
     }
 
+    @Operation(summary = "게시글 단건 삭제")
     @DeleteMapping("/{boardId}")
     public ResponseEntity<Response<String>> deleteBoard(@PathVariable long boardId,  @AuthenticationPrincipal CustomOAuth2User oauth2User) {
         Long memberId = oauth2User.getId();
