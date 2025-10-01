@@ -4,7 +4,6 @@ import com.bangtalboys.BTS_Backend.city.domain.QCity;
 import com.bangtalboys.BTS_Backend.city.domain.QDistrict;
 import com.bangtalboys.BTS_Backend.store.domain.QStore;
 import com.bangtalboys.BTS_Backend.theme.domain.QTheme;
-import com.bangtalboys.BTS_Backend.theme.domain.QThemeLike;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeListRequest;
 import com.querydsl.core.BooleanBuilder;
@@ -31,7 +30,6 @@ public class ThemeCustomRepositoryImpl implements ThemeCustomRepository {
         QStore s = QStore.store;
         QDistrict d = QDistrict.district;
         QCity c = QCity.city;
-        QThemeLike l = QThemeLike.themeLike;
 
         BooleanBuilder where = buildWhere(req);
 
@@ -40,7 +38,6 @@ public class ThemeCustomRepositoryImpl implements ThemeCustomRepository {
                 .leftJoin(t.store, s).fetchJoin()
                 .leftJoin(s.district, d).fetchJoin()
                 .leftJoin(d.city, c).fetchJoin()
-                .leftJoin(t.themeLikeList, l)
                 .where(where)
                 .distinct();
 
@@ -48,15 +45,24 @@ public class ThemeCustomRepositoryImpl implements ThemeCustomRepository {
         if ("recent".equals(req.getSort())) {
             query.orderBy(t.registrationDate.desc());
         } else if ("popular".equals(req.getSort())) {
-            query.groupBy(t).orderBy(l.count().desc());
+            // 서브쿼리로 좋아요 수를 계산해 정렬 (중복/그룹바이 이슈 회피)
+            NumberExpression<Long> likeCount = Expressions.numberTemplate(
+                    Long.class,
+                    "(select count(1) from theme_like tl where tl.theme_id = {0})",
+                    t.id
+            );
+            query.orderBy(likeCount.desc(), t.id.desc());
         } else if ("distance".equals(req.getSort()) && req.getLatitude() != null && req.getLongitude() != null) {
+            // 좌표가 없는 가게는 제외
+            where.and(s.latitude.isNotNull()).and(s.longitude.isNotNull());
+
             NumberExpression<Double> distance = Expressions.numberTemplate(
                     Double.class,
                     "ST_Distance_Sphere(POINT({0}, {1}), POINT({2}, {3}))",
                     req.getLongitude(), req.getLatitude(),
                     s.longitude, s.latitude
             );
-            query.orderBy(distance.asc());
+            query.orderBy(distance.asc(), t.id.desc());
         }
 
         query.limit(20).offset((req.getPage()-1)* 20L);
