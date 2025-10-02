@@ -48,7 +48,7 @@ public class ThemeCustomRepositoryImpl implements ThemeCustomRepository {
             // 서브쿼리로 좋아요 수를 계산해 정렬 (중복/그룹바이 이슈 회피)
             NumberExpression<Long> likeCount = Expressions.numberTemplate(
                     Long.class,
-                    "(select count(1) from theme_like tl where tl.theme_id = {0})",
+                    "(select count(1) from ThemeLike tl where tl.theme.id = {0})",
                     t.id
             );
             query.orderBy(likeCount.desc(), t.id.desc());
