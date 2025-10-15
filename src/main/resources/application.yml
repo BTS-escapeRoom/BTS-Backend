@@ -3,34 +3,34 @@ server:
 spring:
   security:
     jwt:
-      secret-key: ${SPRING_SECURITY_JWT_SECRET_KEY:37e5e6213096155c93ce0d832fc2f1f5a0faca5785f893fa4eb9b9d4676f2404}
+      secret-key: ${SPRING_SECURITY_JWT_SECRET_KEY:}
     oauth2:
       client:
         registration:
           kakao:
-            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_ID:6314ef9de4168d995d3c4c4c308f8fef}
-            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_SECRET:jte1OyJD8wDmQdKWjh3E6mRNjLrC91y2}
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_ID:}
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_SECRET:}
             scope:
             authorization-grant-type: authorization_code
-            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_REDIRECT_URI:https://apis.bangtal-boys.com/login/oauth2/code/kakao}
+            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_REDIRECT_URI:}
             client-name: Kakao
             client-authentication-method: client_secret_post
           naver:
-            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_ID:87XRcRkTrKm_jRmKqsVb}
-            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_SECRET:XRsjyrij5R}
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_ID:}
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_SECRET:}
             scope:
             authorization-grant-type: authorization_code
-            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI:https://apis.bangtal-boys.com/login/oauth2/code/naver}
+            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI:h}
             client-name: Naver
             client-authentication-method: client_secret_post
-        #          apple:
-        #            client-id:
-        #            client-secret:
-        #            scope:
-        #            authorization-grant-type: authorization_code
-        #            redirect-uri: http://localhost:8080/login/oauth2/code/naver
-        #            client-name: Apple
-        #            client-authentication-method: client_secret_post
+          apple:
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_APPLE_CLIENT_ID:}
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_APPLE_CLIENT_SECRET:}
+            scope:
+            authorization-grant-type: authorization_code
+            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_APPLE_REDIRECT_URI:}
+            client-name: Apple
+            client-authentication-method: client_secret_post
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
@@ -45,15 +45,15 @@ spring:
             user-info-authentication-method: header
             user-name-attribute: response
           apple:
-            authorization-uri: https://appleid.apple.com/auth/authorize?scope=name%20email&response_mode=form_post
+            authorization-uri: https://appleid.apple.com/auth/authorize
             token-uri: https://appleid.apple.com/auth/token
-            jwkSetUri: https://appleid.apple.com/auth/keys
-            user-name-attribute: sub
+            user-info-uri: https://appleid.apple.com/auth/userinfo 
+            user-name-attribute: sub 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL:}
+    username: ${SPRING_DATASOURCE_USERNAME:}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
 decorator:
   datasource:
     p6spy:
@@ -61,10 +61,10 @@ decorator:
 springdoc:
   show-login-endpoint: true
 kakao:
-  admin-key: e9852da424682bb32f23283f28aa2e7c
+  api-url: https://kapi.kakao.com
+  admin-key: ${KAKAO_ADMIN_KEY:}
 naver:
-  client-id: 87XRcRkTrKm_jRmKqsVb
-  client-secret: XRsjyrij5R
+  api-url: https://nid.naver.com/oauth2.0
 apple:
-  key-id:
-  team-id:
+  team-id: ${APPLE_TEAM_ID:}
+  key-id: ${APPLE_KEY_ID:}

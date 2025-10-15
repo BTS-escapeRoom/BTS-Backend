@@ -2,33 +2,12 @@ services:
   bts-backend:
     image: ghcr.io/bts-escaperoom/bts-backend:${IMAGE_TAG}
     restart: always
-    environment:
-      # JWT Secret Key
-      SPRING_SECURITY_JWT_SECRET-KEY: 37e5e6213096155c93ce0d832fc2f1f5a0faca5785f893fa4eb9b9d4676f2404
-
-      # Kakao OAuth2
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_ID: 6314ef9de4168d995d3c4c4c308f8fef
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_SECRET: jte1OyJD8wDmQdKWjh3E6mRNjLrC91y2
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_REDIRECT_URI: https://apis.bangtal-boys.com/login/oauth2/code/kakao
-
-      # Naver OAuth2
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_ID: 87XRcRkTrKm_jRmKqsVb
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_SECRET: XRsjyrij5R
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI: https://apis.bangtal-boys.com/login/oauth2/code/naver
-
-      # Database Configuration
-      SPRING_DATASOURCE_URL: jdbc:mysql://bangtal-boys-database.clmmy2kggqxt.ap-northeast-2.rds.amazonaws.com:3306/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: bangtal-boys
-
-      # Optional: 추가 필요 시 Apple Key/Team ID 설정
-      APPLE_KEY_ID: <your-apple-key-id>
-      APPLE_TEAM_ID: <your-apple-team-id>
+    env_file:
+      - .env
     networks:
       - bts-backend
     ports:
       - "8881:8080"
-
 
 networks:
   bts-backend:

@@ -2,7 +2,6 @@ package com.bangtalboys.BTS_Backend.theme.domain;
 
 import com.bangtalboys.BTS_Backend.genre.domain.Genre;
 import com.bangtalboys.BTS_Backend.store.domain.Store;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;

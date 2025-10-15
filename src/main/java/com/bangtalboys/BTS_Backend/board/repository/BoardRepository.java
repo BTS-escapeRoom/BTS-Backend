@@ -1,10 +1,6 @@
 package com.bangtalboys.BTS_Backend.board.repository;
 
 import com.bangtalboys.BTS_Backend.board.domain.Board;
-import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

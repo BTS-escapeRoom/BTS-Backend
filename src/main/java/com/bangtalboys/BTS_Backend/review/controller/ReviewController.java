@@ -1,7 +1,6 @@
 package com.bangtalboys.BTS_Backend.review.controller;
 
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
-import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.review.dto.request.ReviewReportRequest;
 import com.bangtalboys.BTS_Backend.review.dto.request.ReviewRequest;
 import com.bangtalboys.BTS_Backend.review.dto.response.ReviewAvailableResponse;
@@ -25,7 +24,6 @@ import java.util.List;
 @RequestMapping("/v1/reviews")
 public class ReviewController {
     private final ReviewService reviewService;
-    private final JwtUtil jwtUtil;
 
     @Operation(summary = "리뷰 단건 조회")
     @GetMapping("/{reviewId}")

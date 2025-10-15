@@ -16,10 +16,10 @@ public class UnlinkService {
     @Value("${kakao.admin-key}") // application.yml 등에 설정
     private String adminKey;
 
-    @Value("${naver.client-id}")
+    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
     private String clientId;
 
-    @Value("${naver.client-secret}")
+    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String clientSecret;
 
     public void unlinkKakao(String socialId) {

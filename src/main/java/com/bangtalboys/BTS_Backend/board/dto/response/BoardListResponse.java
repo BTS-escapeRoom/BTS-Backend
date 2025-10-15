@@ -4,8 +4,6 @@ import com.bangtalboys.BTS_Backend.board.domain.Board;
 import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 public class BoardListResponse {
     private Long id;

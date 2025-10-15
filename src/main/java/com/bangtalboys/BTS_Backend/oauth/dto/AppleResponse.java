@@ -10,8 +10,15 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AppleResponse implements OAuth2Response {
     private final String socialId;
+    
     public AppleResponse(Map<String, Object> attribute) {
-        this.socialId = attribute.get("id").toString();
+        // Apple의 경우 ID 토큰에서 sub 클레임을 사용
+        this.socialId = attribute.get("sub").toString();
+    }
+    
+    // Apple의 경우 추가 파라미터에서 정보를 가져오는 생성자도 제공
+    public AppleResponse(String socialId) {
+        this.socialId = socialId;
     }
 
     @Override

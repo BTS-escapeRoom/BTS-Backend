@@ -5,12 +5,10 @@ import com.bangtalboys.BTS_Backend.comment.domain.Comment;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.ArrayList;
 import java.util.Date;

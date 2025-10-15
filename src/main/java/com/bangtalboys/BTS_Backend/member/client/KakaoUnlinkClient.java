@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 //KakaoUnlinkClient
-@FeignClient(name = "KakaoUnlinkClient", url = "https://kapi.kakao.com")
+@FeignClient(name = "KakaoUnlinkClient", url = "${kakao.api-url}")
 public interface KakaoUnlinkClient {
 
     @PostMapping(value = "/v1/user/unlink", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)

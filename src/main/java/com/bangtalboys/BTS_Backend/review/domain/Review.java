@@ -4,7 +4,6 @@ import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.utils.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
 
 import java.time.LocalDateTime;

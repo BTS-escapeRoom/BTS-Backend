@@ -1,6 +1,5 @@
 package com.bangtalboys.BTS_Backend.city.domain;
 
-import com.bangtalboys.BTS_Backend.city.domain.City;
 import com.bangtalboys.BTS_Backend.store.domain.Store;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

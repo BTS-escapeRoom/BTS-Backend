@@ -1,7 +1,7 @@
 package com.bangtalboys.BTS_Backend.utils.response;
 
 import lombok.Getter;
-import lombok.Setter;
+
 @Getter
 public class Response<T> {
     private String code;

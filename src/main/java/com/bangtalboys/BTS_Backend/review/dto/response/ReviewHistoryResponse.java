@@ -1,8 +1,6 @@
 package com.bangtalboys.BTS_Backend.review.dto.response;
 
 import com.bangtalboys.BTS_Backend.review.domain.Review;
-import com.bangtalboys.BTS_Backend.store.domain.Store;
-import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import lombok.Data;
 
 @Data

@@ -4,7 +4,6 @@ import com.bangtalboys.BTS_Backend.comment.dto.request.CommentRequest;
 import com.bangtalboys.BTS_Backend.comment.dto.response.CommentResponse;
 import com.bangtalboys.BTS_Backend.comment.service.CommentService;
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
-import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

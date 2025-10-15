@@ -1,7 +1,6 @@
 package com.bangtalboys.BTS_Backend.theme.controller;
 
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
-import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeListRequest;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeListPageResponse;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeListResponse;
@@ -25,7 +24,6 @@ import java.util.List;
 @RequestMapping("/v1/themes")
 public class ThemeController {
     private final ThemeService themeService;
-    private final JwtUtil jwtUtil;
 
     @Operation(summary = "테마 리스트 조회", description = "제목, 가게, 사람수, 난이도, 장르, 지역으로 필터링하여 전달")
     @GetMapping("")

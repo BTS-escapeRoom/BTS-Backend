@@ -94,7 +94,6 @@ public class ThemeCustomRepositoryImpl implements ThemeCustomRepository {
     private BooleanBuilder buildWhere(ThemeListRequest req) {
         QTheme t = QTheme.theme;
         QStore s = QStore.store;
-        QDistrict d = QDistrict.district;
         QCity c = QCity.city;
 
         BooleanBuilder where = new BooleanBuilder();

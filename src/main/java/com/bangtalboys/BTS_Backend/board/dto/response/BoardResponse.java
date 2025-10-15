@@ -1,16 +1,10 @@
 package com.bangtalboys.BTS_Backend.board.dto.response;
 
 import com.bangtalboys.BTS_Backend.board.domain.Board;
-import com.bangtalboys.BTS_Backend.board.domain.BoardReport;
-import com.bangtalboys.BTS_Backend.member.domain.Member;
-import com.bangtalboys.BTS_Backend.theme.domain.Theme;
-import com.bangtalboys.BTS_Backend.theme.dto.ThemeListResponse;
-import com.bangtalboys.BTS_Backend.theme.dto.ThemeResponse;
 import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Data
 public class BoardResponse  {

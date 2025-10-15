@@ -2,9 +2,6 @@ package com.bangtalboys.BTS_Backend.home.controller;
 
 import com.bangtalboys.BTS_Backend.home.dto.response.HomeResponse;
 import com.bangtalboys.BTS_Backend.home.service.HomeService;
-import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
-import com.bangtalboys.BTS_Backend.utils.enums.Role;
-import com.bangtalboys.BTS_Backend.utils.enums.Token;
 import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +18,6 @@ import java.util.List;
 @Tag(name="메인 홈 API")
 public class HomeController {
     private final HomeService homeService;
-    private final JwtUtil jwtUtil;
 
     @GetMapping("")
     public ResponseEntity<Response<List<HomeResponse>>> home() {

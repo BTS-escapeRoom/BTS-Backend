@@ -3,7 +3,6 @@ package com.bangtalboys.BTS_Backend.comment.domain;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.stereotype.Service;
 
 @Entity
 @Getter

@@ -1,7 +1,6 @@
 package com.bangtalboys.BTS_Backend.board.domain;
 
 import com.bangtalboys.BTS_Backend.member.domain.Member;
-import com.bangtalboys.BTS_Backend.utils.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 

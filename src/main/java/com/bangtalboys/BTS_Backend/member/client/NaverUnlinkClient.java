@@ -5,7 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "NaverUnlinkClient", url = "https://nid.naver.com/oauth2.0")
+@FeignClient(name = "NaverUnlinkClient", url = "${naver.api-url}")
 public interface NaverUnlinkClient {
 
     @PostMapping(value = "/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)

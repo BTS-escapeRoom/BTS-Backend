@@ -39,3 +39,6 @@ out/
 # QueryDSL generated files
 /src/main/generated/
 /build/
+
+# Environment variables
+.env

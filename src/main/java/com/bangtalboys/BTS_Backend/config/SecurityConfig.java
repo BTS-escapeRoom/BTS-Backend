@@ -3,6 +3,7 @@ package com.bangtalboys.BTS_Backend.config;
 import com.bangtalboys.BTS_Backend.oauth.authentication.*;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtFilter;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
+import com.bangtalboys.BTS_Backend.oauth.util.AppleJwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpMethod;
@@ -12,17 +13,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
+import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
 
 import static com.bangtalboys.BTS_Backend.config.PermitAllPaths.PATHS;
 import static com.bangtalboys.BTS_Backend.config.PermitAllPaths.SWAGGER_PATHS;
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -31,11 +30,13 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomFailureHandler customFailureHandler;
     private final JwtUtil jwtUtil;
+    private final AppleJwtUtil appleJwtUtil;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomFailureHandler customFailureHandler, JwtUtil jwtUtil) {
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomFailureHandler customFailureHandler, JwtUtil jwtUtil, AppleJwtUtil appleJwtUtil) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.customFailureHandler = customFailureHandler;
         this.jwtUtil = jwtUtil;
+        this.appleJwtUtil = appleJwtUtil;
     }
 
     @Bean
@@ -46,6 +47,15 @@ public class SecurityConfig {
     @Bean
     public CustomSuccessHandler customSuccessHandler(AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo) {
         return new CustomSuccessHandler(jwtUtil, authRequestRepo);
+    }
+
+    @Bean
+    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
+        DefaultAuthorizationCodeTokenResponseClient client = new DefaultAuthorizationCodeTokenResponseClient();
+        
+        client.setRequestEntityConverter(new CustomRequestEntityConverter(appleJwtUtil));
+        
+        return client;
     }
 
 //    @Bean
@@ -98,6 +108,9 @@ public class SecurityConfig {
                                         new CustomAuthorizationRequestResolver(clientRegistrationRepository)
                                 )
                                 .authorizationRequestRepository(authRequestRepo)
+                )
+                .tokenEndpoint(token -> token
+                    .accessTokenResponseClient(accessTokenResponseClient())
                 )
                 .userInfoEndpoint(userInfoEndpointConfig ->
                         userInfoEndpointConfig.userService(customOAuth2UserService))

@@ -1,7 +1,6 @@
 package com.bangtalboys.BTS_Backend.home.service;
 
 import com.bangtalboys.BTS_Backend.home.dto.response.HomeResponse;
-import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.utils.enums.UiType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
