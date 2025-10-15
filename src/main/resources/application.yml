@@ -3,32 +3,32 @@ server:
 spring:
   security:
     jwt:
-      secret-key: ${SPRING_SECURITY_JWT_SECRET_KEY:}
+      secret-key: ${SPRING_SECURITY_JWT_SECRET_KEY:37e5e6213096155c93ce0d832fc2f1f5a0faca5785f893fa4eb9b9d4676f2404}
     oauth2:
       client:
         registration:
           kakao:
-            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_ID:}
-            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_SECRET:}
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_ID:6314ef9de4168d995d3c4c4c308f8fef}
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_SECRET:jte1OyJD8wDmQdKWjh3E6mRNjLrC91y2}
             scope:
             authorization-grant-type: authorization_code
-            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_REDIRECT_URI:}
+            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_REDIRECT_URI:https://apis.bangtal-boys.com/login/oauth2/code/kakao}
             client-name: Kakao
             client-authentication-method: client_secret_post
           naver:
-            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_ID:}
-            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_SECRET:}
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_ID:87XRcRkTrKm_jRmKqsVb}
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_SECRET:XRsjyrij5R}
             scope:
             authorization-grant-type: authorization_code
-            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI:h}
+            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI:https://apis.bangtal-boys.com/login/oauth2/code/naver}
             client-name: Naver
             client-authentication-method: client_secret_post
           apple:
-            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_APPLE_CLIENT_ID:}
-            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_APPLE_CLIENT_SECRET:}
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_APPLE_CLIENT_ID:1234}
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_APPLE_CLIENT_SECRET:"-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"}
             scope:
             authorization-grant-type: authorization_code
-            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_APPLE_REDIRECT_URI:}
+            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_APPLE_REDIRECT_URI:https://apis.bangtal-boys.com/login/oauth2/code/apple}
             client-name: Apple
             client-authentication-method: client_secret_post
         provider:
@@ -51,9 +51,9 @@ spring:
             user-name-attribute: sub 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${SPRING_DATASOURCE_URL:}
-    username: ${SPRING_DATASOURCE_USERNAME:}
-    password: ${SPRING_DATASOURCE_PASSWORD:}
+    url: jdbc:mysql://bangtal-boys-database.clmmy2kggqxt.ap-northeast-2.rds.amazonaws.com:3306/bts?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: root
+    password: bangtal-boys
 decorator:
   datasource:
     p6spy:
@@ -62,7 +62,7 @@ springdoc:
   show-login-endpoint: true
 kakao:
   api-url: https://kapi.kakao.com
-  admin-key: ${KAKAO_ADMIN_KEY:}
+  admin-key: ${KAKAO_ADMIN_KEY:e9852da424682bb32f23283f28aa2e7c}
 naver:
   api-url: https://nid.naver.com/oauth2.0
 apple:
