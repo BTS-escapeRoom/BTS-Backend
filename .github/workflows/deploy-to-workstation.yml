@@ -42,7 +42,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             mkdir -p ~/app
-            cat > ~/app/.env << 'EOF'
+            cat > ~/app/.env << EOF
             ${{ secrets.ENV_FILE }}
             EOF
             chmod 600 ~/app/.env
