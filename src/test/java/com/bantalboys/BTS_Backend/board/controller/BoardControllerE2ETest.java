@@ -31,7 +31,7 @@ public class BoardControllerE2ETest {
     @Test
     void createBoard_E2E() throws Exception {
         BoardRequest request = new BoardRequest(
-                1L, BoardType.NORMAL, "Test Title", "Test Description",
+                1L, BoardType.normal, "Test Title", "Test Description",
                 new Date(), new Date(), 3L,
                 "https://open.kakao.com/abc", "KakaoTalk"
         );

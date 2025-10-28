@@ -1,11 +1,13 @@
 package com.bantalboys.BTS_Backend.review.dto.response;
 
-import com.bantalboys.BTS_Backend.review.domain.Review;
+import com.bangtalboys.BTS_Backend.review.domain.Review;
 import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Data
+@Getter
 public class ReviewResponse {
     private Long id;
     private String content;

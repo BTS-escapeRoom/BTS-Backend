@@ -4,6 +4,7 @@ import com.bangtalboys.BTS_Backend.board.domain.BoardLike;
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
+import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,7 +36,7 @@ public class Board {
     private Theme theme;
 
     @Column()
-    private String type;
+    private BoardType type;
 
     @Column()
     private String title;

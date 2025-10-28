@@ -52,7 +52,7 @@ class BoardServiceTest {
 
         BoardRequest request = new BoardRequest(
                 10L,                        // themeId
-                BoardType.NORMAL,                  // type
+                BoardType.normal,                  // type
                 "제목",                    // title
                 "본문 내용입니다",         // description
                 new Date(),                // recruit_deadline
