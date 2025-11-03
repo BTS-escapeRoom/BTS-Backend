@@ -3,7 +3,7 @@ package com.bangtalboys.BTS_Backend.config;
 import com.bangtalboys.BTS_Backend.oauth.authentication.*;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtFilter;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
-import com.bangtalboys.BTS_Backend.oauth.util.AppleJwtUtil;
+
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpMethod;
@@ -30,13 +30,12 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomFailureHandler customFailureHandler;
     private final JwtUtil jwtUtil;
-    private final AppleJwtUtil appleJwtUtil;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomFailureHandler customFailureHandler, JwtUtil jwtUtil, AppleJwtUtil appleJwtUtil) {
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomFailureHandler customFailureHandler, JwtUtil jwtUtil) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.customFailureHandler = customFailureHandler;
         this.jwtUtil = jwtUtil;
-        this.appleJwtUtil = appleJwtUtil;
+
     }
 
     @Bean
@@ -47,15 +46,6 @@ public class SecurityConfig {
     @Bean
     public CustomSuccessHandler customSuccessHandler(AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo) {
         return new CustomSuccessHandler(jwtUtil, authRequestRepo);
-    }
-
-    @Bean
-    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
-        DefaultAuthorizationCodeTokenResponseClient client = new DefaultAuthorizationCodeTokenResponseClient();
-        
-        client.setRequestEntityConverter(new CustomRequestEntityConverter(appleJwtUtil));
-        
-        return client;
     }
 
 //    @Bean
@@ -108,9 +98,6 @@ public class SecurityConfig {
                                         new CustomAuthorizationRequestResolver(clientRegistrationRepository)
                                 )
                                 .authorizationRequestRepository(authRequestRepo)
-                )
-                .tokenEndpoint(token -> token
-                    .accessTokenResponseClient(accessTokenResponseClient())
                 )
                 .userInfoEndpoint(userInfoEndpointConfig ->
                         userInfoEndpointConfig.userService(customOAuth2UserService))
