@@ -2,8 +2,6 @@ services:
   bts-backend:
     image: ghcr.io/bts-escaperoom/bts-backend:${IMAGE_TAG}
     restart: always
-    env_file:
-      - .env
     networks:
       - bts-backend
     ports:
