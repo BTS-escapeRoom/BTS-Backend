@@ -7,7 +7,6 @@ import org.springframework.context.annotation.PropertySource;
 
 @EnableFeignClients
 @SpringBootApplication
-@PropertySource("file:.env")
 public class BtsBackendApplication {
 
 	public static void main(String[] args) {
