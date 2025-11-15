@@ -90,3 +90,4 @@ public class CustomLogoutFilter extends GenericFilterBean {
         response.setStatus(HttpServletResponse.SC_OK);
     }
 }
+

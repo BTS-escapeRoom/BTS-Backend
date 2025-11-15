@@ -40,5 +40,5 @@ out/
 /src/main/generated/
 /build/
 
-# Environment variables
-.env
+# 로컬 환경 설정 파일 (민감 정보 포함)
+application-local.yml

@@ -56,9 +56,6 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	// env
-	implementation 'me.paulschwarz:spring-dotenv:4.0.0'
-
 	//mysql 연동
 	implementation 'mysql:mysql-connector-java:8.0.32'
 
@@ -69,9 +66,9 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
 	//jwt
-	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-	implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
-	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
 	implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'
 	implementation 'org.jboss.logging:jboss-logging:3.5.3.Final'
 
@@ -83,6 +80,10 @@ dependencies {
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+	//aws parameter store
+	implementation platform('io.awspring.cloud:spring-cloud-aws-dependencies:3.2.0')
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
 }
 
 

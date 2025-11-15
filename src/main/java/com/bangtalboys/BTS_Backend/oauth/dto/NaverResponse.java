@@ -3,6 +3,7 @@ package com.bangtalboys.BTS_Backend.oauth.dto;
 import com.bangtalboys.BTS_Backend.utils.enums.SocialType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
+import com.bangtalboys.BTS_Backend.oauth.client.naver.dto.NaverUserInfoResponse;
 
 import java.util.Map;
 
@@ -10,11 +11,16 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NaverResponse implements OAuth2Response{
 
-    private final Map<String, Object> attribute;
+    private final String socialId;
 
     @SuppressWarnings("unchecked")
     public NaverResponse(Map<String, Object> attribute) {
-        this.attribute = (Map<String, Object>) attribute.get("response");
+        Map<String, Object> response = (Map<String, Object>) attribute.get("response");
+        this.socialId = response.get("id").toString();
+    }
+
+    public NaverResponse(NaverUserInfoResponse userInfo) {
+        this.socialId = userInfo.getResponse().getId();
     }
 
     @Override
@@ -24,6 +30,6 @@ public class NaverResponse implements OAuth2Response{
 
     @Override
     public String getSocialId() {
-        return attribute.get("id").toString();
+        return socialId;
     }
 }

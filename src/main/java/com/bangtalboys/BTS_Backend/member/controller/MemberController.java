@@ -20,15 +20,6 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @Operation(summary = "회원 가입 (앱)")
-    @PostMapping("")
-    public ResponseEntity<Response<MemberResponse>> createMember(
-            @RequestBody @Valid MemberCreateRequest req
-    ) {
-
-        return ResponseEntity.ok(Response.ok(memberService.createMember(req)));
-    }
-
     @Operation(summary = "내 회원 정보 조회")
     @GetMapping("/me")
     public ResponseEntity<Response<MemberResponse>> getMember(

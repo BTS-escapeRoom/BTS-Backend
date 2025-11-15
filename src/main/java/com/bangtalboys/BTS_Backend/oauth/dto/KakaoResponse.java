@@ -2,17 +2,23 @@ package com.bangtalboys.BTS_Backend.oauth.dto;
 
 import com.bangtalboys.BTS_Backend.utils.enums.SocialType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
+import lombok.*;
+import com.bangtalboys.BTS_Backend.oauth.client.kakao.dto.KakaoUserInfoResponse;
 
 import java.util.Map;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KakaoResponse implements OAuth2Response {
+    
     private final String socialId;
 
     public KakaoResponse(Map<String, Object> attribute) {
         this.socialId = attribute.get("id").toString();
+    }
+
+    public KakaoResponse(KakaoUserInfoResponse userInfo) {
+        this.socialId = userInfo.getId().toString();
     }
 
     @Override

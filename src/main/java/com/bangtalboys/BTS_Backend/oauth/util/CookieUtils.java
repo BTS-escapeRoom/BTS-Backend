@@ -1,4 +1,4 @@
-package com.bangtalboys.BTS_Backend.oauth.authentication;
+package com.bangtalboys.BTS_Backend.oauth.util;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -64,3 +64,4 @@ public class CookieUtils {
         }
     }
 }
+

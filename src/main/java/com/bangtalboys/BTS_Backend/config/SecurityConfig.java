@@ -3,6 +3,7 @@ package com.bangtalboys.BTS_Backend.config;
 import com.bangtalboys.BTS_Backend.oauth.authentication.*;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtFilter;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
+import com.bangtalboys.BTS_Backend.oauth.service.CustomOAuth2UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.*;

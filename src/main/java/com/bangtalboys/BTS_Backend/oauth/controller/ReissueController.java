@@ -1,5 +1,6 @@
-package com.bangtalboys.BTS_Backend.oauth.jwt;
+package com.bangtalboys.BTS_Backend.oauth.controller;
 
+import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.utils.enums.Token;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -93,3 +94,4 @@ public class ReissueController {
         private final String accessToken;
     }
 }
+
