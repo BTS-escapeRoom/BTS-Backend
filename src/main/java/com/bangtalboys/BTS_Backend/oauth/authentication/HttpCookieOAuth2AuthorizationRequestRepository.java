@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 
-// OAuth2AuthorizationRequest를 Base64로 직렬화해서 쿠키에 저장하는 Repository 예시
+// OAuth2AuthorizationRequest를 Base64로 직렬화해서 쿠키에 저장하는 Repository
 public class HttpCookieOAuth2AuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
 
     public static final String OAUTH2_AUTH_REQUEST_COOKIE_NAME = "oauth2_auth_request";
