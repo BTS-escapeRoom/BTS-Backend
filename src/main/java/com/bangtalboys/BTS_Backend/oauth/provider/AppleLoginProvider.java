@@ -11,9 +11,11 @@ import com.bangtalboys.BTS_Backend.oauth.client.apple.AppleAuthClient;
 import com.bangtalboys.BTS_Backend.oauth.client.apple.dto.AppleTokenResponse;
 import com.bangtalboys.BTS_Backend.oauth.util.AppleJwtUtils;
 import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+@Slf4j
 @Component("apple")
 @RequiredArgsConstructor
 public class AppleLoginProvider implements SocialLoginProvider{
@@ -60,7 +62,15 @@ public class AppleLoginProvider implements SocialLoginProvider{
                     code
             );
         } catch (FeignException e) {
-            throw new RuntimeException("애플 액세스 토큰 발급에 실패했습니다.", e);
+            String errorMessage = String.format(
+                "애플 액세스 토큰 발급 실패 [HTTP %d]: %s",
+                e.status(),
+                e.contentUTF8() != null && !e.contentUTF8().isEmpty() 
+                    ? e.contentUTF8() 
+                    : e.getMessage()
+            );
+            log.error(errorMessage, e);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 }

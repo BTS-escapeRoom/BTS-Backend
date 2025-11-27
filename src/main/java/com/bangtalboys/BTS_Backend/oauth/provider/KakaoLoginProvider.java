@@ -59,7 +59,15 @@ public class KakaoLoginProvider implements SocialLoginProvider {
             return response.getAccessToken();
 
         } catch (FeignException e) {
-            throw new RuntimeException("카카오 액세스 토큰 발급에 실패했습니다.", e);
+            String errorMessage = String.format(
+                "카카오 액세스 토큰 발급 실패 [HTTP %d]: %s",
+                e.status(),
+                e.contentUTF8() != null && !e.contentUTF8().isEmpty() 
+                    ? e.contentUTF8() 
+                    : e.getMessage()
+            );
+            log.error(errorMessage, e);
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
@@ -70,7 +78,15 @@ public class KakaoLoginProvider implements SocialLoginProvider {
             return kakaoApiClient.getUserInfo(bearerToken);
             
         } catch (FeignException e) {
-            throw new RuntimeException("카카오 사용자 정보 조회에 실패했습니다.", e);
+            String errorMessage = String.format(
+                "카카오 사용자 정보 조회 실패 [HTTP %d]: %s",
+                e.status(),
+                e.contentUTF8() != null && !e.contentUTF8().isEmpty() 
+                    ? e.contentUTF8() 
+                    : e.getMessage()
+            );
+            log.error(errorMessage, e);
+            throw new RuntimeException(errorMessage, e);
         }
     }       
 }
