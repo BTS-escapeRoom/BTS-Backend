@@ -4,6 +4,7 @@ import com.bangtalboys.BTS_Backend.oauth.client.kakao.KakaoApiClient;
 import com.bangtalboys.BTS_Backend.oauth.client.kakao.KakaoAuthClient;
 import com.bangtalboys.BTS_Backend.oauth.client.kakao.dto.KakaoTokenResponse;
 import com.bangtalboys.BTS_Backend.oauth.client.kakao.dto.KakaoUserInfoResponse;
+import com.bangtalboys.BTS_Backend.oauth.client.kakao.dto.KakaoTokenInfoResponse;
 import com.bangtalboys.BTS_Backend.oauth.dto.AppSocialLoginRequest;
 import com.bangtalboys.BTS_Backend.oauth.dto.KakaoResponse;
 import com.bangtalboys.BTS_Backend.oauth.dto.OAuth2Response;
@@ -34,16 +35,46 @@ public class KakaoLoginProvider implements SocialLoginProvider {
     private String tokenUri;
     @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
     private String userInfoUri;
+    @Value("${spring.security.oauth2.client.registration.kakao.app-id}")
+    private String AppId;
 
     @Override
     public OAuth2Response getUserProfile(AppSocialLoginRequest request) {
-        // 1. code로 카카오에 Access Token 요청
-        String kakaoAccessToken = getKakaoAccessToken(request.getCode());
+        // 1. 카카오에 Access Token 유효성 검증
+        validateKakaoAccessToken(request.getAccessToken(), request.getId());
         
-        // 2. Access Token으로 사용자 정보 (attributes) 요청
-        KakaoUserInfoResponse userInfo = getKakaoUserInfo(kakaoAccessToken);
+        
+        // // 2. Access Token으로 사용자 정보 (attributes) 요청
+        // KakaoUserInfoResponse userInfo = getKakaoUserInfo(request.getAccessToken());
 
-        return new KakaoResponse(userInfo);
+        return new KakaoResponse(request.getId());
+    }
+
+    private Boolean validateKakaoAccessToken(String accessToken, Long Id) {
+        try {
+            String bearerToken = "Bearer " + accessToken;
+            KakaoTokenInfoResponse response = kakaoApiClient.validateAccessToken(bearerToken);
+            // 앱 아이디 검증
+            if (response.getApp_id().toString() != AppId) {
+                return false;
+            }
+
+            // 사용자 아이디 검증
+            if (response.getId() != Id) {
+                return false;
+            }
+
+            return response.getExpiresIn() > 0;
+        } catch (FeignException e) {
+            String errorMessage = String.format(
+                "카카오 액세스 토큰 유효성 검증 실패 [HTTP %d]: %s",
+                e.status(),
+                e.contentUTF8() != null && !e.contentUTF8().isEmpty() 
+                    ? e.contentUTF8() 
+                    : e.getMessage()
+            );
+            throw new RuntimeException(errorMessage, e);
+        }
     }
 
     private String getKakaoAccessToken(String code) {
@@ -66,7 +97,6 @@ public class KakaoLoginProvider implements SocialLoginProvider {
                     ? e.contentUTF8() 
                     : e.getMessage()
             );
-            log.error(errorMessage, e);
             throw new RuntimeException(errorMessage, e);
         }
     }

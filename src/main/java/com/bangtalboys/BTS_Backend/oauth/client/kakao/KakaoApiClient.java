@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bangtalboys.BTS_Backend.oauth.client.kakao.dto.KakaoUserInfoResponse;
+import com.bangtalboys.BTS_Backend.oauth.client.kakao.dto.KakaoTokenInfoResponse;
 
 
 /**
@@ -27,5 +28,10 @@ public interface KakaoApiClient {
             @RequestHeader("Authorization") String authorization,
             @RequestParam(name = "target_id_type", defaultValue = "user_id") String targetIdType,
             @RequestParam("target_id") String socialId
+    );
+
+    @GetMapping(value = "/v1/user/access_token_info", headers = "Content-Type=application/x-www-form-urlencoded;charset=utf-8")
+    KakaoTokenInfoResponse validateAccessToken(
+            @RequestHeader("Authorization") String bearerToken
     );
 }

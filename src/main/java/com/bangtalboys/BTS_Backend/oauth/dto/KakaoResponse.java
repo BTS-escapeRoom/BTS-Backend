@@ -17,8 +17,8 @@ public class KakaoResponse implements OAuth2Response {
         this.socialId = attribute.get("id").toString();
     }
 
-    public KakaoResponse(KakaoUserInfoResponse userInfo) {
-        this.socialId = userInfo.getId().toString();
+    public KakaoResponse(Long id) {
+        this.socialId = id.toString();
     }
 
     @Override
