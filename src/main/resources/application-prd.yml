@@ -15,6 +15,7 @@ spring:
         registration:
           kakao:
             client-id: ${spring.security.oauth2.client.registration.kakao.client-id}
+            app-id: ${spring.security.oauth2.client.registration.kakao.app-id}
             client-secret: ${spring.security.oauth2.client.registration.kakao.client-secret}
             scope:
             authorization-grant-type: authorization_code
