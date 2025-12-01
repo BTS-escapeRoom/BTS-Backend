@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -114,7 +115,10 @@ public class SecurityConfig {
                                 .authorizationRequestRepository(authRequestRepo)
                 )
                 .userInfoEndpoint(userInfoEndpointConfig ->
-                        userInfoEndpointConfig.userService(customOAuth2UserService))
+                        userInfoEndpointConfig
+                        .userService(customOAuth2UserService)
+                        .oidcUserService((OAuth2UserService) customOAuth2UserService)
+                    )
                 .successHandler(customSuccessHandler)
                 .failureHandler(customFailureHandler)
 
