@@ -3,6 +3,8 @@ package com.bangtalboys.BTS_Backend.review.domain;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.utils.entity.BaseEntity;
+import com.bangtalboys.BTS_Backend.utils.enums.TimeType;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +27,9 @@ public class Review extends BaseEntity {
     private Integer people;
 
     private Integer time;
+
+    @Enumerated(EnumType.STRING)
+    private TimeType timeType;
 
     private Integer scareScore;
 
@@ -49,10 +54,11 @@ public class Review extends BaseEntity {
     private Member member;
 
     @Builder
-    public Review(String content, Integer people, Integer time, Integer scareScore, Integer activityScore, Float difficulty, LocalDateTime visitDate, Integer hints, boolean isSuccess, boolean isDisplay, Theme theme, Member member) {
+    public Review(String content, Integer people, Integer time, TimeType timeType, Integer scareScore, Integer activityScore, Float difficulty, LocalDateTime visitDate, Integer hints, boolean isSuccess, boolean isDisplay, Theme theme, Member member) {
         this.content = content;
         this.people = people;
         this.time = time;
+        this.timeType = timeType;
         this.scareScore = scareScore;
         this.activityScore = activityScore;
         this.difficulty = difficulty;

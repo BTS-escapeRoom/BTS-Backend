@@ -19,6 +19,7 @@ import com.bangtalboys.BTS_Backend.theme.repository.ThemeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.bangtalboys.BTS_Backend.utils.enums.TimeType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,6 +60,7 @@ public class ReviewService {
                 .content(reviewRequest.getContent())
                 .people(reviewRequest.getPeople())
                 .time(reviewRequest.getTime())
+                .timeType(reviewRequest.getTimeType() != null ? reviewRequest.getTimeType() : TimeType.NONE)
                 .scareScore(reviewRequest.getScareScore())
                 .activityScore(reviewRequest.getActivityScore())
                 .difficulty(reviewRequest.getDifficulty())
@@ -85,6 +87,7 @@ public class ReviewService {
         review.setContent(reviewRequest.getContent());
         review.setPeople(reviewRequest.getPeople());
         review.setTime(reviewRequest.getTime());
+        review.setTimeType(reviewRequest.getTimeType() != null ? reviewRequest.getTimeType() : TimeType.NONE);
         review.setScareScore(reviewRequest.getScareScore());
         review.setActivityScore(reviewRequest.getActivityScore());
         review.setDifficulty(reviewRequest.getDifficulty());
