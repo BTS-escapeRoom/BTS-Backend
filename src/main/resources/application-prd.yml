@@ -54,7 +54,6 @@ spring:
           apple:
             authorization-uri: https://appleid.apple.com/auth/authorize
             token-uri: https://appleid.apple.com/auth/token
-            user-info-uri: https://appleid.apple.com/auth/userinfo
             user-name-attribute: sub
             jwk-set-uri: https://appleid.apple.com/auth/keys
             team-id: ${spring.security.oauth2.client.provider.apple.team-id}
