@@ -27,6 +27,8 @@ public class AppleLoginProvider implements SocialLoginProvider{
     private String clientId;
     @Value("${spring.security.oauth2.client.registration.apple.authorization-grant-type}")
     private String grantType;
+    @Value("${spring.security.oauth2.client.registration.apple.redirect-uri}")
+    private String redirectUri;
 
     @Override
     public OAuth2Response getUserProfile(AppSocialLoginRequest request) {
@@ -59,7 +61,8 @@ public class AppleLoginProvider implements SocialLoginProvider{
                     clientId,
                     clientSecret,
                     grantType,
-                    code
+                    code,
+                    redirectUri
             );
         } catch (FeignException e) {
             String errorMessage = String.format(

@@ -79,7 +79,7 @@ public class AppleJwtUtils{
 
     public String createClientSecret() {
         Instant now = Instant.now();
-        Instant expiration = now.plus(5, ChronoUnit.MINUTES); // 5분 유효
+        Instant expiration = now.plus(180, ChronoUnit.DAYS); // 6개월 유효
 
         // JJWT를 사용하여 client secret 빌드
         return Jwts.builder()

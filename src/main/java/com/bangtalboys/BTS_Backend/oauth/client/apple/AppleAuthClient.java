@@ -14,7 +14,8 @@ public interface AppleAuthClient {
             @RequestParam("client_id") String clientId,
             @RequestParam("client_secret") String clientSecretJwt, // 동적으로 생성된 JWT
             @RequestParam("grant_type") String grantType,
-            @RequestParam("code") String code
+            @RequestParam("code") String code,
+            @RequestParam("redirect_uri") String redirectUri
             // (redirect_uri는 최초 요청 시에만 필요할 수 있음)
     );
 }
