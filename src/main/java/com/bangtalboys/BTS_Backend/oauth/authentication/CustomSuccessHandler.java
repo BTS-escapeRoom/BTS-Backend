@@ -2,7 +2,10 @@ package com.bangtalboys.BTS_Backend.oauth.authentication;
 
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
+import com.bangtalboys.BTS_Backend.oauth.util.UrlUtils;
+
 import com.bangtalboys.BTS_Backend.utils.enums.Token;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,8 +18,6 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -24,13 +25,16 @@ import java.util.Iterator;
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
+    private final UrlUtils urlUtils;
     private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo;
 
     private static final String DEFAULT_REDIRECT_URL = "/";
 
     // 생성자 주입
-    public CustomSuccessHandler(JwtUtil jwtUtil,
+    public CustomSuccessHandler(UrlUtils urlUtils,
+                                JwtUtil jwtUtil,
                                 AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo) {
+        this.urlUtils = urlUtils;
         this.jwtUtil = jwtUtil;
         this.authRequestRepo = authRequestRepo;
     }
@@ -47,7 +51,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
             if (returnUrlObj instanceof String) {
                 String decodedUrl = (String) returnUrlObj;
-                if (isSafeReturnUrl(decodedUrl)) {
+                if (urlUtils.isSafeReturnUrl(decodedUrl)) {
                     returnUrl = decodedUrl;
                 }
             }
@@ -110,28 +114,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 cookie.getName(), cookie.getValue(), cookie.getMaxAge(), cookie.getPath(), cookie.getDomain());
 
         response.addHeader("Set-Cookie", cookieStr);
-    }
-
-    private boolean isSafeReturnUrl(String url) {
-        try {
-            URI uri = new URI(url);
-            String host = uri.getHost();
-
-            // 로컬 개발 환경 허용 (선택)
-            if (host == null) return false;
-
-            return host.endsWith("bangtal-boys.com") || host.equals("localhost");
-        } catch (URISyntaxException e) {
-            return false;
-        }
-    }
-
-    public String getDomain(String input) {
-        int index = input.indexOf('?');
-        if (index == -1) {
-            return input;
-        }
-        return input.substring(0, index);
     }
 }
 

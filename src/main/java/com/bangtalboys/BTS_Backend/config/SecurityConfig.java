@@ -5,6 +5,7 @@ import com.bangtalboys.BTS_Backend.oauth.jwt.JwtFilter;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.oauth.service.CustomOAuth2UserService;
 import com.bangtalboys.BTS_Backend.oauth.util.AppleJwtUtils;
+import com.bangtalboys.BTS_Backend.oauth.util.UrlUtils;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.*;
@@ -31,16 +32,16 @@ import static com.bangtalboys.BTS_Backend.config.PermitAllPaths.SWAGGER_PATHS;
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final CustomFailureHandler customFailureHandler;
+    private final UrlUtils urlUtils;
     private final JwtUtil jwtUtil;
     private final AppleJwtUtils appleJwtUtils;
 
     public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, 
-                            CustomFailureHandler customFailureHandler, 
-                            JwtUtil jwtUtil, 
+                            UrlUtils urlUtils,
+                            JwtUtil jwtUtil,
                             AppleJwtUtils appleJwtUtils) {
         this.customOAuth2UserService = customOAuth2UserService;
-        this.customFailureHandler = customFailureHandler;
+        this.urlUtils = urlUtils;
         this.jwtUtil = jwtUtil;
         this.appleJwtUtils = appleJwtUtils;
     }
@@ -52,8 +53,14 @@ public class SecurityConfig {
 
     @Bean
     public CustomSuccessHandler customSuccessHandler(AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo) {
-        return new CustomSuccessHandler(jwtUtil, authRequestRepo);
+        return new CustomSuccessHandler(urlUtils, jwtUtil, authRequestRepo);
     }
+
+    @Bean
+    public CustomFailureHandler customFailureHandler(AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo) {
+        return new CustomFailureHandler(urlUtils, authRequestRepo);
+    }
+
 
     @Bean
     public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
@@ -88,7 +95,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository,
                                            AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo,
-                                           CustomSuccessHandler customSuccessHandler) throws Exception {
+                                           CustomSuccessHandler customSuccessHandler,
+                                           CustomFailureHandler customFailureHandler) throws Exception {
 
         // CORS 설정
 //        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
