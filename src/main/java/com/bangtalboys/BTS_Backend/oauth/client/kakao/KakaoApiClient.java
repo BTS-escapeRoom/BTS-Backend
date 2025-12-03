@@ -30,7 +30,7 @@ public interface KakaoApiClient {
             @RequestParam("target_id") String socialId
     );
 
-    @GetMapping(value = "/v1/user/access_token_info", headers = "Content-Type=application/x-www-form-urlencoded;charset=utf-8")
+    @GetMapping(value = "/v1/user/access_token_info")
     KakaoTokenInfoResponse validateAccessToken(
             @RequestHeader("Authorization") String bearerToken
     );

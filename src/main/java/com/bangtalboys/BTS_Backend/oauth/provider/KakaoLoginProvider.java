@@ -50,8 +50,9 @@ public class KakaoLoginProvider implements SocialLoginProvider {
         return new KakaoResponse(request.getId());
     }
 
-    private Boolean validateKakaoAccessToken(String accessToken, Long Id) {
+    private Boolean validateKakaoAccessToken(String accessToken, Long id) {
         try {
+            System.out.println("accessToken: " + accessToken);
             String bearerToken = "Bearer " + accessToken;
             KakaoTokenInfoResponse response = kakaoApiClient.validateAccessToken(bearerToken);
             // 앱 아이디 검증
@@ -60,7 +61,7 @@ public class KakaoLoginProvider implements SocialLoginProvider {
             }
 
             // 사용자 아이디 검증
-            if (response.getId() != Id) {
+            if (response.getId() != id) {
                 return false;
             }
 
