@@ -23,7 +23,7 @@ public class AppleLoginProvider implements SocialLoginProvider{
     private final AppleAuthClient appleAuthClient;
     private final AppleJwtUtils appleJwtUtils;
 
-    @Value("${spring.security.oauth2.client.registration.apple.team-id}")
+    @Value("${spring.security.oauth2.client.provider.apple.team-id}")
     private String clientId;
     @Value("${spring.security.oauth2.client.registration.apple.authorization-grant-type}")
     private String grantType;
