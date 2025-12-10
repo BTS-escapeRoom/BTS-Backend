@@ -46,8 +46,8 @@ public class BoardController {
 
     @Operation(summary = "게시글 목록 조회")
     @GetMapping("")
-    public ResponseEntity<Response<BoardListPageResponse>> getAllBoards(@RequestParam(required = false) String keyword, @RequestParam(required = false) BoardType type, @RequestParam(required = false) SortType sortType, @RequestParam(required = false, defaultValue = "1") Integer page) {
-        BoardListRequest boardListRequest = new BoardListRequest(keyword, type, sortType, page);
+    public ResponseEntity<Response<BoardListPageResponse>> getAllBoards(@RequestParam(required = false) String keyword, @RequestParam(required = false) boolean isRecruiting, @RequestParam(required = false) BoardType type, @RequestParam(required = false) SortType sortType, @RequestParam(required = false, defaultValue = "1") Integer page) {
+        BoardListRequest boardListRequest = new BoardListRequest(keyword, isRecruiting, type, sortType, page);
         return ResponseEntity.ok(Response.ok(boardService.getAllBoards(boardListRequest)));
     }
 

@@ -20,6 +20,7 @@ public class BoardListResponse {
     private String storeName;
     private Date escapeDate;
     private Long recruitPeople;
+    private Date recruitDeadline;
     private String contactUrl;
     private ContactMethod contactMethod;
     private int likeCount;
@@ -39,6 +40,7 @@ public class BoardListResponse {
         this.storeName = board.getTheme() != null ?  board.getTheme().getStore().getName() : null;
         this.escapeDate = board.getEscape_date() != null ? board.getEscape_date() : null;
         this.recruitPeople = board.getRecruit_people();
+        this.recruitDeadline = board.getRecruit_deadline() != null ? board.getRecruit_deadline() : null;
         this.contactUrl = board.getContact_url();
         this.contactMethod = board.getContact_method();
         this.likeCount =  board.getLikes().size();

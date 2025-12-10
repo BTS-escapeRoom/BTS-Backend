@@ -13,6 +13,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -74,14 +75,27 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
 
         BooleanBuilder where = new BooleanBuilder();
 
+        // ✅ 키워드 검색
         if (boardListRequest.getKeyword() != null && !boardListRequest.getKeyword().isEmpty()) {
-            where.and(b.title.contains(boardListRequest.getKeyword()).or(b.description.contains(boardListRequest.getKeyword()).or(b.theme.title.contains(boardListRequest.getKeyword()).or(b.theme.store.name.contains(boardListRequest.getKeyword())))));
+            where.and(
+                    b.title.contains(boardListRequest.getKeyword())
+                            .or(b.description.contains(boardListRequest.getKeyword()))
+                            .or(b.theme.title.contains(boardListRequest.getKeyword()))
+                            .or(b.theme.store.name.contains(boardListRequest.getKeyword()))
+            );
         }
 
+        // ✅ 게시글 타입 필터
         if (boardListRequest.getBoardType() != null) {
             where.and(b.type.eq(boardListRequest.getBoardType()));
         }
 
+        // ✅ 모집중인 글만 보기 (🔥 여기 추가 🔥)
+        if (boardListRequest.isRecruiting()) {
+            where.and(b.recruit_deadline.after(new Date()));
+        }
+
         return where;
     }
+
 }
