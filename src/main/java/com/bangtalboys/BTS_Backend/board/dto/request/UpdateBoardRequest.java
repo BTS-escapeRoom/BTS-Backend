@@ -1,5 +1,6 @@
 package com.bangtalboys.BTS_Backend.board.dto.request;
 
+import com.bangtalboys.BTS_Backend.utils.enums.ContactMethod;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,9 +15,9 @@ public class UpdateBoardRequest {
     private Date escape_date;
     private Long recruit_people;
     private String contact_url;
-    private String contact_method;
+    private ContactMethod contact_method;
 
-    public UpdateBoardRequest(String title, String description, Date recruitDeadline, Date escapeDate,Long recruit_people, String contactUrl, String contactMethod) {
+    public UpdateBoardRequest(String title, String description, Date recruitDeadline, Date escapeDate,Long recruit_people, String contactUrl, ContactMethod contactMethod) {
         this.title = title;
         this.description = description;
         this.recruit_deadline = recruitDeadline;

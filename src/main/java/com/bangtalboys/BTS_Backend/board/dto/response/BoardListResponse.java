@@ -1,8 +1,13 @@
 package com.bangtalboys.BTS_Backend.board.dto.response;
 
+import com.bangtalboys.BTS_Backend.board.calculator.PopularityCalculator;
 import com.bangtalboys.BTS_Backend.board.domain.Board;
 import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
+import com.bangtalboys.BTS_Backend.utils.enums.ContactMethod;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class BoardListResponse {
@@ -13,14 +18,16 @@ public class BoardListResponse {
     private String memberName;
     private String themeName;
     private String storeName;
-    private String escapeDate;
+    private Date escapeDate;
     private Long recruitPeople;
     private String contactUrl;
-    private String contactMethod;
+    private ContactMethod contactMethod;
     private int likeCount;
     private int commentCount;
-    private String createdAt;
-    private String updatedAt;
+    private Date createdAt;
+    private Date updatedAt;
+    @JsonProperty("isPopular")
+    private boolean isPopular;
 
     public BoardListResponse(Board board) {
         this.id = board.getId();
@@ -28,9 +35,9 @@ public class BoardListResponse {
         this.title = board.getTitle();
         this.hit = board.getHit();
         this.memberName = board.getMember().getNickname();
-        this.themeName = board.getTheme().getTitle();
-        this.storeName = board.getTheme().getStore().getName();
-        this.escapeDate = board.getEscape_date().toString();
+        this.themeName = board.getTheme() != null ? board.getTheme().getTitle() : null;
+        this.storeName = board.getTheme() != null ?  board.getTheme().getStore().getName() : null;
+        this.escapeDate = board.getEscape_date() != null ? board.getEscape_date() : null;
         this.recruitPeople = board.getRecruit_people();
         this.contactUrl = board.getContact_url();
         this.contactMethod = board.getContact_method();
@@ -38,5 +45,6 @@ public class BoardListResponse {
         this.commentCount =  board.getComments().size();
         this.createdAt = board.getCreated_at();
         this.updatedAt = board.getUpdated_at();
+        this.isPopular = PopularityCalculator.isPopular(board);
     }
 }

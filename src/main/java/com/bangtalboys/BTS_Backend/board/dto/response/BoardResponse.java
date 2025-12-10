@@ -1,7 +1,10 @@
 package com.bangtalboys.BTS_Backend.board.dto.response;
 
+import com.bangtalboys.BTS_Backend.board.calculator.PopularityCalculator;
 import com.bangtalboys.BTS_Backend.board.domain.Board;
 import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
+import com.bangtalboys.BTS_Backend.utils.enums.ContactMethod;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -12,30 +15,47 @@ public class BoardResponse  {
     private BoardType type;
     private String title;
     private String description;
+    private String memberName;
+    private String themeName;
+    private String storeName;
+    private Date escapeDate;
+    private Long recruitPeople;
+    private String contactUrl;
+    private ContactMethod contactMethod;
+    private Date createdAt;
+    private Date updatedAt;
     private Date recruit_deadline;
     private Date escape_date;
     private Long recruit_people;
     private String contact_url;
-    private String contact_method;
+    private ContactMethod contact_method;
     private Long hit;
     private String reportStatus;
     private int likeCount;
     private int commentCount;
+    @JsonProperty("isPopular")
+    private boolean isPopular;
+
 
     public BoardResponse(Board board, String status) {
         this.id = board.getId();
         this.type = board.getType();
         this.title = board.getTitle();
+        this.memberName = board.getMember().getNickname();
+        this.themeName = board.getTheme() != null ? board.getTheme().getTitle() : null;
+        this.storeName = board.getTheme() != null ?  board.getTheme().getStore().getName() : null;
         this.description = board.getDescription();
         this.recruit_deadline = board.getRecruit_deadline();
-        this.escape_date = board.getEscape_date();
+        this.escape_date = board.getEscape_date() != null ? board.getEscape_date() : null;
         this.recruit_people = board.getRecruit_people();
         this.contact_url = board.getContact_url();
         this.contact_method = board.getContact_method();
         this.hit = board.getHit();
         this.reportStatus = status;
-        this.likeCount =  board.getLikes().size();
-        this.commentCount =  board.getComments().size();
+        this.likeCount = board.getLikes().size();
+        this.commentCount = board.getComments().size();
+        this.isPopular = PopularityCalculator.isPopular(board);
+        this.createdAt = board.getCreated_at();
+        this.updatedAt = board.getUpdated_at();
     }
-
 }

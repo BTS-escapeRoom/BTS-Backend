@@ -5,6 +5,7 @@ import com.bangtalboys.BTS_Backend.comment.domain.Comment;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
+import com.bangtalboys.BTS_Backend.utils.enums.ContactMethod;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -52,7 +53,9 @@ public class Board {
 
     private String contact_url;
 
-    private String contact_method;
+    @Column()
+    @Enumerated(EnumType.STRING)
+    private ContactMethod contact_method;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoardLike> likes = new ArrayList<>();
@@ -62,11 +65,11 @@ public class Board {
 
     @CreationTimestamp
     @Column()
-    private String created_at;
+    private Date created_at;
 
     @UpdateTimestamp
     @Column()
-    private String updated_at;
+    private Date updated_at;
 
     @Builder
     public Board( BoardRequest boardRequest, Member member, Theme theme) {

@@ -19,6 +19,7 @@ import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.theme.repository.ThemeRepository;
+import com.bangtalboys.BTS_Backend.utils.enums.Status;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,10 +40,13 @@ public class BoardService {
     @Transactional
     public BoardResponse createBoard(BoardRequest boardRequest, Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
-        Theme theme = themeRepository.findById(boardRequest.getThemeId()).orElseThrow(NotFoundException::new);
+        Theme theme = null;
+        if (boardRequest.getThemeId() != null) {
+            theme = themeRepository.findById(boardRequest.getThemeId()).orElseThrow(NotFoundException::new);
+        }
         Board board = new Board(boardRequest, member, theme);
         boardRepository.save(board);
-        return new BoardResponse(board, "in-active");
+        return new BoardResponse(board, Status.INACTIVE.name());
     }
 
     @Transactional
@@ -60,7 +64,7 @@ public class BoardService {
             }
         }
 
-        return new BoardResponse(board.get(), "in-active");
+        return new BoardResponse(board.get(), Status.INACTIVE.name());
     }
     public BoardListPageResponse getAllBoards(BoardListRequest boardListRequest) {
         List<Board> boards = boardRepository.findBoards(boardListRequest);
@@ -124,7 +128,7 @@ public class BoardService {
             boardReportRepository.delete(existReport.get());
             return "게시글 신고 취소 완료";
         }
-        BoardReport boardReport = new BoardReport(member, board, "active");
+        BoardReport boardReport = new BoardReport(member, board, Status.ACTIVE.name());
         boardReportRepository.save(boardReport);
         return "게시글 신고 완료";
     }
