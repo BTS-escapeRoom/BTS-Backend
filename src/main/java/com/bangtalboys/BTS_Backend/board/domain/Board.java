@@ -8,6 +8,7 @@ import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
 import com.bangtalboys.BTS_Backend.utils.enums.ContactMethod;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,7 +19,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @Table(name = "board")
 public class Board {
@@ -57,9 +57,11 @@ public class Board {
     @Enumerated(EnumType.STRING)
     private ContactMethod contact_method;
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoardLike> likes = new ArrayList<>();
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 

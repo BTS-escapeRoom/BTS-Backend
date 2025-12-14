@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface BoardRepository extends JpaRepository<Board, Long>, BoardCustomRepository {
@@ -16,4 +17,12 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardCustom
     List<Board> findLikedBoardByMemberId(
             @Param("memberId") Long memberId);
     List<Board> findAllByMemberId(Long memberId);
+    @Query("""
+    SELECT b FROM Board b
+    LEFT JOIN FETCH b.member
+    LEFT JOIN FETCH b.theme t
+    LEFT JOIN FETCH t.store
+    WHERE b.id = :id
+""")
+    Optional<Board> findDetailById(@Param("id") Long id);
 }

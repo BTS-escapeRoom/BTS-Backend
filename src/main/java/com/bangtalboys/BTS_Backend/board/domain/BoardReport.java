@@ -23,13 +23,16 @@ public class BoardReport {
     @JoinColumn(name = "board_id")
     private Board board;
 
+    private String description;
+
     @Column()
     private String status;
 
     @Builder
-    public BoardReport(Member member, Board board, String status) {
+    public BoardReport(Member member, Board board, String status, String description) {
         this.member = member;
         this.board = board;
         this.status = status;
+        this.description = description;
     }
 }

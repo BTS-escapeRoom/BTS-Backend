@@ -15,6 +15,8 @@ public class BoardListResponse {
     private BoardType type;
     private String title;
     private Long hit;
+    private Long memberId;
+    private String profileImg;
     private String memberName;
     private String themeName;
     private String storeName;
@@ -35,6 +37,8 @@ public class BoardListResponse {
         this.type = board.getType();
         this.title = board.getTitle();
         this.hit = board.getHit();
+        this.memberId = board.getMember().getId();
+        this.profileImg = board.getMember().getProfileImg();
         this.memberName = board.getMember().getNickname();
         this.themeName = board.getTheme() != null ? board.getTheme().getTitle() : null;
         this.storeName = board.getTheme() != null ?  board.getTheme().getStore().getName() : null;

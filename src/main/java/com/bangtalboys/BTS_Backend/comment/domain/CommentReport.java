@@ -26,10 +26,13 @@ public class CommentReport {
     @Column()
     private String status;
 
+    private String description;
+
     @Builder
-    public CommentReport(Member member, Comment comment, String status) {
+    public CommentReport(Member member, Comment comment, String status, String description) {
         this.member = member;
         this.comment = comment;
         this.status = status;
+        this.description = description;
     }
 }

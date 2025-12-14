@@ -1,6 +1,7 @@
 package com.bangtalboys.BTS_Backend.board.controller;
 
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardListRequest;
+import com.bangtalboys.BTS_Backend.board.dto.request.BoardReportRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.UpdateBoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardListPageResponse;
@@ -79,10 +80,10 @@ public class BoardController {
     @PostMapping("/report")
     public ResponseEntity<Response<String>> createBoardReport(
             @AuthenticationPrincipal CustomOAuth2User oauth2User,
-            @RequestParam(required = false) Long boardId
-    ) {
+            @RequestBody BoardReportRequest boardReportRequest
+            ) {
         Long memberId = oauth2User.getId();
-        return ResponseEntity.ok(Response.ok(boardService.createBoardReport(memberId, boardId)));
+        return ResponseEntity.ok(Response.ok(boardService.createBoardReport(memberId, boardReportRequest)));
     }
 
     @Operation(summary = "내가 찜한 게시글 조회")
@@ -109,4 +110,13 @@ public class BoardController {
         return ResponseEntity.ok(Response.ok(commentService.getBoardComments(boardId)));
     }
 
+    @PatchMapping("/{boardId}/close-recruit")
+    public ResponseEntity<Response<String>> closeRecruit(
+            @PathVariable Long boardId,
+            @AuthenticationPrincipal CustomOAuth2User oauth2User
+    ) {
+        Long memberId = oauth2User.getId();
+        String message = boardService.closeRecruit(boardId, memberId);
+        return ResponseEntity.ok(Response.ok(message));
+    }
 }

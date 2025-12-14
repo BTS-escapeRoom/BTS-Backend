@@ -4,10 +4,12 @@ import com.bangtalboys.BTS_Backend.config.error.exception.BusinessBaseException;
 import com.bangtalboys.BTS_Backend.config.error.exception.ForbiddenException;
 import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public final class GlobalExceptionHandler {
@@ -42,5 +44,25 @@ public final class GlobalExceptionHandler {
     public ResponseEntity<Object> handleGenericException(Exception e) {
         ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException e) {
+
+        ErrorCode errorCode = mapStatusToErrorCode(e.getStatusCode());
+        ErrorResponse errorResponse = ErrorResponse.of(errorCode, e.getReason());
+
+        return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+    }
+
+    private ErrorCode mapStatusToErrorCode(HttpStatusCode status) {
+        int code = status.value();
+
+        return switch (code) {
+            case 400 -> ErrorCode.INVALID_INPUT_VALUE;
+            case 403 -> ErrorCode.FORBIDDEN;
+            case 404 -> ErrorCode.NOT_FOUND;
+            default -> ErrorCode.INTERNAL_SERVER_ERROR;
+        };
     }
 }

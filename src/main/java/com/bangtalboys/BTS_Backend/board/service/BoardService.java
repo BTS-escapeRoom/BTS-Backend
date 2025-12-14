@@ -5,6 +5,7 @@ import com.bangtalboys.BTS_Backend.board.domain.Board;
 import com.bangtalboys.BTS_Backend.board.domain.BoardLike;
 import com.bangtalboys.BTS_Backend.board.domain.BoardReport;
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardListRequest;
+import com.bangtalboys.BTS_Backend.board.dto.request.BoardReportRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.request.UpdateBoardRequest;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardListPageResponse;
@@ -22,8 +23,13 @@ import com.bangtalboys.BTS_Backend.theme.repository.ThemeRepository;
 import com.bangtalboys.BTS_Backend.utils.enums.Status;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,26 +52,46 @@ public class BoardService {
         }
         Board board = new Board(boardRequest, member, theme);
         boardRepository.save(board);
-        return new BoardResponse(board, Status.INACTIVE.name());
+        return new BoardResponse(board, Status.INACTIVE.name(), false);
     }
 
     @Transactional
     public BoardResponse getOneBoard(Long boardId, Long memberId) {
-        Optional<Board> board = boardRepository.findById(boardId);
-        if (!board.isPresent()) {
-            throw new NotFoundException();
-        }
-        board.get().setHit(board.get().getHit() + 1);
+
+        Board board = boardRepository.findDetailById(boardId)
+                .orElseThrow(NotFoundException::new);
+
+        Hibernate.initialize(board.getLikes());
+        Hibernate.initialize(board.getComments());
+        board.setHit(board.getHit() + 1);
+
+        // 기본값
+        boolean isLike = false;
+        String status = Status.INACTIVE.name();
+
         if (memberId != null) {
-            Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
-            Optional<BoardReport> boardReport = boardReportRepository.findByMemberAndBoard(member, board.get());
-            if (boardReport.isPresent()) {
-                return new BoardResponse(board.get(), boardReport.get().getStatus());
+
+            Member member = memberRepository.findById(memberId)
+                    .orElseThrow(NotFoundException::new);
+
+            Optional<BoardReport> reportOpt =
+                    boardReportRepository.findByMemberAndBoard(member, board);
+
+            if (reportOpt.isPresent()) {
+                status = reportOpt.get().getStatus();
+            }
+
+            Optional<BoardLike> boardLike =
+                    boardLikeRepository.findByMemberAndBoard(member, board);
+
+            if (boardLike.isPresent()) {
+                isLike = true;
             }
         }
 
-        return new BoardResponse(board.get(), Status.INACTIVE.name());
+        return new BoardResponse(board, status, isLike);
     }
+
     public BoardListPageResponse getAllBoards(BoardListRequest boardListRequest) {
         List<Board> boards = boardRepository.findBoards(boardListRequest);
         long totalCount = boardRepository.countBoards(boardListRequest);
@@ -118,9 +144,9 @@ public class BoardService {
         }
     }
 
-    public String createBoardReport(Long memberId, Long boardId) {
+    public String createBoardReport(Long memberId, BoardReportRequest boardReportRequest) {
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
-        Board board = boardRepository.findById(boardId).orElseThrow(NotFoundException::new);
+        Board board = boardRepository.findById(boardReportRequest.getBoardId()).orElseThrow(NotFoundException::new);
 
         Optional<BoardReport> existReport = boardReportRepository.findByMemberAndBoard(member, board);
 
@@ -128,7 +154,7 @@ public class BoardService {
             boardReportRepository.delete(existReport.get());
             return "게시글 신고 취소 완료";
         }
-        BoardReport boardReport = new BoardReport(member, board, Status.ACTIVE.name());
+        BoardReport boardReport = new BoardReport(member, board, Status.ACTIVE.name(), boardReportRequest.getDescription());
         boardReportRepository.save(boardReport);
         return "게시글 신고 완료";
     }
@@ -143,4 +169,25 @@ public class BoardService {
         return boards.stream().map(BoardListResponse::new).collect(Collectors.toList());
     }
 
+    @Transactional
+    public String closeRecruit(Long boardId, Long memberId) {
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다.")
+                );
+
+        if (!board.getMember().getId().equals(memberId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "작성자가 아닙니다.");
+        }
+
+        Date now = new Date();
+        if (board.getRecruit_deadline().before(now)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 모집 마감된 글입니다.");
+        }
+
+        board.setRecruit_deadline(now);
+
+        return "모집 마감처리되었습니다.";
+    }
 }

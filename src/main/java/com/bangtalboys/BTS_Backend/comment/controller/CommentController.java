@@ -1,5 +1,6 @@
 package com.bangtalboys.BTS_Backend.comment.controller;
 
+import com.bangtalboys.BTS_Backend.comment.dto.request.CommentReportRequest;
 import com.bangtalboys.BTS_Backend.comment.dto.request.CommentRequest;
 import com.bangtalboys.BTS_Backend.comment.dto.response.CommentResponse;
 import com.bangtalboys.BTS_Backend.comment.service.CommentService;
@@ -40,8 +41,8 @@ public class CommentController {
 
     @Operation(summary = "코멘트 신고/취소 (토글)")
     @PostMapping("/report")
-    public ResponseEntity<Response<String>> reportComment(@RequestParam(required = false) Long commentId,@AuthenticationPrincipal CustomOAuth2User oauth2User) {
+    public ResponseEntity<Response<String>> reportComment(@RequestBody CommentReportRequest commentReportRequest, @AuthenticationPrincipal CustomOAuth2User oauth2User) {
         Long memberId = oauth2User.getId();
-        return ResponseEntity.ok(Response.ok(commentService.createCommentReport(memberId, commentId)));
+        return ResponseEntity.ok(Response.ok(commentService.createCommentReport(memberId, commentReportRequest)));
     }
 }
