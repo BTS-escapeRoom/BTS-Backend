@@ -11,6 +11,7 @@ public class CommentResponse {
     private String comment;
     private Long memberId;
     private String memberName;
+    private String profileImg;
     @JsonProperty("isDeleted")
     private boolean isDeleted;
     @JsonProperty("isReported")
@@ -21,6 +22,7 @@ public class CommentResponse {
         this.comment = isDeleted ? "삭제된 댓글입니다." : comment.getComment(); // 🌟 UI friendly
         this.memberId = comment.getMember().getId();
         this.memberName = comment.getMember().getNickname();
+        this.profileImg = comment.getMember().getProfileImg();
         this.isDeleted = isDeleted;
         this.isReported = isReported;
     }
