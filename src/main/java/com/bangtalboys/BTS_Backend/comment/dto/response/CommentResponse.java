@@ -5,6 +5,8 @@ import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class CommentResponse {
     private Long id;
@@ -16,6 +18,7 @@ public class CommentResponse {
     private boolean isDeleted;
     @JsonProperty("isReported")
     private boolean isReported;
+    private Date createdAt;
 
     public CommentResponse(Comment comment, boolean isReported, boolean isDeleted) {
         this.id = comment.getId();
@@ -25,5 +28,6 @@ public class CommentResponse {
         this.profileImg = comment.getMember().getProfileImg();
         this.isDeleted = isDeleted;
         this.isReported = isReported;
+        this.createdAt = comment.getCreatedAt();
     }
 }
