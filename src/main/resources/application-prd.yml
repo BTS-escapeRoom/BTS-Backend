@@ -58,6 +58,7 @@ spring:
             jwk-set-uri: https://appleid.apple.com/auth/keys
             team-id: ${spring.security.oauth2.client.provider.apple.team-id}
             key-id: ${spring.security.oauth2.client.provider.apple.key-id}
+            bundle-id: ${spring.security.oauth2.client.provider.apple.bundle-id}
             private-key: ${spring.security.oauth2.client.provider.apple.private-key}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
