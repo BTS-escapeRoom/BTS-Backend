@@ -2,7 +2,6 @@ package com.bangtalboys.BTS_Backend.board.dto.response;
 
 import com.bangtalboys.BTS_Backend.board.calculator.PopularityCalculator;
 import com.bangtalboys.BTS_Backend.board.domain.Board;
-import com.bangtalboys.BTS_Backend.theme.domain.Theme;
 import com.bangtalboys.BTS_Backend.theme.dto.ThemeResponse;
 import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
 import com.bangtalboys.BTS_Backend.utils.enums.ContactMethod;

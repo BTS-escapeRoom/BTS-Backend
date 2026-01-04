@@ -6,7 +6,6 @@ import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
 import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

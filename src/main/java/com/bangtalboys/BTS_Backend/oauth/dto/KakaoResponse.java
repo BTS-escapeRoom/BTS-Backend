@@ -3,7 +3,6 @@ package com.bangtalboys.BTS_Backend.oauth.dto;
 import com.bangtalboys.BTS_Backend.utils.enums.SocialType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
-import com.bangtalboys.BTS_Backend.oauth.client.kakao.dto.KakaoUserInfoResponse;
 
 import java.util.Map;
 

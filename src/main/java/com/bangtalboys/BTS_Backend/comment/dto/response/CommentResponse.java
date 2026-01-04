@@ -1,7 +1,6 @@
 package com.bangtalboys.BTS_Backend.comment.dto.response;
 
 import com.bangtalboys.BTS_Backend.comment.domain.Comment;
-import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 

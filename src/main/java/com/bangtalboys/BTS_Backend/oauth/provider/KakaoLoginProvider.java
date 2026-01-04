@@ -1,9 +1,6 @@
 package com.bangtalboys.BTS_Backend.oauth.provider;
 
 import com.bangtalboys.BTS_Backend.oauth.client.kakao.KakaoApiClient;
-import com.bangtalboys.BTS_Backend.oauth.client.kakao.KakaoAuthClient;
-import com.bangtalboys.BTS_Backend.oauth.client.kakao.dto.KakaoTokenResponse;
-import com.bangtalboys.BTS_Backend.oauth.client.kakao.dto.KakaoUserInfoResponse;
 import com.bangtalboys.BTS_Backend.oauth.client.kakao.dto.KakaoTokenInfoResponse;
 import com.bangtalboys.BTS_Backend.oauth.dto.AppSocialLoginRequest;
 import com.bangtalboys.BTS_Backend.oauth.dto.KakaoResponse;
@@ -20,7 +17,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class KakaoLoginProvider implements SocialLoginProvider {
 
-    private final KakaoAuthClient kakaoAuthClient;
     private final KakaoApiClient kakaoApiClient;
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -78,47 +74,47 @@ public class KakaoLoginProvider implements SocialLoginProvider {
         }
     }
 
-    private String getKakaoAccessToken(String code) {
-        try {
-            KakaoTokenResponse response = kakaoAuthClient.getAccessToken(
-                    grantType,
-                    clientId,
-                    redirectUri,
-                    code,
-                    clientSecret
-            );
+    // private String getKakaoAccessToken(String code) {
+    //     try {
+    //         KakaoTokenResponse response = kakaoAuthClient.getAccessToken(
+    //                 grantType,
+    //                 clientId,
+    //                 redirectUri,
+    //                 code,
+    //                 clientSecret
+    //         );
             
-            return response.getAccessToken();
+    //         return response.getAccessToken();
 
-        } catch (FeignException e) {
-            String errorMessage = String.format(
-                "카카오 액세스 토큰 발급 실패 [HTTP %d]: %s",
-                e.status(),
-                e.contentUTF8() != null && !e.contentUTF8().isEmpty() 
-                    ? e.contentUTF8() 
-                    : e.getMessage()
-            );
-            throw new RuntimeException(errorMessage, e);
-        }
-    }
+    //     } catch (FeignException e) {
+    //         String errorMessage = String.format(
+    //             "카카오 액세스 토큰 발급 실패 [HTTP %d]: %s",
+    //             e.status(),
+    //             e.contentUTF8() != null && !e.contentUTF8().isEmpty() 
+    //                 ? e.contentUTF8() 
+    //                 : e.getMessage()
+    //         );
+    //         throw new RuntimeException(errorMessage, e);
+    //     }
+    // }
 
-    private KakaoUserInfoResponse getKakaoUserInfo(String accessToken) {
-        try {
-            String bearerToken = "Bearer " + accessToken;
+    // private KakaoUserInfoResponse getKakaoUserInfo(String accessToken) {
+    //     try {
+    //         String bearerToken = "Bearer " + accessToken;
 
-            return kakaoApiClient.getUserInfo(bearerToken);
+    //         return kakaoApiClient.getUserInfo(bearerToken);
             
-        } catch (FeignException e) {
-            String errorMessage = String.format(
-                "카카오 사용자 정보 조회 실패 [HTTP %d]: %s",
-                e.status(),
-                e.contentUTF8() != null && !e.contentUTF8().isEmpty() 
-                    ? e.contentUTF8() 
-                    : e.getMessage()
-            );
-            log.error(errorMessage, e);
-            throw new RuntimeException(errorMessage, e);
-        }
-    }       
+    //     } catch (FeignException e) {
+    //         String errorMessage = String.format(
+    //             "카카오 사용자 정보 조회 실패 [HTTP %d]: %s",
+    //             e.status(),
+    //             e.contentUTF8() != null && !e.contentUTF8().isEmpty() 
+    //                 ? e.contentUTF8() 
+    //                 : e.getMessage()
+    //         );
+    //         log.error(errorMessage, e);
+    //         throw new RuntimeException(errorMessage, e);
+    //     }
+    // }       
 }
 

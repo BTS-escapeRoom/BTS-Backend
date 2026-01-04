@@ -1,16 +1,10 @@
 package com.bantalboys.BTS_Backend.board.dto.response;
 
 import com.bangtalboys.BTS_Backend.board.domain.Board;
-import com.bangtalboys.BTS_Backend.board.domain.BoardReport;
-import com.bangtalboys.BTS_Backend.member.domain.Member;
-import com.bangtalboys.BTS_Backend.theme.domain.Theme;
-import com.bangtalboys.BTS_Backend.theme.dto.ThemeListResponse;
-import com.bangtalboys.BTS_Backend.theme.dto.ThemeResponse;
 import com.bangtalboys.BTS_Backend.utils.enums.BoardType;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Data
 public class BoardResponse  {
@@ -35,7 +29,7 @@ public class BoardResponse  {
         this.escape_date = board.getEscape_date();
         this.recruit_people = board.getRecruit_people();
         this.contact_url = board.getContact_url();
-        this.contact_method = board.getContact_method();
+        this.contact_method = board.getContact_method().name();
         this.hit = board.getHit();
         this.reportStatus = status;
     }

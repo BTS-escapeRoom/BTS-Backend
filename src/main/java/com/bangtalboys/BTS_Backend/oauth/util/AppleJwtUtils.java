@@ -33,7 +33,7 @@ public class AppleJwtUtils{
     // .p8 파일에서 읽어온 비공개 키
     private PrivateKey privateKey; 
     
-    @Value("${spring.security.oauth2.client.registration.apple.bundle-id}")
+    @Value("${spring.security.oauth2.client.provider.apple.bundle-id}")
     private String clientId;
     @Value("${spring.security.oauth2.client.provider.apple.key-id}")
     private String keyId;
