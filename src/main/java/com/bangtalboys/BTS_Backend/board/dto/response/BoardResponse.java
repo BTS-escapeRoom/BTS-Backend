@@ -65,7 +65,7 @@ public class BoardResponse {
         this.commentCount = board.getComments().size();
         this.isPopular = PopularityCalculator.isPopular(board);
         this.isLike = isLike;
-
+        this.recruitDeadline = board.getRecruit_deadline() != null ? board.getRecruit_deadline() : null;
         this.createdAt = board.getCreated_at();
         this.updatedAt = board.getUpdated_at();
     }
