@@ -9,12 +9,17 @@ public class ReviewHistoryResponse {
     private String storeName;
     private String themeTitle;
     private Integer time;
+    private Boolean isSuccess;
+    private Boolean isDisplay;
 
     public ReviewHistoryResponse(Review review) {
         this.reviewId = review.getId();
         this.storeName = review.getTheme().getStore().getName();
         this.themeTitle = review.getTheme().getTitle();
         this.time = review.getTime();
+        this.isSuccess = review.getIsSuccess();
+        this.isDisplay = review.getIsDisplay();
+
 
 
     }
