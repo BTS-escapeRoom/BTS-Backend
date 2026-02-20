@@ -50,7 +50,8 @@ public class NaverLoginProvider implements SocialLoginProvider {
                     code,
                     state
             );
-            return response.getAccessToken();
+            String accessToken = response.getAccessToken();
+            return accessToken;
 
         } catch (FeignException e) {
             String errorMessage = String.format(
@@ -60,26 +61,36 @@ public class NaverLoginProvider implements SocialLoginProvider {
                     ? e.contentUTF8() 
                     : e.getMessage()
             );
-            log.error(errorMessage, e);
+            log.error(errorMessage);
             throw new RuntimeException(errorMessage, e);
         }
     }
 
     private NaverUserInfoResponse getNaverUserInfo(String accessToken) {
         try {
+            if (accessToken == null || accessToken.trim().isEmpty()) {
+                log.error("네이버 Access Token이 null이거나 비어있습니다.");
+                throw new IllegalArgumentException("Access Token이 유효하지 않습니다.");
+            }
+            
             String bearerToken = "Bearer " + accessToken;
 
-            return naverApiClient.getUserInfo(bearerToken);
+            NaverUserInfoResponse response = naverApiClient.getUserInfo(bearerToken);
+            return response;
 
         } catch (FeignException e) {
+            String errorBody = e.contentUTF8() != null && !e.contentUTF8().isEmpty() 
+                    ? e.contentUTF8() 
+                    : e.getMessage();
             String errorMessage = String.format(
                 "네이버 사용자 정보 조회 실패 [HTTP %d]: %s",
                 e.status(),
-                e.contentUTF8() != null && !e.contentUTF8().isEmpty() 
-                    ? e.contentUTF8() 
-                    : e.getMessage()
+                errorBody
             );
-            log.error(errorMessage, e);
+            log.error("네이버 사용자 정보 조회 실패 - Access Token 앞 10자: {}, 에러 응답: {}", 
+                    accessToken != null && accessToken.length() > 10 ? accessToken.substring(0, 10) + "..." : "null",
+                    errorBody);
+            log.error(errorMessage);
             throw new RuntimeException(errorMessage, e);
         }
     }

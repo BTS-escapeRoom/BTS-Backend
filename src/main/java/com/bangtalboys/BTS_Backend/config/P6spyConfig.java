@@ -19,8 +19,8 @@ public class P6spyConfig implements MessageFormattingStrategy {
 
     @Override
     public String formatMessage(int connectionId, String now, long elapsed, String category, String prepared, String sql, String url) {
-        sql = formatSql(category, sql);
-        return String.format("[%s] | %d ms | %s", category, elapsed, formatSql(category, sql));
+        String formattedSql = formatSql(category, sql);
+        return String.format("[%s] | %d ms | %s", category, elapsed, formattedSql);
     }
 
     private String formatSql(String category, String sql) {

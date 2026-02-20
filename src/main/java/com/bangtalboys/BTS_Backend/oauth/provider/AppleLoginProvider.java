@@ -72,7 +72,7 @@ public class AppleLoginProvider implements SocialLoginProvider{
                     ? e.contentUTF8() 
                     : e.getMessage()
             );
-            log.error(errorMessage, e);
+            log.error(errorMessage);
             throw new RuntimeException(errorMessage, e);
         }
     }

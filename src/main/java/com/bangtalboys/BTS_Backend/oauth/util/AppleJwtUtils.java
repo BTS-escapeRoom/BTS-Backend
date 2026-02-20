@@ -81,21 +81,24 @@ public class AppleJwtUtils{
         Instant now = Instant.now();
         Instant expiration = now.plus(180, ChronoUnit.DAYS); // 6개월 유효
 
+
+        log.info("clientId: {}", clientId, clientId.length());
+        log.info("keyId: {}", keyId, keyId.length());
+        log.info("teamId: {}", teamId, teamId.length());
+        log.info("privateKey: {}", privateKey);
         // JJWT를 사용하여 client secret 빌드
         return Jwts.builder()
                 .header()
                     .keyId(keyId) // kid (키 ID)
                     .type("JWT")
                     .and()
-                .issuer(teamId) // iss (발급자)
-                .issuedAt(Date.from(now)) // iat (발급 시간)
-                .expiration(Date.from(expiration)) // exp (만료 시간)
-                .audience()
-                    .add("https://appleid.apple.com") // aud (수신자)
-                    .and()
-                .subject(clientId) // sub (주제)
-                .signWith(this.privateKey, Jwts.SIG.ES256) // ES256과 우리의 비공개 키로 서명
-                .compact();
+                    .claim("iss", teamId) // iss (발급자)
+                    .claim("iat", Date.from(now)) // iat (발급 시간)
+                    .claim("exp", Date.from(expiration)) // exp (만료 시간)
+                    .claim("aud", "https://appleid.apple.com") // aud (수신자)
+                    .claim("sub", clientId) // sub (주제)
+                    .signWith(this.privateKey, Jwts.SIG.ES256)
+                    .compact();
     }
 
     public Claims decodeIdToken(String idToken, String nonce) {
@@ -119,7 +122,7 @@ public class AppleJwtUtils{
             return jws.getPayload();
 
         } catch (Exception e) {
-            log.error("Failed to decode or validate Apple ID Token: {}", e.getMessage(), e);
+            log.error("Failed to decode or validate Apple ID Token: {}", e.getMessage());
             throw new SecurityException("Apple ID Token is invalid.", e);
         }
     }
