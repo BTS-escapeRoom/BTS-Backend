@@ -14,6 +14,7 @@ import com.bangtalboys.BTS_Backend.board.dto.response.BoardListResponse;
 import com.bangtalboys.BTS_Backend.board.repository.BoardLikeRepository;
 import com.bangtalboys.BTS_Backend.board.repository.BoardReportRepository;
 import com.bangtalboys.BTS_Backend.board.repository.BoardRepository;
+import com.bangtalboys.BTS_Backend.comment.repository.CommentRepository;
 import com.bangtalboys.BTS_Backend.config.error.exception.ForbiddenException;
 import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
@@ -41,6 +42,7 @@ public class BoardService {
     private final ThemeRepository themeRepository;
     private final BoardLikeRepository boardLikeRepository;
     private final BoardReportRepository boardReportRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public BoardResponse createBoard(BoardRequest boardRequest, Long memberId) {
@@ -51,7 +53,7 @@ public class BoardService {
         }
         Board board = new Board(boardRequest, member, theme);
         boardRepository.save(board);
-        return new BoardResponse(board, Status.INACTIVE.name(), false);
+        return new BoardResponse(board, Status.INACTIVE.name(), false, 0, 0);
     }
 
     @Transactional
@@ -60,35 +62,26 @@ public class BoardService {
         Board board = boardRepository.findDetailById(boardId)
                 .orElseThrow(NotFoundException::new);
 
-        Hibernate.initialize(board.getLikes());
-        Hibernate.initialize(board.getComments());
+        // 조회수 증가
         board.setHit(board.getHit() + 1);
+
+        // ✅ 컬렉션 로딩 대신 count 쿼리로 개수만
+        long likeCount = boardLikeRepository.countByBoardId(boardId);
+        long commentCount = commentRepository.countByBoardId(boardId);
 
         // 기본값
         boolean isLike = false;
         String status = Status.INACTIVE.name();
 
         if (memberId != null) {
+            // ✅ member 조회 없이 memberId로만 처리 (쿼리/메모리 둘 다 절약)
+            status = boardReportRepository.findStatusByMemberIdAndBoardId(memberId, boardId)
+                    .orElse(Status.INACTIVE.name());
 
-            Member member = memberRepository.findById(memberId)
-                    .orElseThrow(NotFoundException::new);
-
-            Optional<BoardReport> reportOpt =
-                    boardReportRepository.findByMemberAndBoard(member, board);
-
-            if (reportOpt.isPresent()) {
-                status = reportOpt.get().getStatus();
-            }
-
-            Optional<BoardLike> boardLike =
-                    boardLikeRepository.findByMemberAndBoard(member, board);
-
-            if (boardLike.isPresent()) {
-                isLike = true;
-            }
+            isLike = boardLikeRepository.existsByMemberIdAndBoardId(memberId, boardId);
         }
 
-        return new BoardResponse(board, status, isLike);
+        return new BoardResponse(board, status, isLike, likeCount, commentCount);
     }
 
     public BoardListPageResponse getAllBoards(BoardListRequest boardListRequest) {

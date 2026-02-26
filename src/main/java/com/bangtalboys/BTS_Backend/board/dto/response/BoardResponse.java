@@ -33,8 +33,8 @@ public class BoardResponse {
     private Long hit;
 
     private String reportStatus;
-    private int likeCount;
-    private int commentCount;
+    private long likeCount;
+    private long commentCount;
 
     @JsonProperty("isPopular")
     private boolean isPopular;
@@ -42,7 +42,7 @@ public class BoardResponse {
     @JsonProperty("isLike")
     private boolean isLike;
 
-    public BoardResponse(Board board, String status, boolean isLike) {
+    public BoardResponse(Board board, String status, boolean isLike, long likeCount, long commentCount) {
         this.id = board.getId();
         this.type = board.getType();
         this.title = board.getTitle();
@@ -61,8 +61,8 @@ public class BoardResponse {
         this.hit = board.getHit();
 
         this.reportStatus = status;
-        this.likeCount = board.getLikes().size();
-        this.commentCount = board.getComments().size();
+        this.likeCount = likeCount;
+        this.commentCount = commentCount;
         this.isPopular = PopularityCalculator.isPopular(board);
         this.isLike = isLike;
         this.recruitDeadline = board.getRecruit_deadline() != null ? board.getRecruit_deadline() : null;
