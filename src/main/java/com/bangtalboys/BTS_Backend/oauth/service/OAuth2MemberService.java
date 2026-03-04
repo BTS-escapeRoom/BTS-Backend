@@ -5,6 +5,7 @@ import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.oauth.dto.OAuth2Response;
 import com.bangtalboys.BTS_Backend.oauth.dto.UserDto;
 import com.bangtalboys.BTS_Backend.utils.enums.Role;
+import com.bangtalboys.BTS_Backend.utils.enums.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,13 +27,21 @@ public class OAuth2MemberService {
     @Transactional
     public UserDto processOAuth2User(OAuth2Response oAuth2Response) {
         
-        Optional<Member> memberOpt = memberRepository.findBySocialTypeAndSocialId(
+        // 모든 상태의 회원을 조회 (ACTIVE, INACTIVE 모두 확인)
+        Optional<Member> memberOpt = memberRepository.findBySocialTypeAndSocialIdIgnoreStatus(
                 oAuth2Response.getSocialType(), oAuth2Response.getSocialId()
         );
 
         if (memberOpt.isPresent()) {
-            // 1. 기존 회원일 경우
             Member member = memberOpt.get();
+            
+            // INACTIVE인 경우 (탈퇴 후 재로그인) - 기존 데이터 복구
+            if (member.getStatus() == Status.INACTIVE) {
+                member.setStatus(Status.ACTIVE);
+                member = memberRepository.save(member);
+            }
+            
+            // 기존 회원일 경우 (ACTIVE)
             return UserDto.builder()
                     .id(member.getId())
                     .profileImg(member.getProfileImg())
@@ -43,7 +52,7 @@ public class OAuth2MemberService {
                     .isNewUser(false) // 기존 회원이므로 false
                     .build();
         } else {
-            // 2. 신규 회원일 경우
+            // 신규 회원일 경우
             Member newMember = Member.builder()
                     .socialType(oAuth2Response.getSocialType())
                     .socialId(oAuth2Response.getSocialId())

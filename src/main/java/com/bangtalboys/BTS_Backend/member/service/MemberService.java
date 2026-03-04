@@ -68,13 +68,17 @@ public class MemberService {
             }
         }
 
-        // 내부 DB 유저 데이터 삭제
-        memberRepository.delete(member);
+        // Soft delete: status를 INACTIVE로 변경
+        member.setStatus(com.bangtalboys.BTS_Backend.utils.enums.Status.INACTIVE);
+        memberRepository.save(member);
     }
 
     @Transactional
     public MemberCheckSignupResponse checkSignupMember(MemberCheckSignupRequest req) {
-        Optional<Member> memberOpt = memberRepository.findBySocialTypeAndSocialId(req.getSocialType(), req.getSocialId());
+        // status가 ACTIVE인 회원만 조회 (신규 회원 판단)
+        Optional<Member> memberOpt = memberRepository.findBySocialTypeAndSocialIdAndStatus(
+                req.getSocialType(), req.getSocialId(), com.bangtalboys.BTS_Backend.utils.enums.Status.ACTIVE
+        );
 
         if (memberOpt.isPresent()) {
             Member member = memberOpt.get();

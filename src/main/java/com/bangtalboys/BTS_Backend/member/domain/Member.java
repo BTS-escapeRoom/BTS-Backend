@@ -1,7 +1,9 @@
 package com.bangtalboys.BTS_Backend.member.domain;
 
+import com.bangtalboys.BTS_Backend.utils.entity.BaseEntity;
 import com.bangtalboys.BTS_Backend.utils.enums.Role;
 import com.bangtalboys.BTS_Backend.utils.enums.SocialType;
+import com.bangtalboys.BTS_Backend.utils.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +13,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @Table(name = "member")
-public class Member {
+public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,8 +32,12 @@ public class Member {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
+    private Status status = Status.ACTIVE;
+
     @Builder
-    public Member(Long id, String profileImg, String nickname, String description, SocialType socialType, String socialId, Role role) {
+    public Member(Long id, String profileImg, String nickname, String description, SocialType socialType, String socialId, Role role, Status status) {
         this.id = id;
         this.profileImg = profileImg;
         this.nickname = nickname;
@@ -39,5 +45,6 @@ public class Member {
         this.socialType = socialType;
         this.socialId = socialId;
         this.role = role;
+        this.status = status != null ? status : Status.ACTIVE;
     }
 }

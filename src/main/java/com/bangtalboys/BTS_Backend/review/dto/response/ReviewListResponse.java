@@ -23,6 +23,7 @@ public class ReviewListResponse {
     private LocalDateTime createdAt;
     private Boolean isMyReview;
     private String nickname;
+    private Long themeId;
 
 
     public ReviewListResponse(Review review, Boolean isMine) {
@@ -39,6 +40,7 @@ public class ReviewListResponse {
         this.isMyReview = isMine;
         this.nickname = review.getMember().getNickname();
         this.timeType = review.getTimeType();
+        this.themeId = review.getTheme().getId();
 
         int themeTime = review.getTheme().getTime() * 60;
         int time = review.getTime() != null ? review.getTime() : 0;
