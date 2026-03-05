@@ -41,6 +41,20 @@ public class MemberService {
     public MemberResponse updateMember(Long memberId, MemberUpdateRequest memberUpdateRequest) {
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
 
+        // 닉네임이 변경되는 경우 중복 체크
+        if (memberUpdateRequest.getNickname() != null && 
+            !memberUpdateRequest.getNickname().equals(member.getNickname())) {
+            
+            Optional<Member> existingMember = memberRepository.findByNicknameAndStatus(
+                    memberUpdateRequest.getNickname(), 
+                    com.bangtalboys.BTS_Backend.utils.enums.Status.ACTIVE
+            );
+            
+            if (existingMember.isPresent() && !existingMember.get().getId().equals(memberId)) {
+                throw new BusinessBaseException(ErrorCode.DUPLICATE_NICKNAME);
+            }
+        }
+
         member.setProfileImg(memberUpdateRequest.getProfileImg());
         member.setNickname(memberUpdateRequest.getNickname());
         member.setDescription(memberUpdateRequest.getDescription());

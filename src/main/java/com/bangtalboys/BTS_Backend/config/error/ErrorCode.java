@@ -10,7 +10,8 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "E2", "잘못된 HTTP 메서드를 호출했습니다."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "E3", "해당 데이터가 없습니다."),
     INVALID_ACCESS_TOKEN(HttpStatus.BAD_REQUEST, "E4", "access token이 없습니다."),
-    FORBIDDEN(HttpStatus.FORBIDDEN, "E5", "권한이 없습니다.");
+    FORBIDDEN(HttpStatus.FORBIDDEN, "E5", "권한이 없습니다."),
+    DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "E6", "이미 사용 중인 닉네임입니다.");
 
     private final String message;
 

@@ -20,7 +20,7 @@ public class CustomFailureHandler implements AuthenticationFailureHandler {
     private final UrlUtils urlUtils;
     private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo;
     
-    private static final String DEFAULT_FAILURE_URL = "http://localhost:3000/oauth/login";
+    private static final String DEFAULT_FAILURE_URL = "https://www.bangtal-boys.com/oauth/login";
 
     public CustomFailureHandler(UrlUtils urlUtils,
                                 AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo) {

@@ -24,6 +24,11 @@ public class ReviewListResponse {
     private Boolean isMyReview;
     private String nickname;
     private Long themeId;
+    private String themeTitle;
+    private String themeThumbnail;
+    private String themeGenre;
+    private String themeCity;
+    private String themeDistrict;
 
 
     public ReviewListResponse(Review review, Boolean isMine) {
@@ -41,6 +46,11 @@ public class ReviewListResponse {
         this.nickname = review.getMember().getNickname();
         this.timeType = review.getTimeType();
         this.themeId = review.getTheme().getId();
+        this.themeTitle = review.getTheme().getTitle();
+        this.themeThumbnail = review.getTheme().getThumbnail();
+        this.themeGenre = review.getTheme().getGenre();
+        this.themeCity = review.getTheme().getStore().getDistrict().getCity().getName();
+        this.themeDistrict = review.getTheme().getStore().getDistrict().getName();
 
         int themeTime = review.getTheme().getTime() * 60;
         int time = review.getTime() != null ? review.getTime() : 0;

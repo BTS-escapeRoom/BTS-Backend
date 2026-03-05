@@ -94,7 +94,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         } catch (Exception e) {
             System.out.println("🔥 예외 발생: " + e.getMessage());
             // 인증 중 예외가 발생했을 경우 fallback URL로 리다이렉트
-            response.sendRedirect("http://localhost:3000/oauth/login?result=fail");
+            response.sendRedirect("https://www.bangtal-boys.com/oauth/login?result=fail");
         }
     }
 

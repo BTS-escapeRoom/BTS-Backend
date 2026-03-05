@@ -17,4 +17,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 모든 상태의 회원을 조회 (탈퇴한 회원 복구 등 특수한 경우용)
     @Query("SELECT m FROM Member m WHERE m.socialType = :socialType AND m.socialId = :socialId")
     Optional<Member> findBySocialTypeAndSocialIdIgnoreStatus(@Param("socialType") SocialType socialType, @Param("socialId") String socialId);
+    
+    // 닉네임으로 ACTIVE 상태인 회원 조회 (닉네임 중복 체크용)
+    @Query("SELECT m FROM Member m WHERE m.nickname = :nickname AND m.status = :status")
+    Optional<Member> findByNicknameAndStatus(@Param("nickname") String nickname, @Param("status") Status status);
 }
