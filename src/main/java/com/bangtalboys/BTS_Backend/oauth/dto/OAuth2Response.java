@@ -5,4 +5,5 @@ import com.bangtalboys.BTS_Backend.utils.enums.SocialType;
 public interface OAuth2Response {
     SocialType getSocialType();
     String getSocialId();
+    String getProfileImage();
 }

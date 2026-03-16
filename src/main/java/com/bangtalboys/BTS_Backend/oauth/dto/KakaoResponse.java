@@ -1,5 +1,6 @@
 package com.bangtalboys.BTS_Backend.oauth.dto;
 
+import com.bangtalboys.BTS_Backend.oauth.client.kakao.dto.KakaoUserInfoResponse;
 import com.bangtalboys.BTS_Backend.utils.enums.SocialType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -11,13 +12,16 @@ import java.util.Map;
 public class KakaoResponse implements OAuth2Response {
     
     private final String socialId;
+    private final String profileImage;
 
     public KakaoResponse(Map<String, Object> attribute) {
         this.socialId = attribute.get("id").toString();
+        this.profileImage = attribute.get("profile_image").toString();
     }
 
-    public KakaoResponse(Long id) {
-        this.socialId = id.toString();
+    public KakaoResponse(KakaoUserInfoResponse userInfo) {
+        this.socialId = userInfo.getId().toString();
+        this.profileImage = userInfo.getKakaoAccount().getProfile().getThumbnailImageUrl();
     }
 
     @Override
@@ -28,6 +32,11 @@ public class KakaoResponse implements OAuth2Response {
     @Override
     public String getSocialId() {
         return socialId;
+    }
+
+    @Override
+    public String getProfileImage() {
+        return profileImage;
     }
 
 }

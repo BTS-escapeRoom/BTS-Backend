@@ -28,6 +28,7 @@ public class KakaoUserInfoResponse {
         public static class Profile {
             private String nickname;
             private String thumbnailImageUrl;
+            private String profileImageUrl;
         }
     }
 }

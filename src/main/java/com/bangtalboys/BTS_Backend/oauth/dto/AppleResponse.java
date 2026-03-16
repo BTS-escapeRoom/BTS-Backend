@@ -30,4 +30,9 @@ public class AppleResponse implements OAuth2Response {
     public String getSocialId() {
         return socialId;
     }
+
+    @Override
+    public String getProfileImage() {
+        return null;
+    }
 }
