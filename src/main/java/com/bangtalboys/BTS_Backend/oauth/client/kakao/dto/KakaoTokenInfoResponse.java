@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 public class KakaoTokenInfoResponse {
 
     private Long id;
-    private Integer expiresIn;
+    private Integer expires_in;
     private Integer app_id;
     
 }
