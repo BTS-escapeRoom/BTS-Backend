@@ -18,7 +18,9 @@ public class NaverResponse implements OAuth2Response{
     public NaverResponse(Map<String, Object> attribute) {
         Map<String, Object> response = (Map<String, Object>) attribute.get("response");
         this.socialId = response.get("id").toString();
-        this.profileImage = response.get("profile_image").toString();
+        
+        Object profileImg = response.get("profile_image");
+        this.profileImage = profileImg != null ? profileImg.toString() : null;
     }
 
     public NaverResponse(NaverUserInfoResponse userInfo) {

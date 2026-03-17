@@ -14,9 +14,22 @@ public class KakaoResponse implements OAuth2Response {
     private final String socialId;
     private final String profileImage;
 
+    @SuppressWarnings("unchecked")
     public KakaoResponse(Map<String, Object> attribute) {
         this.socialId = attribute.get("id").toString();
-        this.profileImage = attribute.get("profile_image").toString();
+
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attribute.get("kakao_account");
+        if (kakaoAccount != null) {
+            Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+            if (profile != null) {
+                Object profileImg = profile.get("thumbnail_image_url");
+                this.profileImage = profileImg != null ? profileImg.toString() : null;
+            } else {
+                this.profileImage = null;
+            }
+        } else {
+            this.profileImage = null;
+        }
     }
 
     public KakaoResponse(KakaoUserInfoResponse userInfo) {
