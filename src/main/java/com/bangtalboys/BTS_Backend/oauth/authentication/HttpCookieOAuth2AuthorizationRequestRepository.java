@@ -30,8 +30,12 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
     }
 
     @Override
-    public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request, HttpServletResponse response) {
-        return this.loadAuthorizationRequest(request);
+    public OAuth2AuthorizationRequest removeAuthorizationRequest(
+        HttpServletRequest request, HttpServletResponse response) {
+        OAuth2AuthorizationRequest authRequest = this.loadAuthorizationRequest(request);
+        // 읽은 후 쿠키 삭제
+        CookieUtils.deleteCookie(request, response, OAUTH2_AUTH_REQUEST_COOKIE_NAME);
+        return authRequest;
     }
 }
 
