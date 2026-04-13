@@ -34,7 +34,13 @@ public class KakaoResponse implements OAuth2Response {
 
     public KakaoResponse(KakaoUserInfoResponse userInfo) {
         this.socialId = userInfo.getId().toString();
-        this.profileImage = userInfo.getKakaoAccount().getProfile().getThumbnailImageUrl();
+    
+        KakaoUserInfoResponse.KakaoAccount kakaoAccount = userInfo.getKakaoAccount();
+        if (kakaoAccount != null && kakaoAccount.getProfile() != null) {
+            this.profileImage = kakaoAccount.getProfile().getThumbnailImageUrl();
+        } else {
+            this.profileImage = null;
+        }
     }
 
     @Override

@@ -32,39 +32,36 @@ public class NaverLoginProvider implements SocialLoginProvider {
 
     @Override
     public OAuth2Response getUserProfile(AppSocialLoginRequest request) {
-        // 1. code로 네이버에 Access Token 요청
-        String naverAccessToken = getNaverAccessToken(request.getCode(), request.getState());
-        
-        // 2. Access Token으로 사용자 정보 (attributes) 요청
-        NaverUserInfoResponse userInfo = getNaverUserInfo(naverAccessToken);
+        // 1. Access Token으로 사용자 정보 (attributes) 요청
+        NaverUserInfoResponse userInfo = getNaverUserInfo(request.getAccessToken());
 
         return new NaverResponse(userInfo);
     }
 
-    private String getNaverAccessToken(String code, String state) {
-        try {
-            NaverTokenResponse response = naverAuthClient.getAccessToken(
-                    grantType,
-                    clientId,
-                    clientSecret,
-                    code,
-                    state
-            );
-            String accessToken = response.getAccessToken();
-            return accessToken;
+    // private String getNaverAccessToken(String code, String state) {
+    //     try {
+    //         NaverTokenResponse response = naverAuthClient.getAccessToken(
+    //                 grantType,
+    //                 clientId,
+    //                 clientSecret,
+    //                 code,
+    //                 state
+    //         );
+    //         String accessToken = response.getAccessToken();
+    //         return accessToken;
 
-        } catch (FeignException e) {
-            String errorMessage = String.format(
-                "네이버 액세스 토큰 발급 실패 [HTTP %d]: %s",
-                e.status(),
-                e.contentUTF8() != null && !e.contentUTF8().isEmpty() 
-                    ? e.contentUTF8() 
-                    : e.getMessage()
-            );
-            log.error(errorMessage);
-            throw new RuntimeException(errorMessage, e);
-        }
-    }
+    //     } catch (FeignException e) {
+    //         String errorMessage = String.format(
+    //             "네이버 액세스 토큰 발급 실패 [HTTP %d]: %s",
+    //             e.status(),
+    //             e.contentUTF8() != null && !e.contentUTF8().isEmpty() 
+    //                 ? e.contentUTF8() 
+    //                 : e.getMessage()
+    //         );
+    //         log.error(errorMessage);
+    //         throw new RuntimeException(errorMessage, e);
+    //     }
+    // }
 
     private NaverUserInfoResponse getNaverUserInfo(String accessToken) {
         try {
