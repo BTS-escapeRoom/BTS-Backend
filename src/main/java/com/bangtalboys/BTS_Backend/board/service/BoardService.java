@@ -4,10 +4,7 @@ package com.bangtalboys.BTS_Backend.board.service;
 import com.bangtalboys.BTS_Backend.board.domain.Board;
 import com.bangtalboys.BTS_Backend.board.domain.BoardLike;
 import com.bangtalboys.BTS_Backend.board.domain.BoardReport;
-import com.bangtalboys.BTS_Backend.board.dto.request.BoardListRequest;
-import com.bangtalboys.BTS_Backend.board.dto.request.BoardReportRequest;
-import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
-import com.bangtalboys.BTS_Backend.board.dto.request.UpdateBoardRequest;
+import com.bangtalboys.BTS_Backend.board.dto.request.*;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardListPageResponse;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardResponse;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardListResponse;
@@ -29,9 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,7 +79,7 @@ public class BoardService {
         return new BoardResponse(board, status, isLike, likeCount, commentCount);
     }
 
-    public BoardListPageResponse getAllBoards(BoardListRequest boardListRequest) {
+    public BoardListPageResponse getAllBoards(BoardListRequest boardListRequest, Long loginMemberId) {
         List<Board> boards = boardRepository.findBoards(boardListRequest);
         long totalCount = boardRepository.countBoards(boardListRequest);
         long totalPage = totalCount % 20 == 0 ? totalCount / 20 : totalCount / 20 + 1;
@@ -94,7 +89,18 @@ public class BoardService {
             nextPage = -1L;
         }
 
-        List<BoardListResponse> boardListResponses = boards.stream().map(BoardListResponse::new).toList();
+        List<Long> boardIds = boards.stream()
+                .map(Board::getId)
+                .toList();
+
+        Set<Long> reportedBoardIdSet = boardIds.isEmpty()
+                ? Collections.emptySet()
+                : new HashSet<>(boardReportRepository.findReportedBoardIds(loginMemberId, boardIds));
+
+        List<BoardListResponse> boardListResponses = boards.stream()
+                .map(board -> new BoardListResponse(board, reportedBoardIdSet.contains(board.getId())))
+                .toList();
+
         return new BoardListPageResponse(boardListResponses, nextPage, totalPage);
     }
 
@@ -153,12 +159,26 @@ public class BoardService {
 
     public List<BoardListResponse> getLikeBoard(Long memberId) {
         List<Board> boards = boardRepository.findLikedBoardByMemberId(memberId);
-        return boards.stream().map(BoardListResponse::new).collect(Collectors.toList());
+        return toBoardListResponses(boards, memberId);
     }
 
     public List<BoardListResponse> getMyBoardList(Long memberId) {
         List<Board> boards = boardRepository.findAllByMemberId(memberId);
-        return boards.stream().map(BoardListResponse::new).collect(Collectors.toList());
+        return toBoardListResponses(boards, memberId);
+    }
+
+    private List<BoardListResponse> toBoardListResponses(List<Board> boards, Long memberId) {
+        List<Long> boardIds = boards.stream()
+                .map(Board::getId)
+                .toList();
+
+        Set<Long> reportedBoardIdSet = boardIds.isEmpty()
+                ? Collections.emptySet()
+                : new HashSet<>(boardReportRepository.findReportedBoardIds(memberId, boardIds));
+
+        return boards.stream()
+                .map(board -> new BoardListResponse(board, reportedBoardIdSet.contains(board.getId())))
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -181,5 +201,37 @@ public class BoardService {
         board.setRecruit_deadline(now);
 
         return "모집 마감처리되었습니다.";
+    }
+
+    @Transactional
+    public String reopenRecruit(Long boardId, Long memberId, ReopenRecruitRequest request) {
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다.")
+                );
+
+        if (!board.getMember().getId().equals(memberId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "작성자가 아닙니다.");
+        }
+
+        Date now = new Date();
+        Date newRecruitDeadline = request.getRecruitDeadline();
+
+        if (newRecruitDeadline == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "새로운 모집 마감일이 필요합니다.");
+        }
+
+        if (!newRecruitDeadline.after(now)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "모집 마감일은 현재 시간 이후여야 합니다.");
+        }
+
+        if (board.getRecruit_deadline() != null && board.getRecruit_deadline().after(now)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "아직 모집 중인 글입니다.");
+        }
+
+        board.setRecruit_deadline(newRecruitDeadline);
+
+        return "모집 마감이 취소되었습니다.";
     }
 }

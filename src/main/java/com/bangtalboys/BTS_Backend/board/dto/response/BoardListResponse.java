@@ -29,10 +29,14 @@ public class BoardListResponse {
     private int commentCount;
     private Date createdAt;
     private Date updatedAt;
+
     @JsonProperty("isPopular")
     private boolean isPopular;
 
-    public BoardListResponse(Board board) {
+    @JsonProperty("isReported")
+    private boolean isReported;
+
+    public BoardListResponse(Board board, boolean isReported) {
         this.id = board.getId();
         this.type = board.getType();
         this.title = board.getTitle();
@@ -41,16 +45,17 @@ public class BoardListResponse {
         this.profileImg = board.getMember().getProfileImg();
         this.memberName = board.getMember().getNickname();
         this.themeName = board.getTheme() != null ? board.getTheme().getTitle() : null;
-        this.storeName = board.getTheme() != null ?  board.getTheme().getStore().getName() : null;
-        this.escapeDate = board.getEscape_date() != null ? board.getEscape_date() : null;
+        this.storeName = board.getTheme() != null ? board.getTheme().getStore().getName() : null;
+        this.escapeDate = board.getEscape_date();
         this.recruitPeople = board.getRecruit_people();
-        this.recruitDeadline = board.getRecruit_deadline() != null ? board.getRecruit_deadline() : null;
+        this.recruitDeadline = board.getRecruit_deadline();
         this.contactUrl = board.getContact_url();
         this.contactMethod = board.getContact_method();
-        this.likeCount =  board.getLikes().size();
-        this.commentCount =  board.getComments().size();
+        this.likeCount = board.getLikes().size();
+        this.commentCount = board.getComments().size();
         this.createdAt = board.getCreated_at();
         this.updatedAt = board.getUpdated_at();
         this.isPopular = PopularityCalculator.isPopular(board);
+        this.isReported = isReported;
     }
 }

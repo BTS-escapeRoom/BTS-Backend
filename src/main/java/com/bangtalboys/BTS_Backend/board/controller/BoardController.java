@@ -1,9 +1,6 @@
 package com.bangtalboys.BTS_Backend.board.controller;
 
-import com.bangtalboys.BTS_Backend.board.dto.request.BoardListRequest;
-import com.bangtalboys.BTS_Backend.board.dto.request.BoardReportRequest;
-import com.bangtalboys.BTS_Backend.board.dto.request.BoardRequest;
-import com.bangtalboys.BTS_Backend.board.dto.request.UpdateBoardRequest;
+import com.bangtalboys.BTS_Backend.board.dto.request.*;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardListPageResponse;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardResponse;
 import com.bangtalboys.BTS_Backend.board.dto.response.BoardListResponse;
@@ -47,9 +44,10 @@ public class BoardController {
 
     @Operation(summary = "게시글 목록 조회")
     @GetMapping("")
-    public ResponseEntity<Response<BoardListPageResponse>> getAllBoards(@RequestParam(required = false) String keyword, @RequestParam(required = false) boolean isRecruiting, @RequestParam(required = false) BoardType type, @RequestParam(required = false) SortType sortType, @RequestParam(required = false, defaultValue = "1") Integer page) {
+    public ResponseEntity<Response<BoardListPageResponse>> getAllBoards(@RequestParam(required = false) String keyword, @RequestParam(required = false) boolean isRecruiting, @RequestParam(required = false) BoardType type, @RequestParam(required = false) SortType sortType, @RequestParam(required = false, defaultValue = "1") Integer page, @AuthenticationPrincipal CustomOAuth2User oauth2User) {
         BoardListRequest boardListRequest = new BoardListRequest(keyword, isRecruiting, type, sortType, page);
-        return ResponseEntity.ok(Response.ok(boardService.getAllBoards(boardListRequest)));
+        Long memberId = oauth2User.getId();
+        return ResponseEntity.ok(Response.ok(boardService.getAllBoards(boardListRequest, memberId)));
     }
 
     @Operation(summary = "게시글 단건 수정")
@@ -106,10 +104,12 @@ public class BoardController {
 
     @Operation(summary = "게시글 댓글 목록 조회")
     @GetMapping("/{boardId}/comments")
-    public ResponseEntity<Response<CommentListResponse>> getBoardComments( @PathVariable Long boardId) {
-        return ResponseEntity.ok(Response.ok(commentService.getBoardComments(boardId)));
+    public ResponseEntity<Response<CommentListResponse>> getBoardComments( @PathVariable Long boardId, @AuthenticationPrincipal CustomOAuth2User oauth2User) {
+        Long memberId = oauth2User.getId();
+        return ResponseEntity.ok(Response.ok(commentService.getBoardComments(boardId, memberId)));
     }
 
+    @Operation(summary = "모집 마감하기")
     @PatchMapping("/{boardId}/close-recruit")
     public ResponseEntity<Response<String>> closeRecruit(
             @PathVariable Long boardId,
@@ -118,5 +118,16 @@ public class BoardController {
         Long memberId = oauth2User.getId();
         String message = boardService.closeRecruit(boardId, memberId);
         return ResponseEntity.ok(Response.ok(message));
+    }
+
+    @Operation(summary = "모집 마감취소하기")
+    @PatchMapping("/{boardId}/recruit/reopen")
+    public ResponseEntity<String> reopenRecruit(
+            @PathVariable Long boardId,
+            @AuthenticationPrincipal CustomOAuth2User oauth2User,
+            @RequestBody ReopenRecruitRequest request
+    ) {
+        String result = boardService.reopenRecruit(boardId, oauth2User.getId(), request);
+        return ResponseEntity.ok(result);
     }
 }

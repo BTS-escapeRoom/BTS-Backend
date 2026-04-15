@@ -17,9 +17,7 @@ import com.bangtalboys.BTS_Backend.utils.enums.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -58,20 +56,24 @@ public class CommentService {
     }
 
     /** 댓글 목록 조회 */
-    public CommentListResponse getBoardComments(Long boardId) {
+    public CommentListResponse getBoardComments(Long boardId, Long memberId) {
         List<Comment> comments = commentRepository.findByBoard_Id(boardId);
-        List<CommentResponse> responses = new ArrayList<>();
 
-        for (Comment comment : comments) {
+        List<Long> commentIds = comments.stream()
+                .map(Comment::getId)
+                .toList();
 
-            // 누군가라도 신고한 적이 있으면 true
-            boolean isReported = commentReportRepository.existsByComment(comment);
+        Set<Long> reportedCommentIdSet = commentIds.isEmpty()
+                ? Collections.emptySet()
+                : new HashSet<>(commentReportRepository.findReportedCommentIds(memberId, commentIds));
 
-            // soft delete 여부
-            boolean isDeleted = comment.isDeleted();
-
-            responses.add(new CommentResponse(comment, isReported, isDeleted));
-        }
+        List<CommentResponse> responses = comments.stream()
+                .map(comment -> new CommentResponse(
+                        comment,
+                        reportedCommentIdSet.contains(comment.getId()),
+                        comment.isDeleted()
+                ))
+                .toList();
 
         return new CommentListResponse(responses);
     }
