@@ -83,6 +83,9 @@ public class MemberService {
         }
 
         // Soft delete: status를 INACTIVE로 변경
+        member.setNickname("탈퇴한 사용자");
+        member.setProfileImg(null);
+        member.setSocialId("DELETED_" + memberId);
         member.setStatus(com.bangtalboys.BTS_Backend.utils.enums.Status.INACTIVE);
         memberRepository.save(member);
     }

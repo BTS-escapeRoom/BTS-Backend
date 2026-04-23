@@ -42,10 +42,15 @@ public class ReviewService {
     }
 
     public List<ReviewListResponse> getAllReviews(Long themeId, Long memberId) {
-        List<Review> reviewList = reviewRepository.findAllByThemeIdOrAllOrderByCreatedAtDesc(themeId);
+        List<ReviewRepository.ReviewWithReportedProjection> reviewList =
+                reviewRepository.findAllWithReportByThemeIdOrAllOrderByCreatedAtDesc(themeId, memberId);
 
         return reviewList.stream()
-                .map(review -> new ReviewListResponse(review, review.getMember().getId().equals(memberId)))
+                .map(projection -> new ReviewListResponse(
+                        projection.getReview(),
+                        projection.getReview().getMember().getId().equals(memberId),
+                        projection.getIsReported()
+                ))
                 .collect(Collectors.toList());
     }
 
@@ -114,7 +119,7 @@ public class ReviewService {
         List<Review> reviewList = reviewRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId);
 
         return reviewList.stream()
-                .map(review -> new ReviewListResponse(review, true))
+                .map(review -> new ReviewListResponse(review, true, false))
                 .collect(Collectors.toList());
     }
 

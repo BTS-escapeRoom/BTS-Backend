@@ -4,6 +4,10 @@ import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.utils.enums.Token;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +31,22 @@ public class ReissueController {
         this.jwtUtil = jwtUtil;
     }
 
+    @Operation(
+            summary = "토큰 재발급",
+            description = "웹: 쿠키 전송 | 앱: Authorization 헤더로 전송 (Bearer {refreshToken})"
+    )
+    @Parameters({
+            @Parameter(
+                    name = "Cookie",
+                    description = "웹 전용 - refresh={token}",
+                    in = ParameterIn.COOKIE
+            ),
+            @Parameter(
+                    name = "Authorization",
+                    description = "앱 전용 - Bearer {refreshToken}",
+                    in = ParameterIn.HEADER
+            )
+    })
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
         //get refresh token
@@ -37,6 +57,13 @@ public class ReissueController {
                 if (cookie.getName().equals(Token.RefreshToken.getType())) {
                     refresh = cookie.getValue();
                 }
+            }
+        }
+
+        if (refresh == null) {
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                refresh = authHeader.substring(7);
             }
         }
 
@@ -71,7 +98,8 @@ public class ReissueController {
 
         //response
         response.setHeader(Token.AccessToken.getType(), newAccess);
-        Cookie refreshCookie = createCookie(Token.RefreshToken.getType(), newRefresh);
+        response.setHeader(Token.RefreshToken.getType(), newRefresh); // 앱용 헤더 응답 추가
+        Cookie refreshCookie = createCookie(Token.RefreshToken.getType(), newRefresh); // 웹용 쿠키 응답 추가
         addSameSiteCookie(response, refreshCookie);
 
         return new ResponseEntity<>(HttpStatus.OK);
