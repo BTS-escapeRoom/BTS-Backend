@@ -106,12 +106,21 @@ public class BoardService {
 
 
     public BoardResponse updateBoard(Long boardId, Long memberId, UpdateBoardRequest updateBoardRequest) {
-        Board board = boardRepository.findById(boardId).orElseThrow(NotFoundException::new);
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(NotFoundException::new);
+
         if (!board.getMember().getId().equals(memberId)) {
             throw new ForbiddenException();
         }
+
         board.setTitle(updateBoardRequest.getTitle());
         board.setDescription(updateBoardRequest.getDescription());
+        board.setRecruit_deadline(updateBoardRequest.getRecruit_deadline());
+        board.setEscape_date(updateBoardRequest.getEscape_date());
+        board.setRecruit_people(updateBoardRequest.getRecruit_people());
+        board.setContact_url(updateBoardRequest.getContact_url());
+        board.setContact_method(updateBoardRequest.getContact_method());
+
         return this.getOneBoard(boardId, memberId);
     }
 
