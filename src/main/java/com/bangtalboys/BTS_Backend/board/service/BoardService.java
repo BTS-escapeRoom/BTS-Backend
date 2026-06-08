@@ -48,7 +48,7 @@ public class BoardService {
         }
         Board board = new Board(boardRequest, member, theme);
         boardRepository.save(board);
-        return new BoardResponse(board, Status.INACTIVE.name(), false, 0, 0);
+        return new BoardResponse(board,false, false, 0, 0);
     }
 
     @Transactional
@@ -66,17 +66,21 @@ public class BoardService {
 
         // 기본값
         boolean isLike = false;
+        boolean isReported = false;
         String status = Status.INACTIVE.name();
 
         if (memberId != null) {
             // ✅ member 조회 없이 memberId로만 처리 (쿼리/메모리 둘 다 절약)
             status = boardReportRepository.findStatusByMemberIdAndBoardId(memberId, boardId)
                     .orElse(Status.INACTIVE.name());
+            if (status.equals(Status.ACTIVE.name())) {
+                isReported = true;
+            }
 
             isLike = boardLikeRepository.existsByMemberIdAndBoardId(memberId, boardId);
         }
 
-        return new BoardResponse(board, status, isLike, likeCount, commentCount);
+        return new BoardResponse(board, isReported, isLike, likeCount, commentCount);
     }
 
     public BoardListPageResponse getAllBoards(BoardListRequest boardListRequest, Long loginMemberId) {
