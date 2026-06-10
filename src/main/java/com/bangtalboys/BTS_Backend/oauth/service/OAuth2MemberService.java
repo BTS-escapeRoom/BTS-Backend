@@ -1,7 +1,9 @@
 package com.bangtalboys.BTS_Backend.oauth.service;
 
+import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
 import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
+import com.bangtalboys.BTS_Backend.oauth.dto.NaverResponse;
 import com.bangtalboys.BTS_Backend.oauth.dto.OAuth2Response;
 import com.bangtalboys.BTS_Backend.oauth.dto.UserDto;
 import com.bangtalboys.BTS_Backend.utils.enums.Role;
@@ -40,6 +42,11 @@ public class OAuth2MemberService {
                 member.setStatus(Status.ACTIVE);
                 member = memberRepository.save(member);
             }
+
+            // 네이버인 경우 리프레시 토큰 업데이트
+            if (oAuth2Response instanceof NaverResponse naverResponse) {
+                member.setNaverRefreshToken(naverResponse.getRefreshToken());
+            }
             
             // 기존 회원일 경우 (ACTIVE)
             return UserDto.builder()
@@ -59,6 +66,11 @@ public class OAuth2MemberService {
                     .role(Role.ROLE_USER)
                     .build();
 
+            // 네이버인 경우 액세스 토큰, 리프레시 토큰 저장
+            if (oAuth2Response instanceof NaverResponse naverResponse) {
+                newMember.setNaverRefreshToken(naverResponse.getRefreshToken());
+            }
+
             Member saved = memberRepository.save(newMember);
 
             return UserDto.builder()
@@ -69,5 +81,12 @@ public class OAuth2MemberService {
                     .isNewUser(true) // 신규 회원이므로 true
                     .build();
         }
+    }
+
+    @Transactional
+    public void updateNaverTokens(Long memberId, String refreshToken) {
+        Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
+        member.setNaverRefreshToken(refreshToken);
+        memberRepository.save(member);
     }
 }

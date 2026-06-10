@@ -13,6 +13,7 @@ public class NaverResponse implements OAuth2Response{
 
     private final String socialId;
     private final String profileImage;
+    private final String refreshToken;
     
     @SuppressWarnings("unchecked")
     public NaverResponse(Map<String, Object> attribute) {
@@ -21,11 +22,13 @@ public class NaverResponse implements OAuth2Response{
         
         Object profileImg = response.get("profile_image");
         this.profileImage = profileImg != null ? profileImg.toString() : null;
+        this.refreshToken = null;
     }
 
-    public NaverResponse(NaverUserInfoResponse userInfo) {
+    public NaverResponse(NaverUserInfoResponse userInfo, String refreshToken) {
         this.socialId = userInfo.getResponse().getId();
         this.profileImage = userInfo.getResponse().getProfileImage();
+        this.refreshToken = refreshToken;
     }
 
     @Override

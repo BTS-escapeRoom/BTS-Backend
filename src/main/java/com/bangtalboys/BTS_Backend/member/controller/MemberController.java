@@ -3,9 +3,13 @@ package com.bangtalboys.BTS_Backend.member.controller;
 import com.bangtalboys.BTS_Backend.member.dto.*;
 import com.bangtalboys.BTS_Backend.member.service.MemberService;
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
+import com.bangtalboys.BTS_Backend.oauth.util.CookieUtils;
+import com.bangtalboys.BTS_Backend.utils.enums.Token;
 import com.bangtalboys.BTS_Backend.utils.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,11 +49,14 @@ public class MemberController {
     @DeleteMapping("")
     public ResponseEntity<Response<?>> DeleteMember(
             @AuthenticationPrincipal CustomOAuth2User oauth2User,
-            @RequestHeader(value = "naverAccessToken", required = false) String naverAccessToken
+            HttpServletRequest request,
+            HttpServletResponse response
     ) {
 
         Long memberId = oauth2User.getId();
-        memberService.deleteMember(memberId, naverAccessToken);
+        memberService.deleteMember(memberId);
+
+        CookieUtils.deleteCookie(request, response, Token.RefreshToken.name());
 
         return ResponseEntity.ok(Response.ok(null));
     }

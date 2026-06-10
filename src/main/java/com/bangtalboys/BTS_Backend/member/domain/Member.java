@@ -29,6 +29,8 @@ public class Member extends BaseEntity {
 
     private String socialId;
 
+    private String naverRefreshToken;
+
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
@@ -37,7 +39,11 @@ public class Member extends BaseEntity {
     private Status status = Status.ACTIVE;
 
     @Builder
-    public Member(Long id, String profileImg, String nickname, String description, SocialType socialType, String socialId, Role role, Status status) {
+    public Member(Long id, String profileImg,
+                  String nickname, String description,
+                  SocialType socialType, String socialId,
+                  Role role, Status status,
+                  String naverRefreshToken) {
         this.id = id;
         this.profileImg = profileImg;
         this.nickname = nickname;
@@ -46,5 +52,6 @@ public class Member extends BaseEntity {
         this.socialId = socialId;
         this.role = role;
         this.status = status != null ? status : Status.ACTIVE;
+        this.naverRefreshToken = naverRefreshToken;
     }
 }

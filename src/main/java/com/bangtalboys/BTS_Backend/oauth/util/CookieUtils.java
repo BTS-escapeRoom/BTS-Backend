@@ -35,6 +35,7 @@ public class CookieUtils {
                 .secure(true)       // 🚨 중요: SameSite=None은 반드시 Secure=true여야 함 (HTTPS 필수)
                 .sameSite("None")   // 👈 Apple 로그인 필수 설정
                 .maxAge(maxAge)
+                .domain("bangtal-boys.com")
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());
@@ -52,6 +53,7 @@ public class CookieUtils {
                             .httpOnly(true)
                             .secure(true)
                             .sameSite("None")
+                            .domain("bangtal-boys.com")
                             .build();
                     response.addHeader("Set-Cookie", deleteCookie.toString());
                 }

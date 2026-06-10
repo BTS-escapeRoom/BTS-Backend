@@ -35,7 +35,7 @@ public class NaverLoginProvider implements SocialLoginProvider {
         // 1. Access Token으로 사용자 정보 (attributes) 요청
         NaverUserInfoResponse userInfo = getNaverUserInfo(request.getAccessToken());
 
-        return new NaverResponse(userInfo);
+        return new NaverResponse(userInfo, request.getRefreshToken());
     }
 
     // private String getNaverAccessToken(String code, String state) {

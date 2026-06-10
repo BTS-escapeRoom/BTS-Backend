@@ -2,6 +2,8 @@ package com.bangtalboys.BTS_Backend.oauth.authentication;
 
 import com.bangtalboys.BTS_Backend.oauth.dto.CustomOAuth2User;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
+import com.bangtalboys.BTS_Backend.oauth.service.OAuth2MemberService;
+import com.bangtalboys.BTS_Backend.oauth.util.CookieUtils;
 import com.bangtalboys.BTS_Backend.oauth.util.UrlUtils;
 
 import com.bangtalboys.BTS_Backend.utils.enums.Token;
@@ -12,6 +14,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -27,16 +32,22 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final JwtUtil jwtUtil;
     private final UrlUtils urlUtils;
     private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo;
+    private final OAuth2MemberService oAuth2MemberService;
+    private final OAuth2AuthorizedClientService authorizedClientService;
 
     private static final String DEFAULT_REDIRECT_URL = "/";
 
     // 생성자 주입
     public CustomSuccessHandler(UrlUtils urlUtils,
                                 JwtUtil jwtUtil,
-                                AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo) {
+                                AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo,
+                                OAuth2AuthorizedClientService authorizedClientService,
+                                OAuth2MemberService oAuth2MemberService) {
         this.urlUtils = urlUtils;
         this.jwtUtil = jwtUtil;
         this.authRequestRepo = authRequestRepo;
+        this.authorizedClientService = authorizedClientService;
+        this.oAuth2MemberService = oAuth2MemberService;
     }
 
     @Override
@@ -60,6 +71,21 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         try {
             CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
 
+            // 네이버인 경우 액세스 토큰, 리프레시 토큰 저장
+            if ("naver".equals(customUserDetails.getSocialType())) {
+                OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+                OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
+                        oauthToken.getAuthorizedClientRegistrationId(),
+                        oauthToken.getName()
+                );
+
+                String naverRefreshToken = authorizedClient.getRefreshToken() != null
+                        ? authorizedClient.getRefreshToken().getTokenValue()
+                        : null;
+
+                oAuth2MemberService.updateNaverTokens(customUserDetails.getId(), naverRefreshToken);
+            }
+
             String nickname = customUserDetails.getNickname();
             String socialType = customUserDetails.getSocialType();
             String socialId = customUserDetails.getSocialId();
@@ -73,8 +99,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
             String refreshToken = jwtUtil.createJwt(Token.RefreshToken.getType(), id, socialType, socialId, role, Token.RefreshToken.getTtl());
 
-            Cookie myCookie = createCookie(Token.RefreshToken.getType(), refreshToken);
-            addSameSiteCookie(response, myCookie);
+            CookieUtils.addCookie(response, Token.RefreshToken.getType(), refreshToken, 24*60*60);
 
             // returnUrl이 이미 쿼리 파라미터를 포함하는지 확인
             String delimiter = returnUrl.contains("?") ? "&" : "?";
@@ -98,22 +123,5 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
     }
 
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setDomain("bangtal-boys.com");
-
-        return cookie;
-    }
-
-    private void addSameSiteCookie(HttpServletResponse response, Cookie cookie) {
-        String cookieStr = String.format("%s=%s; Max-Age=%d; Path=%s; Secure; HttpOnly; SameSite=None; Domain=%s",
-                cookie.getName(), cookie.getValue(), cookie.getMaxAge(), cookie.getPath(), cookie.getDomain());
-
-        response.addHeader("Set-Cookie", cookieStr);
-    }
 }
 

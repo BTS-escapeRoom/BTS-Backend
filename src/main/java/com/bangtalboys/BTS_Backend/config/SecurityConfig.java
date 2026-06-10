@@ -4,6 +4,7 @@ import com.bangtalboys.BTS_Backend.oauth.authentication.*;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtFilter;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.oauth.service.CustomOAuth2UserService;
+import com.bangtalboys.BTS_Backend.oauth.service.OAuth2MemberService;
 import com.bangtalboys.BTS_Backend.oauth.util.AppleJwtUtils;
 import com.bangtalboys.BTS_Backend.oauth.util.UrlUtils;
 
@@ -13,6 +14,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
@@ -52,15 +55,21 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CustomSuccessHandler customSuccessHandler(AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo) {
-        return new CustomSuccessHandler(urlUtils, jwtUtil, authRequestRepo);
+    public OAuth2AuthorizedClientService authorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
+        return new InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository);
     }
 
+    @Bean
+    public CustomSuccessHandler customSuccessHandler(
+            AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo,
+            OAuth2AuthorizedClientService authorizedClientService,
+            OAuth2MemberService oAuth2MemberService) {
+        return new CustomSuccessHandler(urlUtils, jwtUtil, authRequestRepo, authorizedClientService, oAuth2MemberService);
+    }
     @Bean
     public CustomFailureHandler customFailureHandler(AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo) {
         return new CustomFailureHandler(urlUtils, authRequestRepo);
     }
-
 
     @Bean
     public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {

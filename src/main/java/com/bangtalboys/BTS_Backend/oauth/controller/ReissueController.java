@@ -1,6 +1,12 @@
 package com.bangtalboys.BTS_Backend.oauth.controller;
 
+import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
+import com.bangtalboys.BTS_Backend.member.domain.Member;
+import com.bangtalboys.BTS_Backend.member.dto.MemberResponse;
+import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
+import com.bangtalboys.BTS_Backend.member.service.MemberService;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
+import com.bangtalboys.BTS_Backend.utils.enums.Status;
 import com.bangtalboys.BTS_Backend.utils.enums.Token;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -27,8 +33,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name="REISSUE API")
 public class ReissueController {
     private final JwtUtil jwtUtil;
-    public ReissueController(JwtUtil jwtUtil) {
+    private final MemberService memberService;
+    public ReissueController(JwtUtil jwtUtil, MemberService memberService) {
         this.jwtUtil = jwtUtil;
+        this.memberService = memberService;
     }
 
     @Operation(
@@ -91,6 +99,22 @@ public class ReissueController {
         String socialType = jwtUtil.getSocialType(refresh);
         String socialId = jwtUtil.getSocialId(refresh);
         String role = jwtUtil.getRole(refresh);
+
+        // 탈퇴한 유저인지 판단
+        try {
+            MemberResponse memberRes = memberService.getOneMember(id);
+
+            // 탈퇴 상태(INACTIVE)인 경우 처리
+            if (memberRes.getStatus() == Status.INACTIVE) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("user deleted");
+            }
+        } catch (NotFoundException e) {
+            // DB에 유저가 아예 없는 경우 (Hard Delete 되었거나 존재하지 않는 유저)
+            // 전역 예외 처리기로 가기 전에 캐치해서 401로 응답을 통일해 줍니다.
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("user not found");
+        }
 
         //make new JWT
         String newAccess = jwtUtil.createJwt(Token.AccessToken.getType(), id, socialType, socialId, role, 600000L);

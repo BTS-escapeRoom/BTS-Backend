@@ -7,6 +7,7 @@ import com.bangtalboys.BTS_Backend.member.domain.Member;
 import com.bangtalboys.BTS_Backend.member.dto.*;
 import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.utils.enums.Role;
+import com.bangtalboys.BTS_Backend.utils.enums.Status;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteMember(Long memberId, String accessToken) {
+    public void deleteMember(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
 
         switch (member.getSocialType()) {
@@ -72,13 +73,11 @@ public class MemberService {
                 unlinkService.unlinkKakao(member.getSocialId());
             }
             case NAVER -> {
-                if (accessToken == null || accessToken.isBlank()) {
-                    throw new BusinessBaseException(ErrorCode.INVALID_ACCESS_TOKEN);
-                }
-                unlinkService.unlinkNaver(accessToken);
+                // 네이버는 DB에 저장해둔 네이버 refresh_token으로 access_token을 새로 발급받아 탈퇴 진행
+                unlinkService.unlinkNaver(member.getNaverRefreshToken());
             }
             case APPLE -> {
-                // 탈퇴 처리 없이 내부 데이터만 삭제 + 사용자에게 안내
+                // 탈퇴 처리 없이 내부 데이터만 삭제
             }
         }
 
@@ -86,7 +85,7 @@ public class MemberService {
         member.setNickname("탈퇴한 사용자");
         member.setProfileImg(null);
         member.setSocialId("DELETED_" + memberId);
-        member.setStatus(com.bangtalboys.BTS_Backend.utils.enums.Status.INACTIVE);
+        member.setStatus(Status.INACTIVE);
         memberRepository.save(member);
     }
 
@@ -94,7 +93,7 @@ public class MemberService {
     public MemberCheckSignupResponse checkSignupMember(MemberCheckSignupRequest req) {
         // status가 ACTIVE인 회원만 조회 (신규 회원 판단)
         Optional<Member> memberOpt = memberRepository.findBySocialTypeAndSocialIdAndStatus(
-                req.getSocialType(), req.getSocialId(), com.bangtalboys.BTS_Backend.utils.enums.Status.ACTIVE
+                req.getSocialType(), req.getSocialId(), Status.ACTIVE
         );
 
         if (memberOpt.isPresent()) {
