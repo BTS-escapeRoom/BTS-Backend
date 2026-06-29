@@ -1,7 +1,14 @@
 server:
-  host: apis.bangtal-boys.com
+  port: ${PORT:8080}
+  forward-headers-strategy: native
 
 spring:
+  thymeleaf:
+    check-template-location: false
+
+  jpa:
+    open-in-view: false
+
   security:
     jwt:
       secret-key: ${JWT_SECRET_KEY}
@@ -57,6 +64,7 @@ spring:
             key-id: ${APPLE_KEY_ID}
             bundle-id: ${APPLE_BUNDLE_ID}
             private-key: ${APPLE_PRIVATE_KEY}
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${SPRING_DATASOURCE_URL}
@@ -76,10 +84,7 @@ kakao:
 
 logging:
   level:
-    # 스프링 시큐리티 OAuth2 관련 로그를 상세하게 봅니다.
     org.springframework.security.oauth2: TRACE
-    # HTTP 요청을 보내는 클라이언트(RestTemplate 등)의 로그를 봅니다.
     org.springframework.web.client.RestTemplate: DEBUG
-    org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE # WebClient 사용 시
-    # 아파치 HttpClient(실제 전송 라이브러리) 로그
+    org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
     org.apache.http: DEBUG
