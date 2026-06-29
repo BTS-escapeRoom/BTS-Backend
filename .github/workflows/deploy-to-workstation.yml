@@ -128,8 +128,6 @@ jobs:
               restart: always
               expose:
                 - "8080"
-              depends_on:
-                - mysql
               environment:
                 SPRING_DATASOURCE_URL: {yq(datasource_url)}
                 SPRING_DATASOURCE_USERNAME: {yq(db_username)}
@@ -159,145 +157,27 @@ jobs:
           """)
 
           Path("docker-compose.deploy.yml").write_text(compose)
-          print(compose.replace(db_password, "***").replace(db_root_password, "***"))
+
+          masked = compose
+          masked = masked.replace(db_password, "***")
+          masked = masked.replace(db_root_password, "***")
+          print(masked)
           PY
 
-      - name: Deploy to PaaS by API
-        env:
-          PAAS_DEPLOY_TOKEN: ${{ secrets.PAAS_DEPLOY_TOKEN }}
-          GHCR_PULL_USERNAME: ${{ secrets.GHCR_PULL_USERNAME }}
-          GHCR_PULL_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
-          IMAGE_DIGEST: ${{ needs.build.outputs.IMAGE_DIGEST }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_SHA: ${{ github.sha }}
-        run: |
-          python3 - <<'PY'
-          import json
-          import os
-          import time
-          import urllib.error
-          import urllib.request
-          from pathlib import Path
-
-          paas_url = "https://paas.free4me.cc"
-          app = "bangtal-boys"
-
-          required = [
-              "PAAS_DEPLOY_TOKEN",
-              "GHCR_PULL_USERNAME",
-              "GHCR_PULL_TOKEN",
-              "IMAGE_DIGEST",
-              "GITHUB_REPOSITORY",
-              "GITHUB_SHA",
-          ]
-
-          for key in required:
-              if not os.environ.get(key):
-                  raise SystemExit(f"{key} is empty")
-
-          token = os.environ["PAAS_DEPLOY_TOKEN"]
-          compose = Path("docker-compose.deploy.yml").read_text()
-
-          payload = {
-              "provider": "github",
-              "repository": os.environ["GITHUB_REPOSITORY"],
-              "commitSha": os.environ["GITHUB_SHA"],
-              "composeFile": "docker-compose.deploy.yml",
-              "shape": {
-                  "type": "compose",
-                  "content": compose,
-              },
-              "images": {
-                  "bts-backend": os.environ["IMAGE_DIGEST"],
-              },
-              "registryCredentials": [
-                  {
-                      "host": "ghcr.io",
-                      "username": os.environ["GHCR_PULL_USERNAME"],
-                      "password": os.environ["GHCR_PULL_TOKEN"],
-                  }
-              ],
-              "metadata": {
-                  "httpService": "bts-backend",
-                  "httpPort": "8080",
-                  "healthPath": "/health",
-              },
-          }
-
-          def request_json(method, url, body=None):
-              data = None
-              if body is not None:
-                  data = json.dumps(body).encode("utf-8")
-
-              req = urllib.request.Request(
-                  url,
-                  data=data,
-                  method=method,
-                  headers={
-                      "Authorization": f"Bearer {token}",
-                      "Content-Type": "application/json",
-                  },
-              )
-
-              try:
-                  with urllib.request.urlopen(req, timeout=30) as res:
-                      return json.loads(res.read().decode("utf-8"))
-              except urllib.error.HTTPError as e:
-                  body = e.read().decode("utf-8", errors="replace")
-                  raise SystemExit(f"HTTP {e.code}: {body}")
-
-          created = request_json(
-              "POST",
-              f"{paas_url}/v1/apps/{app}/deployments",
-              payload,
-          )
-
-          deployment_id = created.get("deploymentId")
-          status_url = created.get("statusUrl")
-          app_url = created.get("appUrl")
-
-          print(f"deploymentId={deployment_id}")
-          print(f"statusUrl={status_url}")
-          print(f"appUrl={app_url}")
-
-          if not deployment_id:
-              raise SystemExit("deploymentId is missing")
-
-          deadline = time.time() + 15 * 60
-          last_status = None
-
-          while time.time() < deadline:
-              status = request_json(
-                  "GET",
-                  f"{paas_url}/v1/apps/{app}/deployments/{deployment_id}",
-              )
-
-              current = status.get("status")
-              message = status.get("message") or status.get("reason") or ""
-
-              if current != last_status or message:
-                  print(f"status={current} message={message}")
-                  last_status = current
-
-              if current == "succeeded":
-                  print("deployment succeeded")
-                  print(f"App URL: {app_url}")
-                  raise SystemExit(0)
-
-              if current == "failed":
-                  print(json.dumps(status, ensure_ascii=False, indent=2))
-                  raise SystemExit("deployment failed")
-
-              time.sleep(10)
-
-          final_status = request_json(
-              "GET",
-              f"{paas_url}/v1/apps/{app}/deployments/{deployment_id}",
-          )
-
-          print(json.dumps(final_status, ensure_ascii=False, indent=2))
-          raise SystemExit("timed out waiting for deployment after 15 minutes")
-          PY
+      - name: Deploy to PaaS
+        uses: JangHanbin/paas-deploy-action@v1
+        with:
+          app: bangtal-boys
+          token: ${{ secrets.PAAS_DEPLOY_TOKEN }}
+          deploy-yaml: docker-compose.deploy.yml
+          images: >-
+            {"bts-backend":"${{ needs.build.outputs.IMAGE_DIGEST }}"}
+          http-service: bts-backend
+          http-port: "8080"
+          health-path: /health
+          registry-host: ghcr.io
+          registry-username: ${{ secrets.GHCR_PULL_USERNAME }}
+          registry-password: ${{ secrets.GHCR_PULL_TOKEN }}
 
       - name: Print App URL
         if: always()

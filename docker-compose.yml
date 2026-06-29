@@ -4,8 +4,6 @@ services:
     restart: always
     expose:
       - "8080"
-    depends_on:
-      - mysql
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
