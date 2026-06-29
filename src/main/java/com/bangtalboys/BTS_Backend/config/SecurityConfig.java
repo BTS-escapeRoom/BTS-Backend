@@ -102,13 +102,13 @@ public class SecurityConfig {
 
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository,
-                                           AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo,
-                                           CustomSuccessHandler customSuccessHandler,
-                                           CustomFailureHandler customFailureHandler) throws Exception {
-
-        // CORS 설정
-//        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+    public SecurityFilterChain filterChain(
+            HttpSecurity http,
+            ClientRegistrationRepository clientRegistrationRepository,
+            AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo,
+            CustomSuccessHandler customSuccessHandler,
+            CustomFailureHandler customFailureHandler
+    ) throws Exception {
 
         // CSRF 비활성화
         http.csrf((auth) -> auth.disable());
@@ -133,18 +133,17 @@ public class SecurityConfig {
                 )
                 .userInfoEndpoint(userInfoEndpointConfig ->
                         userInfoEndpointConfig
-                        .userService(customOAuth2UserService)
-                        .oidcUserService((OAuth2UserService) customOAuth2UserService)
-                    )
+                                .userService(customOAuth2UserService)
+                                .oidcUserService((OAuth2UserService) customOAuth2UserService)
+                )
                 .successHandler(customSuccessHandler)
                 .failureHandler(customFailureHandler)
-
-                .tokenEndpoint(tokenEndpointConfig -> 
-                    tokenEndpointConfig.accessTokenResponseClient(accessTokenResponseClient())
-            )
+                .tokenEndpoint(tokenEndpointConfig ->
+                        tokenEndpointConfig.accessTokenResponseClient(accessTokenResponseClient())
+                )
         );
 
-        // 인증 실패시 302 -> 401 Unauthorized 응답 처리 추가
+        // 인증 실패시 302 -> 401 Unauthorized 응답 처리
         http.exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
@@ -154,6 +153,9 @@ public class SecurityConfig {
         // 경로별 인가 설정
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+
+            // PaaS health check
+            auth.requestMatchers(HttpMethod.GET, "/health").permitAll();
 
             for (PermitAllPaths.PermitPath p : PATHS) {
                 if (p.getMethod() != null) {
@@ -173,7 +175,6 @@ public class SecurityConfig {
         // 세션 상태를 STATELESS로 설정
         http.sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
 
         return http.build();
     }
