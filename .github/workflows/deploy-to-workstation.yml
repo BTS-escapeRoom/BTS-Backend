@@ -68,5 +68,5 @@ jobs:
           http-port: "8080"
           health-path: /health
           registry-host: ghcr.io
-          registry-username: ${{ github.actor }}
+          registry-username: ${{ secrets.GHCR_PULL_USERNAME }}
           registry-password: ${{ secrets.GHCR_PULL_TOKEN }}
