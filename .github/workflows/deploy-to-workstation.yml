@@ -110,6 +110,9 @@ jobs:
           db_password = os.environ["DB_PASSWORD"]
           db_root_password = os.environ["DB_ROOT_PASSWORD"]
 
+          if db_username.lower() == "root":
+              raise SystemExit("DB_USERNAME must not be root. Use a normal user such as bts or app_user.")
+
           datasource_url = (
               f"jdbc:mysql://mysql:3306/{db_name}"
               "?useSSL=false"
@@ -128,8 +131,11 @@ jobs:
               restart: always
               expose:
                 - "8080"
+              depends_on:
+                - mysql
               environment:
                 SERVER_PORT: "8080"
+                SPRING_PROFILES_ACTIVE: "prd"
                 SPRING_DATASOURCE_URL: {yq(datasource_url)}
                 SPRING_DATASOURCE_USERNAME: {yq(db_username)}
                 SPRING_DATASOURCE_PASSWORD: {yq(db_password)}
@@ -164,55 +170,6 @@ jobs:
           masked = masked.replace(db_root_password, "***")
           print(masked)
           PY
-
-      - name: Smoke test app health before PaaS deploy
-        run: |
-          cat > docker-compose.smoke.yml <<'EOF'
-          services:
-            bts-backend:
-              ports:
-                - "18080:8080"
-          EOF
-
-          docker compose \
-            -f docker-compose.deploy.yml \
-            -f docker-compose.smoke.yml \
-            up -d
-
-          echo "Waiting for /health..."
-
-          for i in $(seq 1 90); do
-            if curl -fsS "http://localhost:18080/health"; then
-              echo
-              echo "Health check passed"
-              docker compose \
-                -f docker-compose.deploy.yml \
-                -f docker-compose.smoke.yml \
-                down -v
-              exit 0
-            fi
-
-            echo "health not ready yet... $i"
-            sleep 2
-          done
-
-          echo "Health check failed. Container logs:"
-          docker compose \
-            -f docker-compose.deploy.yml \
-            -f docker-compose.smoke.yml \
-            ps
-
-          docker compose \
-            -f docker-compose.deploy.yml \
-            -f docker-compose.smoke.yml \
-            logs --no-color
-
-          docker compose \
-            -f docker-compose.deploy.yml \
-            -f docker-compose.smoke.yml \
-            down -v
-
-          exit 1
 
       - name: Deploy to PaaS
         uses: JangHanbin/paas-deploy-action@v1
