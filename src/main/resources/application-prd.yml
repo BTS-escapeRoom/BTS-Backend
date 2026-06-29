@@ -9,35 +9,35 @@ spring:
     import: ${config.type}
   security:
     jwt:
-      secret-key: ${spring.security.jwt.secret-key}
+      secret-key: ${JWT_SECRET_KEY}
     oauth2:
       client:
         registration:
           kakao:
-            client-id: ${spring.security.oauth2.client.registration.kakao.client-id}
-            app-id: ${spring.security.oauth2.client.registration.kakao.app-id}
-            client-secret: ${spring.security.oauth2.client.registration.kakao.client-secret}
+            client-id: ${KAKAO_CLIENT_ID}
+            app-id: ${KAKAO_APP_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
             scope:
               - profile_image
             authorization-grant-type: authorization_code
-            redirect-uri: ${spring.security.oauth2.client.registration.kakao.redirect-uri}
+            redirect-uri: ${KAKAO_REDIRECT_URI}
             client-name: Kakao
             client-authentication-method: client_secret_post
           naver:
-            client-id: ${spring.security.oauth2.client.registration.naver.client-id}
-            client-secret: ${spring.security.oauth2.client.registration.naver.client-secret}
+            client-id: ${NAVER_CLIENT_ID}
+            client-secret: ${NAVER_CLIENT_SECRET}
             scope:
               - profile_image
             authorization-grant-type: authorization_code
-            redirect-uri: ${spring.security.oauth2.client.registration.naver.redirect-uri}
+            redirect-uri: ${NAVER_REDIRECT_URI}
             client-name: Naver
             client-authentication-method: client_secret_post
           apple:
-            client-id: ${spring.security.oauth2.client.registration.apple.client-id}
+            client-id: ${APPLE_CLIENT_ID}
             client-secret: default-client-secret
             scope: openid
             authorization-grant-type: authorization_code
-            redirect-uri: ${spring.security.oauth2.client.registration.apple.redirect-uri}
+            redirect-uri: ${APPLE_REDIRECT_URI}
             client-name: Apple
             client-authentication-method: client_secret_post
         provider:
@@ -58,15 +58,15 @@ spring:
             token-uri: https://appleid.apple.com/auth/token
             user-name-attribute: sub
             jwk-set-uri: https://appleid.apple.com/auth/keys
-            team-id: ${spring.security.oauth2.client.provider.apple.team-id}
-            key-id: ${spring.security.oauth2.client.provider.apple.key-id}
-            bundle-id: ${spring.security.oauth2.client.provider.apple.bundle-id}
-            private-key: ${spring.security.oauth2.client.provider.apple.private-key}
+            team-id: ${APPLE_TEAM_ID}
+            key-id: ${APPLE_KEY_ID}
+            bundle-id: ${APPLE_BUNDLE_ID}
+            private-key: ${APPLE_PRIVATE_KEY}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${spring.datasource.url}
-    username: ${spring.datasource.username}
-    password: ${spring.datasource.password}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
 
 decorator:
   datasource:
@@ -77,7 +77,7 @@ springdoc:
   show-login-endpoint: true
 
 kakao:
-  admin-key: ${kakao.admin-key}
+  admin-key: ${KAKAO_ADMIN_KEY}
 
 logging:
   level:
