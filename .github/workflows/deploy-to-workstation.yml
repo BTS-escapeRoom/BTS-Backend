@@ -24,21 +24,29 @@ jobs:
         run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
       - name: Build Docker Image
-        run: docker build -t ghcr.io/bts-escaperoom/bts-backend:${{ steps.vars.outputs.IMAGE_TAG }} .
+        run: |
+          docker build \
+            -t ghcr.io/bts-escaperoom/bts-backend:${{ steps.vars.outputs.IMAGE_TAG }} \
+            .
 
       - name: Login to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" \
+          | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-      - name: Push Docker Image
-        run: docker push ghcr.io/bts-escaperoom/bts-backend:${{ steps.vars.outputs.IMAGE_TAG }}
+      - name: Push Docker Image to GHCR
+        run: |
+          docker push ghcr.io/bts-escaperoom/bts-backend:${{ steps.vars.outputs.IMAGE_TAG }}
 
       - name: Get Image Digest
         id: digest
         run: |
           IMAGE="ghcr.io/bts-escaperoom/bts-backend:${{ steps.vars.outputs.IMAGE_TAG }}"
           DIGEST=$(docker buildx imagetools inspect "$IMAGE" --format '{{.Manifest.Digest}}')
+
           echo "IMAGE_DIGEST=ghcr.io/bts-escaperoom/bts-backend@$DIGEST" >> $GITHUB_OUTPUT
-          echo "IMAGE_DIGEST=ghcr.io/bts-escaperoom/bts-backend@$DIGEST"
+          echo "Pushed image: $IMAGE"
+          echo "Digest image: ghcr.io/bts-escaperoom/bts-backend@$DIGEST"
 
   deploy:
     runs-on: ubuntu-latest
@@ -58,11 +66,7 @@ jobs:
             {"bts-backend":"${{ needs.build.outputs.IMAGE_DIGEST }}"}
           http-service: bts-backend
           http-port: "8080"
+          health-path: /health
           registry-host: ghcr.io
-          registry-username: ${{ secrets.GHCR_USERNAME }}
-          registry-password: ${{ secrets.GHCR_TOKEN }}
-
-      - name: Print App URL
-        run: |
-          echo "App URL:"
-          echo "https://bangtal-boys-apps.free4me.cc"
+          registry-username: ${{ github.actor }}
+          registry-password: ${{ secrets.GHCR_PULL_TOKEN }}
