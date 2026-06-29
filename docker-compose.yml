@@ -2,10 +2,8 @@ services:
   bts-backend:
     image: ghcr.io/bts-escaperoom/bts-backend:${IMAGE_TAG}
     restart: always
-    networks:
-      - bts-backend
-    ports:
-      - "8881:8080"
+    expose:
+      - "8080"
 
 networks:
   bts-backend:

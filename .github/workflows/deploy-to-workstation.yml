@@ -58,7 +58,6 @@ jobs:
             {"bts-backend":"${{ needs.build.outputs.IMAGE_DIGEST }}"}
           http-service: bts-backend
           http-port: "8080"
-          health-path: /actuator/health
           registry-host: ghcr.io
           registry-username: ${{ secrets.GHCR_USERNAME }}
           registry-password: ${{ secrets.GHCR_TOKEN }}
