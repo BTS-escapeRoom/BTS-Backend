@@ -1,31 +1,34 @@
 package com.bangtalboys.BTS_Backend.config;
 
-import com.bangtalboys.BTS_Backend.oauth.authentication.*;
+import com.bangtalboys.BTS_Backend.oauth.authentication.CustomAuthorizationRequestResolver;
+import com.bangtalboys.BTS_Backend.oauth.authentication.CustomFailureHandler;
+import com.bangtalboys.BTS_Backend.oauth.authentication.CustomSuccessHandler;
+import com.bangtalboys.BTS_Backend.oauth.authentication.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtFilter;
 import com.bangtalboys.BTS_Backend.oauth.jwt.JwtUtil;
 import com.bangtalboys.BTS_Backend.oauth.service.CustomOAuth2UserService;
 import com.bangtalboys.BTS_Backend.oauth.service.OAuth2MemberService;
 import com.bangtalboys.BTS_Backend.oauth.util.AppleJwtUtils;
 import com.bangtalboys.BTS_Backend.oauth.util.UrlUtils;
-
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
 
 import static com.bangtalboys.BTS_Backend.config.PermitAllPaths.PATHS;
 import static com.bangtalboys.BTS_Backend.config.PermitAllPaths.SWAGGER_PATHS;
@@ -39,10 +42,12 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final AppleJwtUtils appleJwtUtils;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, 
-                            UrlUtils urlUtils,
-                            JwtUtil jwtUtil,
-                            AppleJwtUtils appleJwtUtils) {
+    public SecurityConfig(
+            CustomOAuth2UserService customOAuth2UserService,
+            UrlUtils urlUtils,
+            JwtUtil jwtUtil,
+            AppleJwtUtils appleJwtUtils
+    ) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.urlUtils = urlUtils;
         this.jwtUtil = jwtUtil;
@@ -55,7 +60,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public OAuth2AuthorizedClientService authorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
+    public OAuth2AuthorizedClientService authorizedClientService(
+            ClientRegistrationRepository clientRegistrationRepository
+    ) {
         return new InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository);
     }
 
@@ -63,11 +70,21 @@ public class SecurityConfig {
     public CustomSuccessHandler customSuccessHandler(
             AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo,
             OAuth2AuthorizedClientService authorizedClientService,
-            OAuth2MemberService oAuth2MemberService) {
-        return new CustomSuccessHandler(urlUtils, jwtUtil, authRequestRepo, authorizedClientService, oAuth2MemberService);
+            OAuth2MemberService oAuth2MemberService
+    ) {
+        return new CustomSuccessHandler(
+                urlUtils,
+                jwtUtil,
+                authRequestRepo,
+                authorizedClientService,
+                oAuth2MemberService
+        );
     }
+
     @Bean
-    public CustomFailureHandler customFailureHandler(AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo) {
+    public CustomFailureHandler customFailureHandler(
+            AuthorizationRequestRepository<OAuth2AuthorizationRequest> authRequestRepo
+    ) {
         return new CustomFailureHandler(urlUtils, authRequestRepo);
     }
 
@@ -76,30 +93,23 @@ public class SecurityConfig {
         DefaultAuthorizationCodeTokenResponseClient defaultClient = new DefaultAuthorizationCodeTokenResponseClient();
 
         return request -> {
-            // 1. 요청이 "apple"인지 확인
             if ("apple".equals(request.getClientRegistration().getRegistrationId())) {
-                
-                // 2. AppleJwtUtils를 이용해 실시간으로 유효한 JWT 생성
                 String clientSecret = appleJwtUtils.createClientSecret();
 
-                // 3. 기존 ClientRegistration 설정을 복사하되, clientSecret만 생성한 JWT로 교체
                 ClientRegistration newRegistration = ClientRegistration
                         .withClientRegistration(request.getClientRegistration())
-                        .clientSecret(clientSecret) 
+                        .clientSecret(clientSecret)
                         .build();
 
-                // 4. 교체된 Registration 정보를 가진 새로운 요청 객체 생성
                 request = new OAuth2AuthorizationCodeGrantRequest(
                         newRegistration,
                         request.getAuthorizationExchange()
                 );
             }
 
-            // 5. (애플은 교체된 정보로, 나머지는 원래 정보로) 토큰 요청 전송
             return defaultClient.getTokenResponse(request);
         };
     }
-
 
     @Bean
     public SecurityFilterChain filterChain(
@@ -110,20 +120,23 @@ public class SecurityConfig {
             CustomFailureHandler customFailureHandler
     ) throws Exception {
 
+        // CORS 설정
+        // http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
         // CSRF 비활성화
-        http.csrf((auth) -> auth.disable());
+        http.csrf(auth -> auth.disable());
 
         // Form 로그인 방식 비활성화
-        http.formLogin((auth) -> auth.disable());
+        http.formLogin(auth -> auth.disable());
 
         // HTTP Basic 인증 방식 비활성화
-        http.httpBasic((auth) -> auth.disable());
+        http.httpBasic(auth -> auth.disable());
 
         // JWT 필터 추가
         http.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         // OAuth2 로그인 설정
-        http.oauth2Login((oauth2) -> oauth2
+        http.oauth2Login(oauth2 -> oauth2
                 .authorizationEndpoint(authorizationEndpointConfig ->
                         authorizationEndpointConfig
                                 .authorizationRequestResolver(
@@ -173,8 +186,9 @@ public class SecurityConfig {
         });
 
         // 세션 상태를 STATELESS로 설정
-        http.sessionManagement((session) -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
 
         return http.build();
     }
