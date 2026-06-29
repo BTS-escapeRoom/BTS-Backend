@@ -1,12 +1,7 @@
-config:
-  type: aws-parameterstore:/config/bangtal-boys/prd/
-
 server:
   host: apis.bangtal-boys.com
 
 spring:
-  config:
-    import: ${config.type}
   security:
     jwt:
       secret-key: ${JWT_SECRET_KEY}
