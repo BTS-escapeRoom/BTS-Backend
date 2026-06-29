@@ -52,6 +52,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    timeout-minutes: 10
 
     steps:
       - name: Checkout Repository
@@ -81,10 +82,30 @@ jobs:
       - name: Create production deploy compose
         env:
           IMAGE_DIGEST: ${{ needs.build.outputs.IMAGE_DIGEST }}
+
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+
+          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_APP_ID: ${{ secrets.KAKAO_APP_ID }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_REDIRECT_URI: ${{ secrets.KAKAO_REDIRECT_URI }}
+          KAKAO_ADMIN_KEY: ${{ secrets.KAKAO_ADMIN_KEY }}
+
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          NAVER_REDIRECT_URI: ${{ secrets.NAVER_REDIRECT_URI }}
+
+          APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
+          APPLE_REDIRECT_URI: ${{ secrets.APPLE_REDIRECT_URI }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_KEY_ID: ${{ secrets.APPLE_KEY_ID }}
+          APPLE_BUNDLE_ID: ${{ secrets.APPLE_BUNDLE_ID }}
+          APPLE_PRIVATE_KEY: ${{ secrets.APPLE_PRIVATE_KEY }}
         run: |
           python3 - <<'PY'
           import json
@@ -94,10 +115,30 @@ jobs:
 
           required = [
               "IMAGE_DIGEST",
+
               "DB_NAME",
               "DB_USERNAME",
               "DB_PASSWORD",
               "DB_ROOT_PASSWORD",
+
+              "JWT_SECRET_KEY",
+
+              "KAKAO_CLIENT_ID",
+              "KAKAO_APP_ID",
+              "KAKAO_CLIENT_SECRET",
+              "KAKAO_REDIRECT_URI",
+              "KAKAO_ADMIN_KEY",
+
+              "NAVER_CLIENT_ID",
+              "NAVER_CLIENT_SECRET",
+              "NAVER_REDIRECT_URI",
+
+              "APPLE_CLIENT_ID",
+              "APPLE_REDIRECT_URI",
+              "APPLE_TEAM_ID",
+              "APPLE_KEY_ID",
+              "APPLE_BUNDLE_ID",
+              "APPLE_PRIVATE_KEY",
           ]
 
           for key in required:
@@ -105,6 +146,7 @@ jobs:
                   raise SystemExit(f"{key} is empty")
 
           image_digest = os.environ["IMAGE_DIGEST"]
+
           db_name = os.environ["DB_NAME"]
           db_username = os.environ["DB_USERNAME"]
           db_password = os.environ["DB_PASSWORD"]
@@ -135,11 +177,32 @@ jobs:
                 - mysql
               environment:
                 SERVER_PORT: "8080"
+                SERVER_HOST: "apis.bangtal-boys.com"
                 SPRING_PROFILES_ACTIVE: "prd"
+
                 SPRING_DATASOURCE_URL: {yq(datasource_url)}
                 SPRING_DATASOURCE_USERNAME: {yq(db_username)}
                 SPRING_DATASOURCE_PASSWORD: {yq(db_password)}
                 SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: "0"
+
+                JWT_SECRET_KEY: {yq(os.environ["JWT_SECRET_KEY"])}
+
+                KAKAO_CLIENT_ID: {yq(os.environ["KAKAO_CLIENT_ID"])}
+                KAKAO_APP_ID: {yq(os.environ["KAKAO_APP_ID"])}
+                KAKAO_CLIENT_SECRET: {yq(os.environ["KAKAO_CLIENT_SECRET"])}
+                KAKAO_REDIRECT_URI: {yq(os.environ["KAKAO_REDIRECT_URI"])}
+                KAKAO_ADMIN_KEY: {yq(os.environ["KAKAO_ADMIN_KEY"])}
+
+                NAVER_CLIENT_ID: {yq(os.environ["NAVER_CLIENT_ID"])}
+                NAVER_CLIENT_SECRET: {yq(os.environ["NAVER_CLIENT_SECRET"])}
+                NAVER_REDIRECT_URI: {yq(os.environ["NAVER_REDIRECT_URI"])}
+
+                APPLE_CLIENT_ID: {yq(os.environ["APPLE_CLIENT_ID"])}
+                APPLE_REDIRECT_URI: {yq(os.environ["APPLE_REDIRECT_URI"])}
+                APPLE_TEAM_ID: {yq(os.environ["APPLE_TEAM_ID"])}
+                APPLE_KEY_ID: {yq(os.environ["APPLE_KEY_ID"])}
+                APPLE_BUNDLE_ID: {yq(os.environ["APPLE_BUNDLE_ID"])}
+                APPLE_PRIVATE_KEY: {yq(os.environ["APPLE_PRIVATE_KEY"])}
 
             mysql:
               image: mysql:8.0
@@ -166,12 +229,16 @@ jobs:
           Path("docker-compose.deploy.yml").write_text(compose)
 
           masked = compose
-          masked = masked.replace(db_password, "***")
-          masked = masked.replace(db_root_password, "***")
+          for key in required:
+              value = os.environ.get(key)
+              if value:
+                  masked = masked.replace(value, "***")
+
           print(masked)
           PY
 
       - name: Deploy to PaaS
+        timeout-minutes: 5
         uses: JangHanbin/paas-deploy-action@v1
         with:
           app: bangtal-boys
