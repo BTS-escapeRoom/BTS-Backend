@@ -42,3 +42,6 @@ out/
 
 # 로컬 환경 설정 파일 (민감 정보 포함)
 application-local.yml
+# 운영 데이터 덤프 - 절대 커밋 금지
+migrate/bts_dump.sql
+*.sql
