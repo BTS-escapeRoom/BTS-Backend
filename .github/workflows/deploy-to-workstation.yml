@@ -248,7 +248,7 @@ jobs:
                 APPLE_PRIVATE_KEY: {yq(os.environ["APPLE_PRIVATE_KEY"])}
 
             mysql:
-              image: ghcr.io/bts-escaperoom/bts-migrate:mysql-seed1
+              image: mysql:8.0
               restart: always
               x-deploy:
                 stateful: true
