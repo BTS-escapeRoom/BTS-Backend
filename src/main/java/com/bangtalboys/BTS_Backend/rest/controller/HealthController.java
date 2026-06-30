@@ -2,8 +2,10 @@ package com.bangtalboys.BTS_Backend.rest.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-public class RestController {
+@RestController
+public class HealthController {
     @GetMapping("/health")
     public ResponseEntity<String> health() {
         return ResponseEntity.ok("ok");
