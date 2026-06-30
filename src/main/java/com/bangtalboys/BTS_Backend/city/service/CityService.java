@@ -7,6 +7,7 @@ import com.bangtalboys.BTS_Backend.config.error.exception.NotFoundException;
 import com.bangtalboys.BTS_Backend.city.domain.District;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CityService {
     private final CityRepository cityRepository;
 

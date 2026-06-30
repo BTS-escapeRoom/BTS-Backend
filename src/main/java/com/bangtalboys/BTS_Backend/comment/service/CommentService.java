@@ -16,11 +16,13 @@ import com.bangtalboys.BTS_Backend.member.repository.MemberRepository;
 import com.bangtalboys.BTS_Backend.utils.enums.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -29,6 +31,7 @@ public class CommentService {
     private final CommentReportRepository commentReportRepository;
 
     /** 댓글 생성 */
+    @Transactional
     public CommentResponse createBoardComment(CommentRequest commentRequest, Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(NotFoundException::new);
@@ -43,6 +46,7 @@ public class CommentService {
     }
 
     /** 댓글 수정 */
+    @Transactional
     public CommentResponse updateBoardComment(CommentRequest commentRequest, Long id, Long memberId) {
         Comment comment = commentRepository.findByIdAndMemberId(id, memberId);
         if (comment == null || comment.isDeleted()) {
@@ -79,6 +83,7 @@ public class CommentService {
     }
 
     /** 댓글 삭제 → Soft Delete */
+    @Transactional
     public String deleteBoardComment(Long id, Long memberId) {
         Comment comment = commentRepository.findByIdAndMemberId(id, memberId);
         if (comment == null) {
@@ -92,6 +97,7 @@ public class CommentService {
     }
 
     /** 댓글 신고/취소 */
+    @Transactional
     public String createCommentReport(Long memberId, CommentReportRequest commentReportRequest) {
 
         Member member = memberRepository.findById(memberId)

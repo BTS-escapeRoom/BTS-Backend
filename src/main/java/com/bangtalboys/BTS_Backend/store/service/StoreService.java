@@ -7,6 +7,7 @@ import com.bangtalboys.BTS_Backend.store.dto.StoreResponse;
 import com.bangtalboys.BTS_Backend.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class StoreService {
 
     private final StoreRepository storeRepository;
