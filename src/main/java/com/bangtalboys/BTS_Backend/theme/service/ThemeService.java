@@ -13,6 +13,7 @@ import com.bangtalboys.BTS_Backend.theme.repository.ThemeLikeRepository;
 import com.bangtalboys.BTS_Backend.theme.repository.ThemeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ThemeService {
     private final ThemeRepository themeRepository;
     private final ThemeLikeRepository themeLikeRepository;
@@ -47,6 +49,7 @@ public class ThemeService {
         return theme.map(ThemeResponse::new).orElseThrow(NotFoundException::new);
     }
 
+    @Transactional
     public String createThemeLike(Long memberId, Long themeId) {
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundException::new);
         Theme theme = themeRepository.findById(themeId).orElseThrow(NotFoundException::new);
