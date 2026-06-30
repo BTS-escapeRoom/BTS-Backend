@@ -289,9 +289,22 @@ jobs:
                   MYSQL_ROOT_PASSWORD: {yq(db_root_password)}
               """)
 
+              # 로더가 성공적으로 끝나야 bts-backend 가 뜨도록 묶는다.
+              # -> 로더 실패 시 배포가 실패하며 컨테이너 로그가 노출되어 원인 파악이 가능.
+              #    db-migrate 블록을 붙이기 전에 치환하므로 아래 depends_on 은 bts-backend 것만 매칭된다.
+              old_dep = "    depends_on:\n      - mysql\n"
+              new_dep = (
+                  "    depends_on:\n"
+                  "      mysql:\n"
+                  "        condition: service_started\n"
+                  "      db-migrate:\n"
+                  "        condition: service_completed_successfully\n"
+              )
+              compose = compose.replace(old_dep, new_dep, 1)
+
               block = textwrap.indent(migration_service, "  ")
               compose = compose.replace("\nvolumes:\n", "\n" + block + "\nvolumes:\n", 1)
-              print("db-migrate 사이드카 포함 (run_migration=true)")
+              print("db-migrate 사이드카 포함 (run_migration=true) + bts-backend 가 db-migrate 완료를 대기")
 
           Path("docker-compose.deploy.yml").write_text(compose)
 
