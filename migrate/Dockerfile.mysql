@@ -1,0 +1,8 @@
+# 데이터가 미리 적재된 MySQL 이미지.
+# /docker-entrypoint-initdb.d/ 의 .sql 은 볼륨이 "빈 상태로 처음 초기화"될 때만,
+# MYSQL_DATABASE(=bts) 를 기본 DB 로 하여 자동 실행된다.
+# 운영 데이터를 포함하므로 반드시 GHCR private 로 두고 마이그레이션 검증 후 정리할 것.
+FROM mysql:8.0
+
+# 빌드 전에 migrate/ 에 RDS 덤프(bts_dump.sql)가 있어야 한다.
+COPY bts_dump.sql /docker-entrypoint-initdb.d/01_bts_dump.sql
