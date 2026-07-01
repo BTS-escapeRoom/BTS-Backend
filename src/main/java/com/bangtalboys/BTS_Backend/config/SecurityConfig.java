@@ -29,6 +29,11 @@ import org.springframework.security.oauth2.client.web.AuthorizationRequestReposi
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 import static com.bangtalboys.BTS_Backend.config.PermitAllPaths.PATHS;
 import static com.bangtalboys.BTS_Backend.config.PermitAllPaths.SWAGGER_PATHS;
@@ -112,6 +117,26 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        // 프론트 오리진 허용 (Vercel 배포 도메인 + 로컬 개발). credentials 사용하므로 명시적 패턴 필요.
+        config.setAllowedOriginPatterns(List.of(
+                "https://www.bangtal-boys.com",
+                "https://bangtal-boys.com",
+                "http://localhost:*"
+        ));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization"));
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
             ClientRegistrationRepository clientRegistrationRepository,
@@ -121,7 +146,7 @@ public class SecurityConfig {
     ) throws Exception {
 
         // CORS 설정
-        // http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         // CSRF 비활성화
         http.csrf(auth -> auth.disable());
