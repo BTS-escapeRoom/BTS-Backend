@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional  // open-in-view=false: 서비스 메서드 내 LAZY 연관(Board.theme 등) 접근/쓰기 반영 보장
 public class BoardService {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;

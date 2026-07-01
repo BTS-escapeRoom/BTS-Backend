@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional  // open-in-view=false: 서비스 메서드 내 LAZY 연관(Review.theme/member 등) 접근/쓰기 반영 보장
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReviewReportRepository reviewReportRepository;

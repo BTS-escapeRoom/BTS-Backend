@@ -16,6 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional  // open-in-view=false: 서비스 메서드 내 LAZY 연관 접근/쓰기 반영 보장
 public class MemberService {
     private final MemberRepository memberRepository;
     private final UnlinkService unlinkService;
