@@ -167,8 +167,9 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
 
-            // PaaS health check
+            // PaaS health check (GET + HEAD)
             auth.requestMatchers(HttpMethod.GET, "/health").permitAll();
+            auth.requestMatchers(HttpMethod.HEAD, "/health").permitAll();
 
             for (PermitAllPaths.PermitPath p : PATHS) {
                 if (p.getMethod() != null) {

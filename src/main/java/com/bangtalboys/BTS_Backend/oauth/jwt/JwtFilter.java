@@ -93,8 +93,9 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private boolean isPermitAllPath(String requestPath, String requestMethod) {
-        // PaaS health check는 JWT 검사 없이 통과
-        if ("GET".equalsIgnoreCase(requestMethod) && "/health".equals(requestPath)) {
+        // PaaS health check는 JWT 검사 없이 통과 (GET + HEAD)
+        if (("GET".equalsIgnoreCase(requestMethod) || "HEAD".equalsIgnoreCase(requestMethod))
+                && "/health".equals(requestPath)) {
             return true;
         }
 
