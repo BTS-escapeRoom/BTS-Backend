@@ -280,6 +280,9 @@ jobs:
           http-service: edge
           http-port: "80"
           health-path: /health
+          # 커스텀 도메인 등록 -> Cloudflare 엣지 인증서 자동 발급(CNAME 해석되면 비동기 검증).
+          # DNS: apis.bangtal-boys.com CNAME bangtal-boys-apps.free4me.cc (이미 설정됨)
+          custom-domains: apis.bangtal-boys.com
           registry-host: ghcr.io
           registry-username: ${{ secrets.GHCR_PULL_USERNAME }}
           registry-password: ${{ secrets.GHCR_PULL_TOKEN }}
