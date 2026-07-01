@@ -127,7 +127,9 @@ public class SecurityConfig {
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("Authorization"));
+        // 프론트가 재발급 응답에서 토큰을 읽어야 하므로 커스텀 토큰 헤더를 노출.
+        // (ReissueController 가 access-token / refresh-token 헤더로 새 토큰을 내려줌)
+        config.setExposedHeaders(List.of("Authorization", "access-token", "refresh-token"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
