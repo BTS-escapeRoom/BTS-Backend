@@ -1,0 +1,65 @@
+name: PaaS Ops (rollback/teardown/delete)
+
+# 수동 전용 운영 워크플로.
+# - rollback : 지정한 이전 release-id 스냅샷으로 재배포
+# - teardown : 서빙만 중지(데이터/앱레코드/토큰/릴리스 보존, 재배포 가능)
+# - delete   : 라우트·컨테이너·stateful 볼륨·네트워크·커스텀도메인 인증서까지 영구 제거(되돌릴 수 없음)
+#
+# ※ 이 워크플로의 "Run workflow" 버튼이 보이려면 기본 브랜치(main)에도 이 파일이 있어야 한다.
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "작업 (rollback / teardown / delete)"
+        type: choice
+        options:
+          - rollback
+          - teardown
+          - delete
+        required: true
+      release_id:
+        description: "rollback 대상 release-id (rollback 시 필수, 예: rel_abc123)"
+        type: string
+        required: false
+      confirm:
+        description: "delete 확인용 — 앱 이름(bangtal-boys)을 정확히 입력해야 실행됨"
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  ops:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 입력 검증
+        env:
+          ACTION: ${{ github.event.inputs.action }}
+          RELEASE_ID: ${{ github.event.inputs.release_id }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          if [ "$ACTION" = "rollback" ] && [ -z "$RELEASE_ID" ]; then
+            echo "::error::rollback 에는 release_id 가 필요합니다."
+            exit 1
+          fi
+          if [ "$ACTION" = "delete" ] && [ "$CONFIRM" != "bangtal-boys" ]; then
+            echo "::error::delete 는 confirm 에 앱 이름(bangtal-boys)을 정확히 입력해야 실행됩니다. stateful 볼륨까지 영구 삭제됩니다."
+            exit 1
+          fi
+          echo "action=$ACTION 실행"
+
+      - name: "PaaS ${{ github.event.inputs.action }}"
+        uses: JangHanbin/paas-deploy-action@v1
+        with:
+          app: bangtal-boys
+          token: ${{ secrets.PAAS_DEPLOY_TOKEN }}
+          action: ${{ github.event.inputs.action }}
+          # rollback 시에만 사용(다른 작업에선 무시됨)
+          release-id: ${{ github.event.inputs.release_id }}
+          # rollback 재배포는 private 이미지 pull 자격증명 필요(릴리스는 자격증명 미저장)
+          registry-host: ghcr.io
+          registry-username: ${{ secrets.GHCR_PULL_USERNAME }}
+          registry-password: ${{ secrets.GHCR_PULL_TOKEN }}
